@@ -1,0 +1,1512 @@
+{
+  "schemaVersion": 1,
+  "personaId": "briton",
+  "bankVersion": 3,
+  "generatedAt": "2026-09-23T07:25:05.940Z",
+  "model": "gemini-3.6-flash",
+  "greetings": [
+    {
+      "reply": "Well met, traveller. I am Segovax, a cattle farmer of the Atrebates. My herd grazes safely inside the great dykes of Calleva. What brings you to our fields today?",
+      "next": [
+        "my-name-and-work",
+        "roundhouse-home",
+        "calleva-settlement",
+        "daily-food"
+      ]
+    },
+    {
+      "reply": "Good day to you. You find me minding the beasts by the outer bank. Life is peaceful here when the rains hold off. Are you looking to trade or just passing through?",
+      "next": [
+        "daily-routine",
+        "trade-and-coins",
+        "roundhouse-home",
+        "my-name-and-work"
+      ]
+    },
+    {
+      "reply": "Greetings, friend. Step closer to the hearth fire if you are cold. The damp gets into the bones this time of year. What news do you bring to our roundhouse?",
+      "next": [
+        "roundhouse-home",
+        "daily-food",
+        "my-name-and-work",
+        "daily-routine"
+      ]
+    }
+  ],
+  "returnGreetings": [
+    {
+      "reply": "Welcome back! The cattle are fed and the hearth is burning bright. It is good to see a familiar face again. Come, rest your feet by the fire.",
+      "next": [
+        "daily-food",
+        "daily-routine",
+        "trade-and-coins",
+        "my-name-and-work"
+      ]
+    },
+    {
+      "reply": "You have returned to Calleva then. The weather has been kind to our crops today. What else would you like to know about our quiet life here?",
+      "next": [
+        "calleva-settlement",
+        "my-name-and-work",
+        "roundhouse-home",
+        "daily-food"
+      ]
+    },
+    {
+      "reply": "Ah, you are back before the evening mist settles over the dykes. My kin and I were just finishing the chores. Sit and talk a while.",
+      "next": [
+        "daily-routine",
+        "daily-food",
+        "trade-and-coins",
+        "my-name-and-work"
+      ]
+    }
+  ],
+  "farewells": [
+    "May the path be easy beneath your feet. Safe travels, friend.",
+    "Farewell then. Mind the mud by the dykes as you go.",
+    "Go safely. You are always welcome by my hearth."
+  ],
+  "nodes": {
+    "my-name-and-work": {
+      "id": "my-name-and-work",
+      "topic": "my-name-and-work",
+      "depth": "intro",
+      "ask": [
+        "Who are you and what do you do here?",
+        "What is your name and your job?",
+        "Can you tell me about yourself and your work?"
+      ],
+      "replies": [
+        "Segovax is my name, a plain cattle farmer of the Atrebates tribe. I tend my beasts near the great earthwork dykes of Calleva. My days are spent driving cows to pasture, mending timber fencing, and watching over the herd. It is hard work, but good honest living.",
+        "Folk call me Segovax. My life belongs to the herds grazing near Calleva's outer earthworks. As an Atrebates man, I raise cattle for milk and trade, while keeping a keen eye on the weather and the pastures. My daily labours keep our home fed and sheltered.",
+        "I am Segovax, living here by the outer dykes of Calleva. My main duty is caring for cattle, ensuring they have rich grass to eat and safe water to drink. Tending herds, repairing wooden fences, and guiding calves takes up most of my waking hours."
+      ],
+      "next": [
+        "my-name-and-work.cattle-grazing",
+        "my-name-and-work.dyke-patrols",
+        "roundhouse-home",
+        "my-cattle",
+        "daily-routine",
+        "tools-of-iron"
+      ],
+      "reviewed": false
+    },
+    "my-name-and-work.cattle-grazing": {
+      "id": "my-name-and-work.cattle-grazing",
+      "topic": "my-name-and-work",
+      "depth": "deep",
+      "ask": [
+        "Where do your cows graze during the day?",
+        "How do you pasture your cattle here?",
+        "Where do you take your herd to feed?"
+      ],
+      "replies": [
+        "Each morning I lead the beasts past the high dykes into the grassy clearings. Forest glades offer fresh clover and rich grass. I stay close by with my wooden staff to ensure no cow wanders off into the deep woods where wild beasts lurk.",
+        "My herd grazes in open clearings surrounded by oak trees. The grass near the banks is sweet after rain, so I guide them there early. Keeping the cows together takes patience, especially when young beasts decide to stray into the shady forest scrub.",
+        "Pastures inside and outside the earthworks provide good grazing for the cattle. I walk with them at sunrise, steering the herd away from boggy ground. They chew peacefully through the afternoon while I keep watch from a grassy mound nearby."
+      ],
+      "next": [
+        "my-name-and-work",
+        "my-name-and-work.dyke-patrols",
+        "roundhouse-home",
+        "my-cattle",
+        "daily-routine",
+        "tools-of-iron"
+      ],
+      "reviewed": false
+    },
+    "my-name-and-work.dyke-patrols": {
+      "id": "my-name-and-work.dyke-patrols",
+      "topic": "my-name-and-work",
+      "depth": "deep",
+      "ask": [
+        "Do you check the earthwork banks while working?",
+        "How do you keep your livestock safe around the dykes?",
+        "What do you look for along the earthworks?"
+      ],
+      "replies": [
+        "Walking the high earthworks is part of my routine while watching the cattle. I look for spots where autumn rains might have washed away soil or where fencing needs fresh wooden stakes. Strong banks keep our precious beasts protected from straying predators.",
+        "Checking the dykes keeps both our cattle safe and our borders clear. If a section of ditch fills with fallen branches or a fence breaks, I fix it straight away. A farmer must always ensure his boundary holds fast against forest wolves.",
+        "My eyes scan the earth banks every time I pass. Cattle love to rub against wooden posts, so I often find loose timbers that need hammering down. Keeping these grand banks sturdy ensures the whole settlement remains secure season after season."
+      ],
+      "next": [
+        "my-name-and-work",
+        "my-name-and-work.cattle-grazing",
+        "roundhouse-home",
+        "my-cattle",
+        "daily-routine",
+        "tools-of-iron"
+      ],
+      "reviewed": false
+    },
+    "roundhouse-home": {
+      "id": "roundhouse-home",
+      "topic": "roundhouse-home",
+      "depth": "intro",
+      "ask": [
+        "What is your home like?",
+        "Where do you live in Calleva?",
+        "Can you describe your roundhouse to me?"
+      ],
+      "replies": [
+        "My home is a sturdy roundhouse sitting near the outer dykes. It features thick wattle-and-daub walls, a tall thatched conical roof, and a stone hearth right in the middle. Warm smoke rises inside, keeping the insects away and keeping us dry through winter.",
+        "Living near the earthworks, my family stays cozy inside a timber roundhouse. We built the circular wall from woven hazel branches plastering them with mud and straw. Rain slides right off the thick straw thatch, and our hearth fire never goes out.",
+        "We dwell in a round house built from sturdy oak posts and woven branches. The clay walls stop winter winds, while a central hearth fills the space with light and heat. It is a comfortable dwelling for my kin, warm even in damp weather."
+      ],
+      "next": [
+        "roundhouse-home.wattle-walls",
+        "roundhouse-home.thatch-roof",
+        "hearth-and-cooking",
+        "family-life",
+        "weather-and-seasons",
+        "great-dykes"
+      ],
+      "reviewed": false
+    },
+    "roundhouse-home.wattle-walls": {
+      "id": "roundhouse-home.wattle-walls",
+      "topic": "roundhouse-home",
+      "depth": "deep",
+      "ask": [
+        "How do you build the walls of your roundhouse?",
+        "What are your house walls made from?",
+        "Can you tell me how wattle and daub works?"
+      ],
+      "replies": [
+        "First we weave flexible hazel rods between upright oak posts, just like making a huge basket. Then we mix river clay, animal dung, and chopped straw to smear over the wood. Once dry, it forms a draft-proof wall that stands strong against rain.",
+        "Wattle walls start with hazel poles driven into the earth. We weave thin branches through them tight, then daub the whole frame with wet clay and straw. It takes time to dry, but it keeps our roundhouse snug when cold winds blow.",
+        "Making walls requires patience and plenty of wet mud. We weave split hazel stems around sturdy upright posts, creating a flexible mesh. Smearing it thick with clay and straw seals every gap, creating a solid boundary that lasts for many long years."
+      ],
+      "next": [
+        "roundhouse-home",
+        "roundhouse-home.thatch-roof",
+        "hearth-and-cooking",
+        "family-life",
+        "weather-and-seasons",
+        "great-dykes"
+      ],
+      "reviewed": false
+    },
+    "roundhouse-home.thatch-roof": {
+      "id": "roundhouse-home.thatch-roof",
+      "topic": "roundhouse-home",
+      "depth": "deep",
+      "ask": [
+        "How is the thatched roof made?",
+        "What keeps the rain off your roundhouse roof?",
+        "How do you straw the roof of your house?"
+      ],
+      "replies": [
+        "Long reed and wheat straw are bound tightly to timber rafters rising to a point. We lay the bundles thick so water glides straight off onto the grass below. Smoke from our fire seeps through the straw slowly without letting cold showers inside.",
+        "Rafters meet at the center peak, supporting heavy layers of dried straw and river reeds. We bind the thatch with willow twigs. A good roof stays dry for decades, though we must patch the top now and then after heavy winter gales.",
+        "High above our heads, thick straw bundles cover a frame of ash poles. The steep cone shape sheds rain easily before it can soak through. Smoke gathers under the rafters, curing our hanging herbs while keeping the thatch dry and sweet."
+      ],
+      "next": [
+        "roundhouse-home",
+        "roundhouse-home.wattle-walls",
+        "hearth-and-cooking",
+        "family-life",
+        "weather-and-seasons",
+        "great-dykes"
+      ],
+      "reviewed": false
+    },
+    "daily-food": {
+      "id": "daily-food",
+      "topic": "daily-food",
+      "depth": "intro",
+      "ask": [
+        "What do you usually eat for dinner?",
+        "What kind of food do people eat here?",
+        "Can you tell me about your daily meals?"
+      ],
+      "replies": [
+        "Hearty stews are our daily fare, cooked slowly over the hearth fire. We mix crushed barley or spelt wheat with leeks, herbs, and wild turnips. On special days we add salted beef, enjoying dense coarse bread alongside a cup of fresh goat milk.",
+        "We live on thick pottage boiled in earthenware clay pots. Spelt flour makes good flat cakes, which we eat with cheese and stewed greens. When cattle are slaughtered in autumn, we feast on roasted meat, but grain remains our main daily food.",
+        "Grains from our fields nourish us best. We grind barley into coarse flour for pottage or bake flat bread on hearthstones. Fresh milk, garden herbs, and occasional salted pork fill our wooden bowls, giving us energy for hard work in the fields."
+      ],
+      "next": [
+        "daily-food.spelt-bread",
+        "daily-food.barley-pottage",
+        "hearth-and-cooking",
+        "my-crops",
+        "my-cattle",
+        "weaving-and-clothes"
+      ],
+      "reviewed": false
+    },
+    "daily-food.spelt-bread": {
+      "id": "daily-food.spelt-bread",
+      "topic": "daily-food",
+      "depth": "deep",
+      "ask": [
+        "How do you make your flat bread?",
+        "What is spelt bread like to eat?",
+        "How do you bake bread on the hearth?"
+      ],
+      "replies": [
+        "Women grind spelt wheat between two heavy quern stones until it becomes coarse flour. Mixing it with water and salt creates a thick dough. We flatten the rounds and bake them directly on hot flat stones beside the glowing coals.",
+        "Spelt bread is dense, chewy, and full of nutty flavor. After grinding grain by hand, we knead the dough on wooden boards. Baking it close to the embers leaves a dark crust that keeps the bread fresh for several days travel.",
+        "Grinding wheat takes strong arms every morning. Once flour is mixed with water, flat cakes are placed on hot hearthstones. The bread bakes quickly in the embers, perfect for dipping into warm beef broth during evening meals."
+      ],
+      "next": [
+        "daily-food",
+        "daily-food.barley-pottage",
+        "hearth-and-cooking",
+        "my-crops",
+        "my-cattle",
+        "weaving-and-clothes"
+      ],
+      "reviewed": false
+    },
+    "daily-food.barley-pottage": {
+      "id": "daily-food.barley-pottage",
+      "topic": "daily-food",
+      "depth": "deep",
+      "ask": [
+        "What goes into your daily pottage stew?",
+        "How do you cook barley pottage?",
+        "What makes pottage so filling?"
+      ],
+      "replies": [
+        "Barley pottage simmers in a clay pot suspended over the flames. We add crushed grain, peas, onions, and wild herbs gathered from woodland edges. It thickens into a hot broth that warms our bellies after long cold hours tending cattle.",
+        "To make pottage, we boil cracked barley grains with root vegetables and herbs. Sometimes a bit of bacon lard adds rich flavor. It bubbles gently all afternoon, filling the roundhouse with a savory scent that welcomes us home.",
+        "A proper pottage uses whatever the garden yields alongside barley. Beans, garlic, and wild garlic leaves simmer together in river water. Eaten hot from wooden trenchers, it provides sturdy comfort to working folk when winds blow chill."
+      ],
+      "next": [
+        "daily-food",
+        "daily-food.spelt-bread",
+        "hearth-and-cooking",
+        "my-crops",
+        "my-cattle",
+        "weaving-and-clothes"
+      ],
+      "reviewed": false
+    },
+    "family-life": {
+      "id": "family-life",
+      "topic": "family-life",
+      "depth": "mid",
+      "ask": [
+        "How does your family work together?",
+        "What do your kin do every day?",
+        "Can you tell me about your home life with family?"
+      ],
+      "replies": [
+        "Kinship keeps our household strong. While I tend the cows, others gather firewood, spin wool, or weed crop patches. Children help fetch water from the stream and mind the sheep. Every person has tasks that help our roundhouse run smoothly.",
+        "My family operates as one unit from dawn till dark. Younger kin drive sheep to high pastures, while elders grind grain or mend woven garments. We share stories around the hearth at dusk, resting our tired limbs after busy hours of labor.",
+        "Everyone contributes to our daily survival. The women weave clothes and prepare meals over the fire, while men and boys manage the heavy outdoor work. Working side by side builds strong bonds between us all through every passing season."
+      ],
+      "next": [
+        "family-life.gathering-wood",
+        "family-life.spinning-wool",
+        "roundhouse-home",
+        "daily-routine",
+        "weaving-and-clothes",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "family-life.gathering-wood": {
+      "id": "family-life.gathering-wood",
+      "topic": "family-life",
+      "depth": "deep",
+      "ask": [
+        "How do you gather enough firewood?",
+        "Who collects timber for the hearth fire?",
+        "Where do you find wood for the house?"
+      ],
+      "replies": [
+        "Gathering firewood is a daily task for younger kin. They search the oak woods for fallen branches and dry brush, hauling bundles back in wicker baskets. Keeping a large stock under the roof eaves ensures our hearth never goes cold.",
+        "We collect dry fallen branches from forest floors nearby. Oak and ash burn hottest, so we stack those logs carefully against rain. Children carry smaller twigs for kindling, ensuring we can kindle fires quickly on frost-bitten winter mornings.",
+        "Wood collection takes effort before winter arrives. We use iron axes to cut dead trees into manageable logs, dragging them home with oxen assistance. Dry timber stored inside the roundhouse guarantees warm nights and reliable cooking fires year-round."
+      ],
+      "next": [
+        "family-life",
+        "family-life.spinning-wool",
+        "roundhouse-home",
+        "daily-routine",
+        "weaving-and-clothes",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "family-life.spinning-wool": {
+      "id": "family-life.spinning-wool",
+      "topic": "family-life",
+      "depth": "deep",
+      "ask": [
+        "How do your kin spin wool into thread?",
+        "Who makes thread from sheep fleece?",
+        "What tools are used for spinning wool?"
+      ],
+      "replies": [
+        "Women spin fleece using drop spindles fitted with baked clay whorls. They pull clean wool fibers, twisting them smoothly as the spindle spins mid-air. It takes steady fingers and hours of work to produce enough yarn for weaving clothes.",
+        "After washing sheep fleece, kin comb the fibers straight with wooden cards. Using a weighted spindle, they twist wool into strong thread for tunics. It is quiet work done by the fire while listening to news from visitors.",
+        "Spinning yarn requires patience and skill passed down through generations. A weighted clay whorl keeps the wooden spindle turning, twisting soft fleece into tight yarn. Once spun, thread is dyed using roots and berries found in nearby woods."
+      ],
+      "next": [
+        "family-life",
+        "family-life.gathering-wood",
+        "roundhouse-home",
+        "daily-routine",
+        "weaving-and-clothes",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "daily-routine": {
+      "id": "daily-routine",
+      "topic": "daily-routine",
+      "depth": "intro",
+      "ask": [
+        "What is your normal daily routine?",
+        "How do you spend your days?",
+        "What do you do from morning to night?"
+      ],
+      "replies": [
+        "Rising before the sun, my boots find the damp earth to check our beasts. Fences must be mended and gates secured before the heat of noon. After a midday break for pottage, I work the fields, tending our crops until the evening shadows grow long and call me back home.",
+        "Daylight governs everything we do out here by the settlement boundaries. Morning begins with watering the thirsty cattle, followed by clearing fallen branches along the paths. By afternoon, I am usually repairing wooden hurdles or helping my kin with heavy field work until the sun sets.",
+        "My daily tasks keep me busy from dawn's first light to dusk. I tend the sheep first, making sure no predators have crept near. The rest of the day goes to digging ditches, checking the grain storage, and gathering firewood to keep our hearth burning bright all night."
+      ],
+      "next": [
+        "daily-routine.midday-meal",
+        "daily-routine.evening-chores",
+        "my-name-and-work",
+        "my-cattle",
+        "hearth-and-cooking",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "calleva-settlement": {
+      "id": "calleva-settlement",
+      "topic": "calleva-settlement",
+      "depth": "intro",
+      "ask": [
+        "What is Calleva like?",
+        "Can you tell me about your town?",
+        "Where do you live?"
+      ],
+      "replies": [
+        "Calleva is our great forest home, a bustling place surrounded by massive banks of earth. Many families live here in cozy roundhouses scattered among the trees and small fields. We have no straight stone streets, only winding dirt tracks that lead to the busy central trading areas.",
+        "Our settlement is a safe haven nestled deep within the northern woodlands of our tribe. It is a vast place, protected by deep ditches and high ramparts rather than stone. Inside, you will find smoke rising from many thatch roofs, busy blacksmiths, and pens filled with noisy livestock.",
+        "This great clearing in the woods is where our people gather to live and trade. Houses are built of timber and clay, spaced out with gardens and pastures in between. It is a lively place, especially when traders arrive with news and goods from far-flung lands."
+      ],
+      "next": [
+        "calleva-settlement.dirt-tracks",
+        "calleva-settlement.timber-houses",
+        "great-dykes",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "news-of-the-tribes"
+      ],
+      "reviewed": false
+    },
+    "great-dykes": {
+      "id": "great-dykes",
+      "topic": "great-dykes",
+      "depth": "mid",
+      "ask": [
+        "What are the great dykes?",
+        "Why did you build earthworks?",
+        "How do the dykes protect you?"
+      ],
+      "replies": [
+        "Massive banks of piled earth and deep ditches form our defenses here at the edge of Calleva. We dug them with simple tools and wooden shovels to mark our tribal territory and keep out thieves. They keep our valuable cattle from wandering off into the deep, wild forests.",
+        "Digging these great earth ramparts was a massive task that took many generations of our folk. They stand high above the woodland floor, discouraging intruders and keeping our herds safe inside. When you stand on top of them, you can see far across the surrounding countryside.",
+        "Our earthwork dykes are the pride of our settlement, winding for miles through the oak trees. They are not made of stone, but thick sod and timber posts that create a formidable barrier. They ensure our daily life inside remains peaceful and secure from outside threats."
+      ],
+      "next": [
+        "great-dykes.shovels-and-digging",
+        "great-dykes.timber-posts",
+        "calleva-settlement",
+        "my-name-and-work",
+        "news-of-the-tribes",
+        "my-cattle"
+      ],
+      "reviewed": false
+    },
+    "trade-and-coins": {
+      "id": "trade-and-coins",
+      "topic": "trade-and-coins",
+      "depth": "intro",
+      "ask": [
+        "Do you use money?",
+        "How do you buy things here?",
+        "What are your coins made of?"
+      ],
+      "replies": [
+        "We trade using shiny iron bars and small metal coins struck with images of horses and wheat ears. They are made by our metalworkers right here in the region to help us trade. For daily matters, however, we often just barter a sheep or grain for what we need.",
+        "Coins of gold, silver, and iron are used when we deal with wealthy merchants or neighboring chieftains. They are stamped with symbols of our land, like fertile wheat ears or swift galloping horses. Most of our local trade is still done by swapping goods directly, friend to friend.",
+        "Trading in Calleva is lively, with folk using iron coins and unit bars to buy pots or tools. These coins show our tribal pride, bearing the marks of our leaders and our sacred beasts. They make it much easier to trade with merchants who travel from far away."
+      ],
+      "next": [
+        "trade-and-coins.coin-symbols",
+        "trade-and-coins.barter-system",
+        "trade-with-gaul",
+        "pottery-and-crafts",
+        "tools-of-iron",
+        "calleva-settlement"
+      ],
+      "reviewed": false
+    },
+    "trade-with-gaul": {
+      "id": "trade-with-gaul",
+      "topic": "trade-with-gaul",
+      "depth": "mid",
+      "ask": [
+        "Do traders come from across the sea?",
+        "What do you get from Gaul?",
+        "Do you meet foreign merchants?"
+      ],
+      "replies": [
+        "Traders bring fine pottery and wine across the waters to swap for our grain, cattle, and metalwork. These Gaulish merchants travel far by boat, bringing things we cannot make ourselves. I traded a fine yearling calf last season for a jar of their dark, sweet wine to share with my kin.",
+        "Foreign merchants come to Calleva carrying beautiful red clay bowls and rich wine from Gaul. We offer them our sturdy cattle, hides, and surplus barley in return. It is always exciting when their wagons arrive, bringing news from far beyond our southern waters and shores.",
+        "Men from Gaul cross the wide water to trade with our folk here in the woods. They seek our strong British hunting dogs and fat cattle, giving us bright bronze trinkets and strong wine. My neighbours always gather to see what strange, fine goods they bring to our market."
+      ],
+      "next": [
+        "trade-with-gaul.gaulish-wine",
+        "trade-with-gaul.red-pottery",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "my-crops",
+        "news-of-the-tribes"
+      ],
+      "reviewed": false
+    },
+    "festivals-and-gods": {
+      "id": "festivals-and-gods",
+      "topic": "festivals-and-gods",
+      "depth": "mid",
+      "ask": [
+        "How do you celebrate feasts?",
+        "What do you thank the gods for?",
+        "Do you have big festivals here?"
+      ],
+      "replies": [
+        "Folk gather around warm fires during seasonal feasts to give thanks for rich harvests and healthy calves. We offer the best portion of our grain and beer to the spirits of the land and forest. It is a time for singing, telling old stories, and sharing food with everyone.",
+        "Great feasts are held when the seasons change, bringing all our kin together inside the earthworks. We thank the unseen powers for keeping our cattle safe from the wolves and the winter cold. Everyone brings something to share, from fresh barley bread to roasted woodland game.",
+        "Our people feast together to honour the gods who make our crops grow tall and strong. We light bright bonfires, share sweet Gaulish wine, and play music on simple bone flutes. These sacred times remind us that we are all bound to the earth and to each other."
+      ],
+      "next": [
+        "festivals-and-gods.bonfires-and-music",
+        "festivals-and-gods.offering-to-spirits",
+        "family-life",
+        "weather-and-seasons",
+        "my-crops",
+        "daily-food"
+      ],
+      "reviewed": false
+    },
+    "weaving-and-clothes": {
+      "id": "weaving-and-clothes",
+      "topic": "weaving-and-clothes",
+      "depth": "mid",
+      "ask": [
+        "What are your clothes made of?",
+        "How do you make your cloaks?",
+        "What do the Atrebates wear?"
+      ],
+      "replies": [
+        "We wear heavy woollen tunics and cloaks, spun from our sheep's fleece and dyed with woodland plants. The cloth is thick enough to keep out the damp British drizzle and biting winds. My wife weaves beautiful checked patterns using wool of different natural colours from our flock.",
+        "Our garments are woven on tall wooden looms inside the warmth of our thatched roundhouses. We use sheep's wool, spinning it into tight yarn before weaving it into sturdy, warm fabric. A good cloak can last many winters, keeping a shepherd dry out on the high pastures.",
+        "Simple woollen tunics, held together with bright bronze brooches, are what we wear every day. We dye the threads using wild roots and berries we gather from the surrounding oak woods. This gives our clothing rich shades of yellow, brown, and sometimes deep, earthy red."
+      ],
+      "next": [
+        "weaving-and-clothes.dyes-and-colours",
+        "weaving-and-clothes.upright-loom",
+        "my-sheep",
+        "roundhouse-home",
+        "family-life",
+        "pottery-and-crafts"
+      ],
+      "reviewed": false
+    },
+    "my-cattle": {
+      "id": "my-cattle",
+      "topic": "my-cattle",
+      "depth": "mid",
+      "ask": [
+        "Tell me about your cows.",
+        "Why are cattle important to you?",
+        "What do you do with your cows?"
+      ],
+      "replies": [
+        "Cattle are a man's true wealth here, giving us milk, meat, and strength to plough the soil. My beasts are small and hardy, with dark coats and curved horns, well-suited to our woodland pastures. We keep them safe within the earthworks when the winter wolves grow hungry.",
+        "Our daily lives revolve around our herds, as they provide us with almost everything we need. We use their strong hides for leather, their horns for spoons, and their dung to enrich our fields. Having a large, healthy herd means a family is respected and well-fed.",
+        "My herd of black cattle grazes on the sweet grass near the great outer dykes. I watch them from dawn till dusk, guiding them to fresh water and clearing the scrubland. They are gentle beasts, and my children help me tend the young calves in spring."
+      ],
+      "next": [
+        "my-cattle.horns-and-hides",
+        "my-cattle.winter-shelter",
+        "calving-time",
+        "my-sheep",
+        "my-crops",
+        "my-name-and-work"
+      ],
+      "reviewed": false
+    },
+    "my-sheep": {
+      "id": "my-sheep",
+      "topic": "my-sheep",
+      "depth": "mid",
+      "ask": [
+        "Tell me about your sheep.",
+        "Do you keep sheep as well as cattle?",
+        "What do your sheep give you?"
+      ],
+      "replies": [
+        "Flocks of small, hardy sheep graze the grassy clearings near our roundhouses. While cattle show a man's wealth, sheep give us rich milk for cheese and thick fleeces for warm clothing. My kin tend them daily, watching carefully so they do not stray into the deep woods where foxes linger.",
+        "Beside my black cattle, I keep a handful of sheep upon the higher ground. They are lively creatures, nimble enough to feed on thin grass. We clip their wool every summer to spin yarn, and their ewe milk makes fine salt cheese that keeps well through the winter.",
+        "Sheep are essential to our homestead alongside our heavy cattle. Their greasy fleeces are sheared when summer warmth arrives, providing the raw wool my family needs to weave cloaks. We also herd them into fallow fields at night, where their droppings help enrich the soil for next year's grain."
+      ],
+      "next": [
+        "my-sheep.shearing-fleece",
+        "my-sheep.grazing-hills",
+        "my-cattle",
+        "weaving-and-clothes",
+        "daily-food",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "my-sheep.shearing-fleece": {
+      "id": "my-sheep.shearing-fleece",
+      "topic": "my-sheep",
+      "depth": "deep",
+      "ask": [
+        "How do you clip the sheep wool?",
+        "When do you shear your sheep?",
+        "What happens during shearing time?"
+      ],
+      "replies": [
+        "When high summer sun warms the hills, we gather the sheep into wooden pens. Using sharp iron shears forged in town, we carefully pluck and cut the heavy wool off their backs. The flock feels much cooler afterwards, and we carry big sacks of soft fleece straight to the hearth.",
+        "Shearing happens once the weather turns warm and dry. We wash the sheep in the stream first to clean their fleece, then clip the wool close to the skin with iron blades. It takes steady hands so as not to nick the animal, but the reward is plenty of yarn.",
+        "Early summer brings shearing days across all our pastures. Young folk help hold the sheep calm while older hands clip the thick fleece using iron shears. Once finished, we bundle the raw wool into baskets, ready for scouring and spinning on drop spindles beside our fire."
+      ],
+      "next": [
+        "my-sheep",
+        "my-sheep.grazing-hills",
+        "my-cattle",
+        "weaving-and-clothes",
+        "daily-food",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "my-sheep.grazing-hills": {
+      "id": "my-sheep.grazing-hills",
+      "topic": "my-sheep",
+      "depth": "deep",
+      "ask": [
+        "Where do your sheep eat grass?",
+        "Who watches the sheep while they graze?",
+        "Are the sheep kept near the cattle?"
+      ],
+      "replies": [
+        "Up on the higher ridges where the trees grow thin, our sheep find sweet grass. Younger children often watch over them through the afternoon, keeping steady guard against stray dogs and forest wolves. The cattle prefer the lower damp pastures, so the two herds stay separate during grazing hours.",
+        "High clearings outside the earthen dykes make fine pasture for our small flock. While I stay down below tending the oxen, my young cousins guide the sheep up to short grasses. They carry wooden whistles to call the flock together if any wander too close to dense woodland.",
+        "Grazing sheep requires open ground, so we drive them up the sunny slopes above Calleva. They thrive on tough herbs that cows leave behind. By keeping them on drier hilltops, their hooves stay healthy, and our children learn the ways of herding while keeping watch all day long."
+      ],
+      "next": [
+        "my-sheep",
+        "my-sheep.shearing-fleece",
+        "my-cattle",
+        "weaving-and-clothes",
+        "daily-food",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "tools-of-iron": {
+      "id": "tools-of-iron",
+      "topic": "tools-of-iron",
+      "depth": "mid",
+      "ask": [
+        "What iron tools do you use?",
+        "Who makes your tools?",
+        "How does iron help on your farm?"
+      ],
+      "replies": [
+        "Blacksmiths in Calleva forge heavy iron tools over glowing coal fires. I use their curved sickles for harvesting barley and iron-tipped ploughshares to turn the stubborn clay soil. Without good iron blades, cutting firewood and clearing oak saplings from our crop fields would take twice as long.",
+        "Iron is precious to every farmer in our tribe. Our smiths shape dark iron ore into sturdy axes, billhooks, and plough tips that cut clean through thick turf. I trade milk or grain to buy these metal tools, for bronze is too soft to break this heavy southern soil.",
+        "Heavy farm work needs strong metal, so we rely on iron implements. Sharp axes let us fell trees for building walls, while iron shears keep our sheep fleeces neat. Every blade is hammered out by skilled craftsmen who live near the centre of our settlement."
+      ],
+      "next": [
+        "tools-of-iron.blacksmith-forge",
+        "tools-of-iron.iron-ploughshares",
+        "my-crops",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "roundhouse-home"
+      ],
+      "reviewed": false
+    },
+    "tools-of-iron.blacksmith-forge": {
+      "id": "tools-of-iron.blacksmith-forge",
+      "topic": "tools-of-iron",
+      "depth": "deep",
+      "ask": [
+        "Where do the smiths work?",
+        "How do blacksmiths shape the iron?",
+        "What is a forge like in Calleva?"
+      ],
+      "replies": [
+        "Glowing coals roar inside the smith's open forge near the town centre. Using leather bellows, the blacksmith pumps air until the iron glows bright orange. He hammers the hot metal upon a stone block, beating it into strong axe heads, knives, and sturdy rings for wagon harness.",
+        "Clanging hammers lead you straight to the local iron forge. The smith heats dark metal bars over charcoal fires until they soften like thick dough. With heavy tongs and iron hammers, he shapes sickles for our harvest, tossing finished tools into cold water buckets to harden the edge.",
+        "Smoky charcoal fires burn hot where our craftsmen work metal. A smith heats crude iron brought from nearby hills, hammering out defects until the blade is tough and true. It takes great strength to forge an iron ploughshare, but such tools last a lifetime on our farms."
+      ],
+      "next": [
+        "tools-of-iron",
+        "tools-of-iron.iron-ploughshares",
+        "my-crops",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "roundhouse-home"
+      ],
+      "reviewed": false
+    },
+    "tools-of-iron.iron-ploughshares": {
+      "id": "tools-of-iron.iron-ploughshares",
+      "topic": "tools-of-iron",
+      "depth": "deep",
+      "ask": [
+        "How do you plough your fields?",
+        "What is an iron ploughshare?",
+        "Why do you need iron to till soil?"
+      ],
+      "replies": [
+        "A wooden plough tipped with a heavy iron share cuts deep furrows into our fields. I hitch two strong oxen to the wooden beam and guide them straight across the earth. The sharp iron tip slices through tough grass roots where simple wooden sticks would snap in half.",
+        "Turning heavy oak-wood soil requires a pointed iron plough tip. Before planting our spelt wheat, we drive oxen across the field, pushing the iron blade deep into the dirt to loosen it. This lets rain soak down to the crop roots and gives us rich grain harvests.",
+        "Our fields have sticky clay that resists light wood, so an iron ploughshare is vital. Attached to a heavy wooden frame, the iron blade cleaves the earth cleanly as the beasts pull forward. Mending that blade at the forge before spring planting is my most crucial chore."
+      ],
+      "next": [
+        "tools-of-iron",
+        "tools-of-iron.blacksmith-forge",
+        "my-crops",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "roundhouse-home"
+      ],
+      "reviewed": false
+    },
+    "weather-and-seasons": {
+      "id": "weather-and-seasons",
+      "topic": "weather-and-seasons",
+      "depth": "mid",
+      "ask": [
+        "How does the weather change your work?",
+        "What are winter and summer like here?",
+        "How do the seasons affect Calleva?"
+      ],
+      "replies": [
+        "Life moves with the sun and rains throughout the passing year. Summer brings long daylight spent harvesting barley and repairing roof thatch, while winter turns paths into heavy mud around the dykes. We spend cold months indoors spinning wool, mending tools, and keeping our cattle warm in thatched sheds.",
+        "Warm summer months keep us outdoors from dusk till dawn, gathering crops and grazing herds. When autumn ends, heavy rains soak our earthen banks and frost hardens the ground. We store dried grain near the central hearth, taking comfort in thick woolen cloaks until spring calves arrive.",
+        "Changing seasons govern everything an Atrebates farmer does. Spring calls us to plough sticky fields and watch over newborn calves in green pastures. Summer means endless field work, whereas winter brings damp cold, forcing us to gather close around the hearth fire while woodsmoke fills the rafters."
+      ],
+      "next": [
+        "weather-and-seasons.winter-mud",
+        "weather-and-seasons.summer-harvest",
+        "my-crops",
+        "calving-time",
+        "daily-routine",
+        "roundhouse-home"
+      ],
+      "reviewed": false
+    },
+    "weather-and-seasons.winter-mud": {
+      "id": "weather-and-seasons.winter-mud",
+      "topic": "weather-and-seasons",
+      "depth": "deep",
+      "ask": [
+        "What is winter like around the dykes?",
+        "Is winter difficult for your farm?",
+        "How do you handle cold muddy weather?"
+      ],
+      "replies": [
+        "Damp frost and thick mud cover every dirt track once midwinter arrives. Water fills the outer ditches around Calleva, keeping cold winds at bay but making travel slow. We wear thick leather boots filled with dry straw, spending short days feeding stored hay to cows indoors.",
+        "Winter brings cold rains that turn our soil into heavy, slipping muck. Driving cattle to drink at the creek becomes a slow, splashing trial. Yet the high earthwork banks shelter our roundhouses from biting gales, so we stay dry indoors, roasting hazelnuts and patching broken timber gates.",
+        "Cold mud is our main trouble when winter storms sweep across the woods. Water pools in deep cart ruts, freezing hard on sharp nights. We keep livestock close inside fenced yards, scattering dry straw across the ground so their hooves stay rot-free until spring sunshine dries the earth."
+      ],
+      "next": [
+        "weather-and-seasons",
+        "weather-and-seasons.summer-harvest",
+        "my-crops",
+        "calving-time",
+        "daily-routine",
+        "roundhouse-home"
+      ],
+      "reviewed": false
+    },
+    "weather-and-seasons.summer-harvest": {
+      "id": "weather-and-seasons.summer-harvest",
+      "topic": "weather-and-seasons",
+      "depth": "deep",
+      "ask": [
+        "What happens during summer harvest?",
+        "Is summer a busy time for you?",
+        "How do you gather crops in summer?"
+      ],
+      "replies": [
+        "Bright summer sun brings intense work for everyone in our settlement. Whole families march into clearings with iron sickles to cut ripe ears of spelt wheat and barley. We dry the grain on wicker racks before storing it safe in clay jars, praying for clear skies throughout.",
+        "Harvest months are exhausting but joyful across Calleva. We work under hot sun from dawn until stars appear, reaping golden grain fields before rain spoils the ears. Youngsters carry bundles of cut stalks to the threshing floor, while elders prepare stone querns for grinding new flour.",
+        "Summer keeps us sweating in the fields day after day. As grain turns golden, we harvest rapidly, binding straw into tight sheaves to feed cattle later. When the crop is safely stored, we celebrate with sweet berry ale and honey cakes around the warm settlement fires."
+      ],
+      "next": [
+        "weather-and-seasons",
+        "weather-and-seasons.winter-mud",
+        "my-crops",
+        "calving-time",
+        "daily-routine",
+        "roundhouse-home"
+      ],
+      "reviewed": false
+    },
+    "news-of-the-tribes": {
+      "id": "news-of-the-tribes",
+      "topic": "news-of-the-tribes",
+      "depth": "mid",
+      "ask": [
+        "How do you hear news from other tribes?",
+        "Who brings news to Calleva?",
+        "What tidings come from across the land?"
+      ],
+      "replies": [
+        "Travelers walking the woodland tracks bring word from distant kin. Traders moving between settlements tell us of crop harvests down south or chieftain gatherings across the hills. I hear these tidings when I visit Calleva's central paths to trade iron coins or spare calves for salt.",
+        "News travels mouth to mouth along dirt paths through the oak forest. Kinsmen from neighbouring Atrebates homesteads stop by our roundhouses for dark ale and share stories of weather, cattle trades, and tribal councils. Sometimes runners arrive with direct messages from our great chieftain.",
+        "Tidings reach us whenever merchants arrive to barter goods. Folk coming up from coastal harbors tell us what tribes across the southern lands are building or trading. We listen closely over hearth fires, eager to know if distant harvests were plentiful or if cattle prices are rising."
+      ],
+      "next": [
+        "news-of-the-tribes.travelling-traders",
+        "news-of-the-tribes.chieftain-messages",
+        "calleva-settlement",
+        "trade-with-gaul",
+        "great-dykes",
+        "trade-and-coins"
+      ],
+      "reviewed": false
+    },
+    "news-of-the-tribes.travelling-traders": {
+      "id": "news-of-the-tribes.travelling-traders",
+      "topic": "news-of-the-tribes",
+      "depth": "deep",
+      "ask": [
+        "Who are the traders visiting you?",
+        "What news do merchants share?",
+        "How do traders carry messages?"
+      ],
+      "replies": [
+        "Merchants driving pack ponies or steering river canoes bring tidings alongside their wares. As they barter bronze pins, salt, or red wine pots, they swap stories of distant markets. They tell us which chieftains are striking new silver coins and how crops fared across the southern coast.",
+        "Traders are our eyes and ears beyond the surrounding forest. Moving from one wooden oppidum to another, they gather news at every fireside. They report on iron smithing in distant hills or foreign ships reaching harbour towns, letting us know how trade flows across the wider world.",
+        "Packhorse drivers traveling woodland tracks carry all manner of reports. When they stop near our outer dykes to rest their beasts, we offer water and grain in exchange for their news. They recount tales of great feasts, tribal marriages, and fair cattle prices in far-off settlements."
+      ],
+      "next": [
+        "news-of-the-tribes",
+        "news-of-the-tribes.chieftain-messages",
+        "calleva-settlement",
+        "trade-with-gaul",
+        "great-dykes",
+        "trade-and-coins"
+      ],
+      "reviewed": false
+    },
+    "news-of-the-tribes.chieftain-messages": {
+      "id": "news-of-the-tribes.chieftain-messages",
+      "topic": "news-of-the-tribes",
+      "depth": "deep",
+      "ask": [
+        "How do chieftains send messages?",
+        "What words come from tribal leaders?",
+        "Do leaders send runners to Calleva?"
+      ],
+      "replies": [
+        "Chieftains send fleet-footed runners across tribal lands when grand decisions are made. A young man carrying a carved wooden token arrives at our earthworks, calling elders together. He announces upcoming seasonal gatherings, boundary agreements between clans, or calls for folk to maintain our great defense banks.",
+        "Word from our noble leaders spreads through trusted messengers riding fast ponies. They stop at major settlements like Calleva to speak with household heads. Such tidings usually concern feast days, taxes paid in grain, or alliances formed with kin across the southern forests.",
+        "Whenever our chieftain summons clan leaders, messengers run along established dirt tracks to spread the call. They carry spoken words learned by heart, delivering tidings accurately to every roundhouse hamlet. Hearing official news keeps our people united across all Atrebates territory."
+      ],
+      "next": [
+        "news-of-the-tribes",
+        "news-of-the-tribes.travelling-traders",
+        "calleva-settlement",
+        "trade-with-gaul",
+        "great-dykes",
+        "trade-and-coins"
+      ],
+      "reviewed": false
+    },
+    "my-crops": {
+      "id": "my-crops",
+      "topic": "my-crops",
+      "depth": "mid",
+      "ask": [
+        "What do you grow in your fields?",
+        "Do you have crops near your roundhouse?",
+        "Tell me about the grains you plant."
+      ],
+      "replies": [
+        "We grow spelt wheat and barley in small fields cleared from the surrounding oak forests. The soil is heavy and sticky, but with a good iron-tipped plough, we manage to feed our family and keep some grain back for sowing. It is hard work, but the earth is kind when the rains fall well.",
+        "Our small fields yield precious spelt wheat and barley, which we clear from the thick woods with our iron axes. Each year we dig the soil to plant the seed, hoping the birds do not steal our future bread. It keeps us busy from spring sowing right through to the autumn harvest.",
+        "Barley and spelt wheat are the main crops we plant in our cleared patches of land. We must weed them by hand to ensure a good harvest for the winter months. If the gods are good, we have enough grain to fill our clay storage jars and even trade a little."
+      ],
+      "next": [
+        "my-crops.spelt-and-barley",
+        "my-crops.iron-ploughshares",
+        "daily-food",
+        "tools-of-iron",
+        "weather-and-seasons",
+        "trade-and-coins"
+      ],
+      "reviewed": false
+    },
+    "hearth-and-cooking": {
+      "id": "hearth-and-cooking",
+      "topic": "hearth-and-cooking",
+      "depth": "mid",
+      "ask": [
+        "How do you cook your food?",
+        "Where is the fire in your house?",
+        "Tell me about your kitchen fire."
+      ],
+      "replies": [
+        "The central stone hearth fills the house with warmth, smoke rising up through the thick roof straw. We hang clay pots from wooden tripods over the embers to boil our grain and wild herbs. It is the heart of our home, keeping the damp cold away throughout the year.",
+        "Our fire sits right in the middle of the roundhouse floor, built on a flat ring of stones. We keep it burning day and night to cook our stews and keep the thatch dry. The smoke drifts upwards slowly, which helps to keep the bugs out of our roof straw.",
+        "Cooking is done over the glowing hearth coals at the centre of our circular home. We simmer barley stews in earthenware pots and roast wild roots in the hot ashes. My kin gather around the warmth every evening to share stories and stay safe from the night chill."
+      ],
+      "next": [
+        "hearth-and-cooking.smoke-and-thatch",
+        "hearth-and-cooking.cooking-pots",
+        "roundhouse-home",
+        "daily-food",
+        "family-life",
+        "daily-routine"
+      ],
+      "reviewed": false
+    },
+    "pottery-and-crafts": {
+      "id": "pottery-and-crafts",
+      "topic": "pottery-and-crafts",
+      "depth": "mid",
+      "ask": [
+        "How do you make your pots?",
+        "Where do your clay jars come from?",
+        "What do you use clay for?"
+      ],
+      "replies": [
+        "We shape pots by hand from local river clay to store our grain, milk, and salt. After shaping them, we bake them in a pit fire covered with turf until they are hard. They are simple, useful things, though some skilled potters in Calleva make much finer ones.",
+        "Clay is dug from the wet riverbeds nearby and worked by hand to remove any small stones. We coil the clay to build up the walls of our jars, smoothing them with wet fingers. These vessels are essential for keeping our food dry and safe from mice.",
+        "Our daily vessels are fashioned from river clay and dried in the summer sun before firing. We use these sturdy pots to hold water, store our harvested barley, and keep our sheep's milk cool. It is a craft we teach our children so they can help the household."
+      ],
+      "next": [
+        "pottery-and-crafts.pit-firing",
+        "pottery-and-crafts.decorating-vessels",
+        "trade-and-coins",
+        "trade-with-gaul",
+        "hearth-and-cooking",
+        "tools-of-iron"
+      ],
+      "reviewed": false
+    },
+    "calving-time": {
+      "id": "calving-time",
+      "topic": "calving-time",
+      "depth": "mid",
+      "ask": [
+        "When are the baby cows born?",
+        "What is spring like for your herd?",
+        "Tell me about calving season."
+      ],
+      "replies": [
+        "Spring is a tense time when the new calves are born, requiring watchful eyes against forest wolves. We bring the heavy pregnant cows close to the roundhouse dykes where we can watch them through the night. A healthy calf is a blessing that ensures our family's future.",
+        "Our black cattle give birth as the first green grass begins to poke through the winter mud. We must be very careful, as the young calves are weak and easily chilled by late frosts. I spend many cold nights in the fields helping the mothers deliver safely.",
+        "Calving season begins when the birch trees start to bud and the weather turns a little warmer. It is an anxious but happy time, as each new calf increases our wealth and milk supply. We keep our iron spears ready to frighten away any hungry wolves from the woods."
+      ],
+      "next": [
+        "calving-time.protecting-calves",
+        "calving-time.spring-pastures",
+        "my-cattle",
+        "weather-and-seasons",
+        "daily-routine",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "calleva-settlement.dirt-tracks": {
+      "id": "calleva-settlement.dirt-tracks",
+      "topic": "calleva-settlement",
+      "depth": "deep",
+      "ask": [
+        "What are the paths like in Calleva?",
+        "Are there any paved roads in the town?",
+        "How do you walk around Calleva?"
+      ],
+      "replies": [
+        "Winding dirt paths criss-cross our town, turning into thick brown mud whenever heavy rain falls. We have no straight paved roads here. Instead, folk and livestock walk along beaten earth tracks that curve gently around roundhouses, timber fencing, and small vegetable plots.",
+        "Paved roads do not exist in Calleva; we tread on plain earth and grass daily. These paths turn squelchy in winter, so we lay down bundles of dry hazel twigs to keep our feet dry as we walk between the livestock pens and trading spaces.",
+        "Walking through town means following dusty dirt tracks in summer and sticky mud in winter. You will find no paved streets here, only natural paths worn smooth by generations of cattle, sheep, and people moving between the timber homes and central markets."
+      ],
+      "next": [
+        "calleva-settlement",
+        "calleva-settlement.timber-houses",
+        "great-dykes",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "news-of-the-tribes"
+      ],
+      "reviewed": false
+    },
+    "calleva-settlement.timber-houses": {
+      "id": "calleva-settlement.timber-houses",
+      "topic": "calleva-settlement",
+      "depth": "deep",
+      "ask": [
+        "How are the houses arranged in Calleva?",
+        "Are the houses close together in your town?",
+        "Where do people build their homes here?"
+      ],
+      "replies": [
+        "Homes are scattered loosely across the forest clearing rather than packed tightly side by side. Each family's roundhouse sits inside its own yard with vegetable patches, haystacks, and animal hurdles. Spacing our dwellings like this leaves plenty of room for our cattle to graze safely.",
+        "Wide gaps lie between most homes in our town. We do not build row upon row of houses. A family roundhouse usually stands beside its own garden, grain pit, and timber pens, giving every household room to breathe and keep their livestock close.",
+        "Scattered timber roundhouses make up our town, dotted among oak trees and open pastures. Families spread out across the settlement, leaving plenty of green space between dwellings for gardens, firewood stacks, and small herds of sheep or cattle to gather."
+      ],
+      "next": [
+        "calleva-settlement",
+        "calleva-settlement.dirt-tracks",
+        "great-dykes",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "news-of-the-tribes"
+      ],
+      "reviewed": false
+    },
+    "calving-time.protecting-calves": {
+      "id": "calving-time.protecting-calves",
+      "topic": "calving-time",
+      "depth": "deep",
+      "ask": [
+        "How do you keep new calves safe from wolves?",
+        "What protects the newborn calves at night?",
+        "Do wolves attack the young cows?"
+      ],
+      "replies": [
+        "Forest wolves love to prowl near our pastures in early spring, sniffing for young meat. To keep our newborns safe, we herd the cows inside high timber enclosures right beside our roundhouses. We light bright torches and keep sharp iron spears ready to frighten away hungry beasts.",
+        "Hungry wolves are a real danger when calves are small. We guard the herd closely, sitting up by the boundary banks with watchdogs and burning fires. If a wolf strays near the dykes, our loud shouts and iron-tipped weapons soon send it running into the trees.",
+        "Watchdogs and tall wooden hurdles keep the wolves away from our vulnerable young calves. During calving weeks, I stay awake near the hearth fire, taking turns with my kin to patrol the outer fencing with iron spears whenever the woods grow dark and quiet."
+      ],
+      "next": [
+        "calving-time",
+        "calving-time.spring-pastures",
+        "my-cattle",
+        "weather-and-seasons",
+        "daily-routine",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "calving-time.spring-pastures": {
+      "id": "calving-time.spring-pastures",
+      "topic": "calving-time",
+      "depth": "deep",
+      "ask": [
+        "What do the young calves eat in spring?",
+        "How do newborn calves grow strong?",
+        "What feeds the cows after they give birth?"
+      ],
+      "replies": [
+        "Newborn calves drink rich milk from their mothers for their first weeks. As the spring sun warms the land, fresh sweet grass sprouts along the earthwork banks. The mother cows graze hungrily on these green shoots, producing plenty of good milk to help their calves grow sturdy.",
+        "Fresh green shoots rising through the spring mud provide wonderful grazing for mother cows. Drinking their mother's warm milk gives the new calves strength. Within a month, you will see the little ones nibbling the soft grass beside the roundhouse dykes themselves.",
+        "Mother's milk is all a newborn calf needs at first. To help the mother cows produce milk, we lead them to fresh spring pastures rich in clover and young grass. Healthy feeding ensures the young beasts grow thick black coats and strong bones before summer."
+      ],
+      "next": [
+        "calving-time",
+        "calving-time.protecting-calves",
+        "my-cattle",
+        "weather-and-seasons",
+        "daily-routine",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "daily-routine.midday-meal": {
+      "id": "daily-routine.midday-meal",
+      "topic": "daily-routine",
+      "depth": "deep",
+      "ask": [
+        "What do you eat for lunch during your workday?",
+        "What is a midday pottage like?",
+        "Do you rest for a meal at noon?"
+      ],
+      "replies": [
+        "Midday brings a welcome rest beside the fields. We sit upon grassy banks to eat thick pottage, cooked over the morning hearth and brought out in clay pots. It is a warm broth made from boiled barley, green herbs, and boiled beans that restores our strength.",
+        "Eating pottage at noon gives us energy for afternoon chores. This thick stew contains ground spelt wheat, dried peas, and whatever herbs we gather from the woods. We scoop it up with flat hearthbread, washing it down with cool water from local streams.",
+        "Stopping for a meal at noon lets us rest our weary aching backs. My kin bring wooden bowls filled with warm grain porridge or vegetable soup. Sitting together near the fencing, we share simple news before returning to mend hurdles and clear dirt paths."
+      ],
+      "next": [
+        "daily-routine",
+        "daily-routine.evening-chores",
+        "my-name-and-work",
+        "my-cattle",
+        "hearth-and-cooking",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "daily-routine.evening-chores": {
+      "id": "daily-routine.evening-chores",
+      "topic": "daily-routine",
+      "depth": "deep",
+      "ask": [
+        "What work do you do as sunset approaches?",
+        "How do you finish your workday at nightfall?",
+        "What happens before you go inside your roundhouse?"
+      ],
+      "replies": [
+        "Sunset signals time to herd our livestock back behind safe wooden fences. I count every head of cattle, bolt the timber gates, and secure the sheep pens. Finally, I carry armfuls of dry oak logs indoors so our central hearth burns brightly throughout the chilly night.",
+        "Nightfall brings the last busy tasks of my long day. We bring the cows close to the earthworks, check the water troughs, and make sure no tools are left in the mud. Once the animals are settled, we gather around the fire for our evening meal.",
+        "Dusk means securing the farmstead against roaming forest predators. My kin and I drive the herds into their night enclosures, bar the timber gates, and bank the hearth fire with fresh peat and wood so warmth remains until dawn."
+      ],
+      "next": [
+        "daily-routine",
+        "daily-routine.midday-meal",
+        "my-name-and-work",
+        "my-cattle",
+        "hearth-and-cooking",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "festivals-and-gods.bonfires-and-music": {
+      "id": "festivals-and-gods.bonfires-and-music",
+      "topic": "festivals-and-gods",
+      "depth": "deep",
+      "ask": [
+        "What music and fun do you have at feasts?",
+        "How do you celebrate around the fires?",
+        "What instruments do people play at festivals?"
+      ],
+      "replies": [
+        "Feast nights fill the darkness with bright orange firelight and cheerful sound. Men play sweet tunes on simple bone flutes while others beat stretched-hide drums. Folk dance around roaring blazes, singing old songs that teach our young ones about brave ancestors and great harvests.",
+        "Music plays a big part in our seasonal celebrations. Musicians blow whistles carved from elder branches and strum simple stringed instruments made of wood and gut. Everyone claps along, laughing, telling grand tales, and dancing in wide circles until the flames burn down to glowing embers.",
+        "Roaring bonfires warm us as we play tunes and sing under the open sky. Young folk dance while older kin blow flutes crafted from sheep bone. These joyous sounds echo off the earthwork banks, keeping spirits high long into the cold night."
+      ],
+      "next": [
+        "festivals-and-gods",
+        "festivals-and-gods.offering-to-spirits",
+        "family-life",
+        "weather-and-seasons",
+        "my-crops",
+        "daily-food"
+      ],
+      "reviewed": false
+    },
+    "festivals-and-gods.offering-to-spirits": {
+      "id": "festivals-and-gods.offering-to-spirits",
+      "topic": "festivals-and-gods",
+      "depth": "deep",
+      "ask": [
+        "How do you thank the forest spirits?",
+        "What gifts do you give to the gods?",
+        "Why do you leave food for unseen powers?"
+      ],
+      "replies": [
+        "Giving thanks keeps us in harmony with the natural world. Before we eat at a feast, we pour a splash of barley beer onto the earth and set aside golden sheaves of wheat. Folk say these humble gifts keep the land fertile and our cattle safe.",
+        "Gifts of fresh cream, grain, and dark wine are offered to the spirits who dwell in deep streams and ancient oak groves. We place these offerings near sacred trees or bury them near the earthworks, hoping the gods will grant clear skies and healthy calves.",
+        "Unseen powers watch over our fields and herds, or so folk say. To show our gratitude for rich harvests, we drop iron tokens or fine polished pots into deep bog waters, asking for protection against blights, frosts, and fierce forest storms."
+      ],
+      "next": [
+        "festivals-and-gods",
+        "festivals-and-gods.bonfires-and-music",
+        "family-life",
+        "weather-and-seasons",
+        "my-crops",
+        "daily-food"
+      ],
+      "reviewed": false
+    },
+    "great-dykes.shovels-and-digging": {
+      "id": "great-dykes.shovels-and-digging",
+      "topic": "great-dykes",
+      "depth": "deep",
+      "ask": [
+        "How did you dig the dykes?",
+        "What tools did you use for the banks?",
+        "Was digging the earthworks hard work?"
+      ],
+      "replies": [
+        "Shovels carved from solid oak wood and picks made of deer antler were what we used. My grandfathers hauled tons of heavy soil in wicker baskets to build these ramparts. It took years of backbreaking labour to pile the earth so high.",
+        "Wooden spades and sharp antler picks helped us carve the deep ditch. Folk carried basket after basket of heavy clay up the bank. Everyday sweat built those high earthworks, working together under the hot summer sun to protect our homes.",
+        "Antler picks broke the hard ground while wooden shovels scraped the dirt into woven baskets. Whole families joined in, lifting the soil day after day. It was tireless, heavy work, but it gave us the strong earth ramparts we have today."
+      ],
+      "next": [
+        "great-dykes",
+        "great-dykes.timber-posts",
+        "calleva-settlement",
+        "my-name-and-work",
+        "news-of-the-tribes",
+        "my-cattle"
+      ],
+      "reviewed": false
+    },
+    "great-dykes.timber-posts": {
+      "id": "great-dykes.timber-posts",
+      "topic": "great-dykes",
+      "depth": "deep",
+      "ask": [
+        "Are there fences on top of the dykes?",
+        "How do you strengthen the earth banks?",
+        "Is there wood on the earthworks?"
+      ],
+      "replies": [
+        "Thick oak posts are driven straight into the top of the piled dirt. We weave sturdy hazel branches between them to make a high fence. That wooden barrier stops beasts from falling over and keeps unwelcome strangers right out of Calleva.",
+        "Stout wooden palisades stand along the peak of the earth banks. We chop sturdy oak trees from the forest to line the top. Coupled with the deep ditch below, no wandering cattle or thief can easily cross into our land.",
+        "Heavy timber posts reinforce the high dirt ridges surrounding our settlement. Interwoven branches form a strong fence along the top crest. It takes constant repair after winter storms, but it ensures our herds stay safe inside the boundary."
+      ],
+      "next": [
+        "great-dykes",
+        "great-dykes.shovels-and-digging",
+        "calleva-settlement",
+        "my-name-and-work",
+        "news-of-the-tribes",
+        "my-cattle"
+      ],
+      "reviewed": false
+    },
+    "hearth-and-cooking.smoke-and-thatch": {
+      "id": "hearth-and-cooking.smoke-and-thatch",
+      "topic": "hearth-and-cooking",
+      "depth": "deep",
+      "ask": [
+        "Where does the fire smoke go?",
+        "Does the smoke bother your eyes?",
+        "Why is there no chimney in the roundhouse?"
+      ],
+      "replies": [
+        "Smoke drifts up slowly toward the tall cone roof and seeps out through the dry thatch. We have no chimney hole, as that would let the winter rain inside. The gentle smoke keeps insects away and cures the meat we hang high.",
+        "Rising wood smoke fills the upper roof before filtering through the thick straw overhead. It stings your eyes a bit if you stand up fast, but sitting low on birch stools keeps you clear of it. The smoke keeps roof bugs away nicely.",
+        "Filtering through the thick reed thatch, the hearth smoke finds its own way out into the sky. A hole in the roof would let rain soak our floor. Keeping the smoke inside preserves our roof timbers and dries our stored herbs."
+      ],
+      "next": [
+        "hearth-and-cooking",
+        "hearth-and-cooking.cooking-pots",
+        "roundhouse-home",
+        "daily-food",
+        "family-life",
+        "daily-routine"
+      ],
+      "reviewed": false
+    },
+    "hearth-and-cooking.cooking-pots": {
+      "id": "hearth-and-cooking.cooking-pots",
+      "topic": "hearth-and-cooking",
+      "depth": "deep",
+      "ask": [
+        "What pots do you hang over the fire?",
+        "How do you cook stews on the hearth?",
+        "How do you hang pots above the coals?"
+      ],
+      "replies": [
+        "Earthenware pots crafted from local river clay hang directly over the glowing coals. We tie strong iron chains or leather thongs to wooden tripods standing over the fire. That lets us simmer coarse barley and wild garlic for hours.",
+        "Heavy clay jars sit on tripods carved from green wood right above the embers. We stir thick grain pottage inside them using long wooden spoons. Cooking slow over gentle heat makes even the toughest root vegetables soft and tasty.",
+        "Round-bottomed clay pots rest carefully on stones or hang from wooden frames over the embers. My kin pour water, crushed wheat, and herbs inside to boil until evening. It brews a warm meal that fills the roundhouse with good smells."
+      ],
+      "next": [
+        "hearth-and-cooking",
+        "hearth-and-cooking.smoke-and-thatch",
+        "roundhouse-home",
+        "daily-food",
+        "family-life",
+        "daily-routine"
+      ],
+      "reviewed": false
+    },
+    "my-cattle.horns-and-hides": {
+      "id": "my-cattle.horns-and-hides",
+      "topic": "my-cattle",
+      "depth": "deep",
+      "ask": [
+        "What do you make from cow horns and hides?",
+        "How do you use the leather and horn?",
+        "What happens to the beast when it dies?"
+      ],
+      "replies": [
+        "Tanned hides become soft leather for sturdy boots, belting, and winter straps. We carve the curved horns into spoons, drinking cups, and knife handles. Nothing from a beast is wasted when its time finally comes to an end.",
+        "Thick cattle hide is scraped clean to make tough leather for horse tack and cloaks. We hollow out the black horns to fashion drinking horns and grease containers. Every part of the animal serves a useful purpose in our home.",
+        "Shaping cow horn into smooth spoons gives us long-lasting tools for our hearth stews. The heavy leather hides are cured to cover wooden shields or keep our feet dry in mud. A single cow provides for us long after its grazing days."
+      ],
+      "next": [
+        "my-cattle",
+        "my-cattle.winter-shelter",
+        "calving-time",
+        "my-sheep",
+        "my-crops",
+        "my-name-and-work"
+      ],
+      "reviewed": false
+    },
+    "my-cattle.winter-shelter": {
+      "id": "my-cattle.winter-shelter",
+      "topic": "my-cattle",
+      "depth": "deep",
+      "ask": [
+        "Where do cows stay in winter?",
+        "How do you keep cattle warm in cold weather?",
+        "Do beasts sleep inside the earthworks?"
+      ],
+      "replies": [
+        "Herds gather in sturdy timber pens built close against the inner banks of the dykes. We stack dry straw and dried bracken to keep the mud off their hooves. Being sheltered from harsh winds keeps the young ones safe and warm.",
+        "Bringing the cattle inside the outer earthworks protects them from freezing forest winds. We feed them stored hay and dried foliage when snow covers the grass. Keeping them close to our roundhouses lets us watch for hungry wolves.",
+        "Timber enclosures thatched with gorse keep the freezing rain off my black cattle. We lay fresh straw down daily so they do not stand in cold mud. Their body heat keeps the pen warm through the darkest winter nights."
+      ],
+      "next": [
+        "my-cattle",
+        "my-cattle.horns-and-hides",
+        "calving-time",
+        "my-sheep",
+        "my-crops",
+        "my-name-and-work"
+      ],
+      "reviewed": false
+    },
+    "my-crops.spelt-and-barley": {
+      "id": "my-crops.spelt-and-barley",
+      "topic": "my-crops",
+      "depth": "deep",
+      "ask": [
+        "What is the difference between spelt and barley?",
+        "Why do you grow spelt wheat?",
+        "How do you use your grain?"
+      ],
+      "replies": [
+        "Spelt wheat has a tough outer husk that protects the grain from damp rot. It makes dark, heavy bread that keeps us full through long winter days. Barley brews good ale and thickens our daily pot of hearth pottage.",
+        "Barley grows fast in our sticky soil and feeds both my family and our winter livestock. Spelt is harder to thrash, but it resists frost better than other grains. Growing both ensures we always have grain to eat.",
+        "Strong husks on spelt wheat keep it safe in our underground grain pits. We grind it on flat saddle querns to make coarse flour for baking flatbreads. Barley is mixed into soups or boiled plain for our mid-day meal."
+      ],
+      "next": [
+        "my-crops",
+        "my-crops.iron-ploughshares",
+        "daily-food",
+        "tools-of-iron",
+        "weather-and-seasons",
+        "trade-and-coins"
+      ],
+      "reviewed": false
+    },
+    "my-crops.iron-ploughshares": {
+      "id": "my-crops.iron-ploughshares",
+      "topic": "my-crops",
+      "depth": "deep",
+      "ask": [
+        "How do you plough the heavy soil?",
+        "What tools do you use for planting crops?",
+        "Is ploughing hard work in the woods?"
+      ],
+      "replies": [
+        "Iron tips fitted onto heavy wooden ploughs cut deep into our sticky clay soil. A pair of strong oxen pulls the plough while I guide the wooden handles behind. It turns the earth so we can scatter our seed.",
+        "Heavy wooden ards shod with forged iron slice through roots and stubborn soil. We drive the team across the cleared patch twice to break up the hard clods. It takes strong arms and steady beasts to ready the land.",
+        "Forged iron ploughshares let us break open rich earth that wooden tools could never cut. My black cattle pull the heavy frame straight through the woodland clearings. Breaking the thick turf takes real effort before sowing time comes."
+      ],
+      "next": [
+        "my-crops",
+        "my-crops.spelt-and-barley",
+        "daily-food",
+        "tools-of-iron",
+        "weather-and-seasons",
+        "trade-and-coins"
+      ],
+      "reviewed": false
+    },
+    "pottery-and-crafts.pit-firing": {
+      "id": "pottery-and-crafts.pit-firing",
+      "topic": "pottery-and-crafts",
+      "depth": "deep",
+      "ask": [
+        "How do you bake your clay pots?",
+        "What is pit firing like?",
+        "How do you make pots hard?"
+      ],
+      "replies": [
+        "Stacking pots in a shallow pit surrounded by wood is how we bake them hard. We cover the pile with thick turf to trap the fierce heat inside. After a day of slow burning, the cooled clay turns strong and tough enough to hold water without leaking.",
+        "Turf-covered fire pits provide the heat needed to bake our hand-shaped clay vessels. My kin tend the wood fire carefully so the cold pots do not crack in the sudden heat. Once the ashes grow cold, we dig out sturdy jars that will last for years.",
+        "Firing our pots takes a full day of steady burning in a ground trench. We heap branches and turf high over the wet clay pieces to keep the heat glowing bright. It is hard work, but it turns soft river mud into useful kitchen tools."
+      ],
+      "next": [
+        "pottery-and-crafts",
+        "pottery-and-crafts.decorating-vessels",
+        "trade-and-coins",
+        "trade-with-gaul",
+        "hearth-and-cooking",
+        "tools-of-iron"
+      ],
+      "reviewed": false
+    },
+    "pottery-and-crafts.decorating-vessels": {
+      "id": "pottery-and-crafts.decorating-vessels",
+      "topic": "pottery-and-crafts",
+      "depth": "deep",
+      "ask": [
+        "Do you put patterns on your pots?",
+        "How do you decorate clay jars?",
+        "Are your pots plain or pretty?"
+      ],
+      "replies": [
+        "Scraping simple lines into damp clay with a twig adds neat decoration before firing. Some folk press twisted cords into the rims to make pretty borders around the tops. Most of my own pots remain plain, but my kin enjoy making simple, pleasant patterns.",
+        "Twisted ropes and carved sticks leave neat markings on the wet clay before it hardens. While our daily cooking pots stay rough and simple, storage jars often get decorative lines running around their rims. It shows the skill of the hand that shaped the river mud.",
+        "Etching light swirls with a pointed bone makes our water jars look fine. We do not paint them with bright colours, but smooth stones give the outer clay a soft shine before the pit firing. Simple touches make our dark vessels pleasant to use every day."
+      ],
+      "next": [
+        "pottery-and-crafts",
+        "pottery-and-crafts.pit-firing",
+        "trade-and-coins",
+        "trade-with-gaul",
+        "hearth-and-cooking",
+        "tools-of-iron"
+      ],
+      "reviewed": false
+    },
+    "trade-and-coins.coin-symbols": {
+      "id": "trade-and-coins.coin-symbols",
+      "topic": "trade-and-coins",
+      "depth": "deep",
+      "ask": [
+        "What pictures are on your coins?",
+        "Why are horses on your money?",
+        "How do coins look?"
+      ],
+      "replies": [
+        "Galloping horses and tall ears of wheat adorn the small metal pieces we strike. These pictures honour our noble beasts and the rich harvests that feed our tribe. Holding a bright coin shows the pride of the Atrebates, stamped neatly into precious metal by our smiths.",
+        "Striking metal with heavy iron dies stamps swift horses onto our silver and iron coins. Our leaders choose these symbols because cattle, horses, and grain are the true heart of our wealth. The small round pieces fit easily into a leather pouch for local trading.",
+        "Bright wheat ears stand out clearly on the face of our local trade coins. Folk recognise these symbols instantly when buying cattle or metal tools in Calleva. Each small piece of metal carries the mark of our land and the strength of our tribal chieftains."
+      ],
+      "next": [
+        "trade-and-coins",
+        "trade-and-coins.barter-system",
+        "trade-with-gaul",
+        "pottery-and-crafts",
+        "tools-of-iron",
+        "calleva-settlement"
+      ],
+      "reviewed": false
+    },
+    "trade-and-coins.barter-system": {
+      "id": "trade-and-coins.barter-system",
+      "topic": "trade-and-coins",
+      "depth": "deep",
+      "ask": [
+        "How do you barter without money?",
+        "What do you trade for cattle?",
+        "Do you always use coins to buy things?"
+      ],
+      "replies": [
+        "Swapping a fat calf for a sturdy iron axe is how we trade most days. We do not always need stamped metal when a neighbour needs grain and I need new woollen cloaks. Direct bartering keeps our households well supplied without any fuss or arguments over silver.",
+        "Exchanging sacks of spelt wheat for winter hides happens often in our village. If a blacksmith fixes my wooden plough, I pay him with fresh cheese or a jar of salted beef. Simple swapping between friends fills our home with whatever food or tools we lack.",
+        "Offering a sack of barley for a clay storage jar works better than using metal. Coins are fine for distant merchants, but local folk prefer trading real goods they can use right away. Honest swapping keeps everyone in Calleva fed, clothed, and well equipped for work."
+      ],
+      "next": [
+        "trade-and-coins",
+        "trade-and-coins.coin-symbols",
+        "trade-with-gaul",
+        "pottery-and-crafts",
+        "tools-of-iron",
+        "calleva-settlement"
+      ],
+      "reviewed": false
+    },
+    "trade-with-gaul.gaulish-wine": {
+      "id": "trade-with-gaul.gaulish-wine",
+      "topic": "trade-with-gaul",
+      "depth": "deep",
+      "ask": [
+        "What does Gaulish wine taste like?",
+        "How do you get wine from Gaul?",
+        "Where do traders bring wine from?"
+      ],
+      "replies": [
+        "Dark, sweet wine arrives inside tall clay jars brought by traders crossing the southern waters. It tastes rich and fruity, very different from the fresh milk or mead we usually drink. We share it sparingly during great tribal feasts when chieftains come to visit.",
+        "Sailing across the choppy sea, merchants bring heavy vessels filled with dark wine from Gaul. The drink is strong and sweet, highly prized by our elders during midwinter gatherings. Exchanging a fat ox for a single jar is a bargain my kin gladly make.",
+        "Clay amphorae packed in straw carry sweet southern wine right into our woodland settlement. Folk here love the rich taste, though we save such rare drinks for special celebrations around the hearth. It is a wonderful treat that only foreign trade can bring to us."
+      ],
+      "next": [
+        "trade-with-gaul",
+        "trade-with-gaul.red-pottery",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "my-crops",
+        "news-of-the-tribes"
+      ],
+      "reviewed": false
+    },
+    "trade-with-gaul.red-pottery": {
+      "id": "trade-with-gaul.red-pottery",
+      "topic": "trade-with-gaul",
+      "depth": "deep",
+      "ask": [
+        "What is special about foreign pottery?",
+        "Do traders bring pretty bowls?",
+        "Where do red clay dishes come from?"
+      ],
+      "replies": [
+        "Smooth red bowls brought by boat from Gaul are far finer than our rough river pots. They shine brightly in the hearthfire and feel light in the hand when serving food. Only wealthy households own many, as they cost many hides or grain sacks to buy.",
+        "Foreign merchants pack glossy red clay dishes deep inside their wooden trade wagons. The surface is so smooth and bright it almost looks like polished metal in the firelight. Having one on your timber table is a sign of great respect among our people.",
+        "Trading grain for foreign clayware brings beautiful red dishes into our timber roundhouses. These bowls are far smoother than anything we bake in our simple turf pits at home. We use them carefully on feast days so they do not drop and shatter."
+      ],
+      "next": [
+        "trade-with-gaul",
+        "trade-with-gaul.gaulish-wine",
+        "trade-and-coins",
+        "pottery-and-crafts",
+        "my-crops",
+        "news-of-the-tribes"
+      ],
+      "reviewed": false
+    },
+    "weaving-and-clothes.dyes-and-colours": {
+      "id": "weaving-and-clothes.dyes-and-colours",
+      "topic": "weaving-and-clothes",
+      "depth": "deep",
+      "ask": [
+        "How do you dye your clothes?",
+        "Where do you get shirt colours?",
+        "What colours are your woollen cloaks?"
+      ],
+      "replies": [
+        "Boiling wild roots, berries, and forest bark creates rich dyes for our woollen yarn. Oak bark gives a dark, earthy brown, while wild roots yield warm yellow and rusty red shades. Blending coloured threads lets us weave colourful checked cloaks to wear in winter.",
+        "Crushing woodland plants in boiling water releases bright dyes that stain our spun fleece. We gather moss, elderberries, and madder roots from the forest clearings during the summer months. My family loves wearing bright, patterned tunics made from these natural woodland dyes.",
+        "Soaking wool in plant dyes colours the fleece before we set it upon the loom. The forest offers many shades, from pale yellows to deep, muddy greens and warm reds. Wearing patterned wool keeps us looking smart when visiting neighbouring kin across the countryside."
+      ],
+      "next": [
+        "weaving-and-clothes",
+        "weaving-and-clothes.upright-loom",
+        "my-sheep",
+        "roundhouse-home",
+        "family-life",
+        "pottery-and-crafts"
+      ],
+      "reviewed": false
+    },
+    "weaving-and-clothes.upright-loom": {
+      "id": "weaving-and-clothes.upright-loom",
+      "topic": "weaving-and-clothes",
+      "depth": "deep",
+      "ask": [
+        "How do you weave cloth?",
+        "What does a loom look like?",
+        "How is clothing made from wool?"
+      ],
+      "replies": [
+        "Tall timber looms leaning against the roundhouse wall are used to weave our woollen cloth. We tie heavy stone weights to the bottom threads to keep them straight and tight while working. It takes many days of patient work to produce a single warm winter tunic.",
+        "Weaving cloth requires a sturdy upright frame made from smooth oak poles and clay weights. My kin pass wooden shuttles filled with spun yarn back and forth across the stretched threads. The resulting fabric is thick, tight, and perfect for beating off cold British rains.",
+        "Hanging clay weights hold the warp threads taut on our tall, upright weaving frames. Working by the warmth of the central hearth, the women weave thick wool into long strips of patterned cloth. That warm fabric is then stitched together into sturdy cloaks for shepherd work."
+      ],
+      "next": [
+        "weaving-and-clothes",
+        "weaving-and-clothes.dyes-and-colours",
+        "my-sheep",
+        "roundhouse-home",
+        "family-life",
+        "pottery-and-crafts"
+      ],
+      "reviewed": false
+    }
+  }
+}

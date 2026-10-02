@@ -1,0 +1,114 @@
+[
+  {
+    "personaId": "bassa",
+    "bankVersion": 4,
+    "nodeCount": 66,
+    "reviewedCount": 66,
+    "generatedAt": "2026-09-28T17:22:32.898Z"
+  },
+  {
+    "personaId": "briton",
+    "bankVersion": 3,
+    "nodeCount": 60,
+    "reviewedCount": 60,
+    "generatedAt": "2026-09-23T07:25:05.940Z"
+  },
+  {
+    "personaId": "child",
+    "bankVersion": 3,
+    "nodeCount": 66,
+    "reviewedCount": 66,
+    "generatedAt": "2026-09-23T08:16:33.133Z"
+  },
+  {
+    "personaId": "coiner",
+    "bankVersion": 3,
+    "nodeCount": 54,
+    "reviewedCount": 54,
+    "generatedAt": "2026-09-23T07:32:33.584Z"
+  },
+  {
+    "personaId": "elen",
+    "bankVersion": 3,
+    "nodeCount": 60,
+    "reviewedCount": 60,
+    "generatedAt": "2026-09-28T17:22:07.032Z"
+  },
+  {
+    "personaId": "enica",
+    "bankVersion": 2,
+    "nodeCount": 57,
+    "reviewedCount": 57,
+    "generatedAt": "2026-09-28T17:21:46.316Z"
+  },
+  {
+    "personaId": "fieldwife",
+    "bankVersion": 5,
+    "nodeCount": 63,
+    "reviewedCount": 63,
+    "generatedAt": "2026-09-23T07:37:48.276Z"
+  },
+  {
+    "personaId": "junia",
+    "bankVersion": 4,
+    "nodeCount": 60,
+    "reviewedCount": 60,
+    "generatedAt": "2026-09-28T17:21:34.902Z"
+  },
+  {
+    "personaId": "labourer",
+    "bankVersion": 3,
+    "nodeCount": 54,
+    "reviewedCount": 54,
+    "generatedAt": "2026-09-23T07:54:02.714Z"
+  },
+  {
+    "personaId": "lucco",
+    "bankVersion": 11,
+    "nodeCount": 66,
+    "reviewedCount": 66,
+    "generatedAt": "2026-09-28T17:46:48.097Z"
+  },
+  {
+    "personaId": "magistrate",
+    "bankVersion": 5,
+    "nodeCount": 57,
+    "reviewedCount": 57,
+    "generatedAt": "2026-09-23T08:05:17.872Z"
+  },
+  {
+    "personaId": "matron",
+    "bankVersion": 3,
+    "nodeCount": 61,
+    "reviewedCount": 61,
+    "generatedAt": "2026-09-23T06:53:27.383Z"
+  },
+  {
+    "personaId": "priestess",
+    "bankVersion": 3,
+    "nodeCount": 57,
+    "reviewedCount": 57,
+    "generatedAt": "2026-09-23T08:09:15.517Z"
+  },
+  {
+    "personaId": "soldier",
+    "bankVersion": 2,
+    "nodeCount": 63,
+    "reviewedCount": 63,
+    "generatedAt": "2026-09-23T06:53:27.351Z"
+  },
+  {
+    "personaId": "swineherd",
+    "bankVersion": 7,
+    "nodeCount": 60,
+    "reviewedCount": 60,
+    "generatedAt": "2026-09-23T08:11:29.613Z"
+  },
+  {
+    "personaId": "traveller",
+    "bankVersion": 5,
+    "nodeCount": 72,
+    "reviewedCount": 72,
+    "generatedAt": "2026-09-23T08:17:53.669Z"
+  }
+]

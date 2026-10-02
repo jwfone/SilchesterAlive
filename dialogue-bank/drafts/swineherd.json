@@ -1,0 +1,1512 @@
+{
+  "schemaVersion": 1,
+  "personaId": "swineherd",
+  "bankVersion": 7,
+  "generatedAt": "2026-09-23T08:11:29.613Z",
+  "model": "gemini-3.6-flash",
+  "greetings": [
+    {
+      "reply": "Keep your dogs close. I am Wulfhere. My pigs root where old kings walked in this quiet place. You are not afeard of the empty walls, are you? The stone giants whisper when the wind blows.",
+      "next": [
+        "my-name-and-work",
+        "my-pigs",
+        "sunken-hut",
+        "what-i-eat"
+      ]
+    },
+    {
+      "reply": "Good day to you. Wulfhere is my name, and these woods are my home. My goats and swine find good feed among the old broken stones here, though we never linger after the sun dips low.",
+      "next": [
+        "my-name-and-work",
+        "the-old-roads",
+        "what-i-eat",
+        "sunken-hut"
+      ]
+    },
+    {
+      "reply": "Mind your step on the overgrown path. I am Wulfhere, a simple swineherd. I keep my beasts well away from the deep, dark wells of the old ones. What brings you to these quiet ruins?",
+      "next": [
+        "my-name-and-work",
+        "my-pigs",
+        "the-old-roads",
+        "sunken-hut"
+      ]
+    }
+  ],
+  "returnGreetings": [
+    {
+      "reply": "You return to Calleva, then? It is good to see a friendly face. My herd has been restless today, sniffing at the old north gate. Come, sit by my hearth fire outside the walls.",
+      "next": [
+        "sunken-hut",
+        "my-pigs",
+        "what-i-eat",
+        "my-name-and-work"
+      ]
+    },
+    {
+      "reply": "Back again before the mist rolls in? Wulfhere welcomes you. The woods are quiet today, save for the grunting of my old sow. Let us speak of simpler things than those haunted stone heaps.",
+      "next": [
+        "my-name-and-work",
+        "my-pigs",
+        "sunken-hut",
+        "what-i-eat"
+      ]
+    },
+    {
+      "reply": "Still wandering these old roads, traveller? I am glad the spirits of the empty town did not snatch you away. My pigs are grazing safely, so I have time for a brief chat.",
+      "next": [
+        "the-old-roads",
+        "my-pigs",
+        "what-i-eat",
+        "my-name-and-work"
+      ]
+    }
+  ],
+  "farewells": [
+    "Go safely on the old roads. May the sun light your path.",
+    "Farewell, then. Keep clear of the walls when night falls.",
+    "May your hearth be warm and your beasts be well. Goodbye."
+  ],
+  "nodes": {
+    "my-name-and-work": {
+      "id": "my-name-and-work",
+      "topic": "my-name-and-work",
+      "depth": "intro",
+      "ask": [
+        "Who are you and what do you do here?",
+        "What is your name and your job in this place?",
+        "Tell me about yourself and your daily work."
+      ],
+      "replies": [
+        "I am Wulfhere, a simple swineherd who guides his grunting beasts through the overgrown ruins of this old town. Every morning, I lead my pigs out from the safety of my hut to find sweet acorns and roots among the mossy stones. It is quiet work, but it keeps my family fed.",
+        "My name is Wulfhere, and I spend my days watching over our grunting pigs inside the silent walls of this empty place. Folk call me a swineherd, which is a good, honest craft. I watch the sky for rain and keep my beasts safe from the deep woods.",
+        "People hereabouts know me as Wulfhere, the swineherd who wanders the ancient, quiet spaces of Silchester with his animals. I guide my clever pigs to the best feeding spots among the fallen walls. It is a peaceful life, so long as the wolves keep their distance."
+      ],
+      "next": [
+        "my-name-and-work.daily-routine",
+        "my-name-and-work.learning-the-trade",
+        "my-pigs",
+        "normal-day",
+        "my-tools",
+        "sunken-hut"
+      ],
+      "reviewed": false
+    },
+    "sunken-hut": {
+      "id": "sunken-hut",
+      "topic": "sunken-hut",
+      "depth": "intro",
+      "ask": [
+        "Where do you live in this area?",
+        "Can you show me where your house is?",
+        "What kind of home do you have here?"
+      ],
+      "replies": [
+        "My home is a humble timber-and-thatch hut dug into the earth, safely placed outside the spooky stone walls. We dug it deep to keep out the biting winter winds that sweep across the open fields. It is cozy inside when the hearth fire is burning bright.",
+        "I live in a small, sunken timber hut just beyond the old stone walls of this quiet town. We built it with thick wooden posts and a roof of dry straw thatch to keep the rain away. It is much warmer down in the ground than living on top of it.",
+        "My family and I share a simple pit-house made of sturdy timber, nestled safely outside the haunted ruins. We dug the floor deep into the dirt to stay snug when the frost comes. It is a good, safe place to sleep away from the old stones."
+      ],
+      "next": [
+        "sunken-hut.roof-and-walls",
+        "sunken-hut.floor-and-pit",
+        "haunted-walls",
+        "my-family",
+        "winter-cold",
+        "cooking-hearth"
+      ],
+      "reviewed": false
+    },
+    "my-pigs": {
+      "id": "my-pigs",
+      "topic": "my-pigs",
+      "depth": "intro",
+      "ask": [
+        "Tell me about the pigs you look after.",
+        "What are your animals like?",
+        "How do you care for your herd of swine?"
+      ],
+      "replies": [
+        "My swine are clever, hairy beasts that love to forage for sweet acorns under the great oak trees. They have thick, dark bristles to protect them from the thorny brambles and sharp tusks to dig up tasty roots. They know my voice and follow me easily.",
+        "These pigs of mine are hardy, long-legged creatures that look a bit like the wild boars of the deep woods. They spend all day snuffling through the leaf litter for nuts, grubs, and fallen apples. I must watch them closely so they do not wander off.",
+        "I keep a herd of dark, bristly swine that are very clever at finding their own food in the forest. They are strong, fast beasts that can run quickly if a wolf gets too close to the clearing. Caring for them is mostly about finding the best oak groves."
+      ],
+      "next": [
+        "my-pigs.pig-acorns",
+        "my-pigs.piglets-and-pens",
+        "what-i-eat",
+        "beasts-and-predators",
+        "my-tools",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "haunted-walls": {
+      "id": "haunted-walls",
+      "topic": "haunted-walls",
+      "depth": "mid",
+      "ask": [
+        "What are those large stone walls around here?",
+        "Can you tell me about the old walls of the town?",
+        "Why do you stay away from the stone ruins?"
+      ],
+      "replies": [
+        "Those massive stone walls are ancient and silent, and folk say they are haunted by old spirits, so I never sleep inside them. They were built by giant folk long ago, using stones bigger than any horse can pull. We leave them alone when the sun sets.",
+        "Great grey walls of stone surround the empty town, built so high that even the trees cannot look over them. We do not know who laid those heavy blocks, but the quiet inside is heavy and strange. I only enter by day to let my pigs graze.",
+        "The old stone walls are falling down in places, but they still stand tall against the wild forests. Folk say the spirits of the past still wander the quiet spaces inside the circle. I always make sure to be outside before the evening shadows grow long."
+      ],
+      "next": [
+        "haunted-walls.the-giant-builders",
+        "haunted-walls.empty-ruins",
+        "sunken-hut",
+        "the-old-roads",
+        "town-history",
+        "old-wells"
+      ],
+      "reviewed": false
+    },
+    "normal-day": {
+      "id": "normal-day",
+      "topic": "normal-day",
+      "depth": "mid",
+      "ask": [
+        "What do you do when you wake up?",
+        "Tell me about your daily routine.",
+        "How do you spend your day here?"
+      ],
+      "replies": [
+        "Dawn finds me checking the grey skies for rain before I push open our heavy wooden door. After a quick bowl of warm mush, I whistle for my dog and drive the snorting swine out into the damp, green woods. We spend the long hours wandering beneath the great oaks, looking for fresh forage.",
+        "Each morning begins by letting the beasts out of their pen as the birds start their chatter. I carry my trusty staff to keep the pigs together while we roam the empty lanes and nearby forest. My eyes must stay sharp for stray piglets and any signs of hungry wolves in the brush.",
+        "My daily work is simple but keeps my legs moving from sunrise until the shadows grow long. I guide my grunting herd to the best patches of sweet clover and fallen acorns outside the old walls. When dusk falls, we slowly make our way back to the safety of our timber hut."
+      ],
+      "next": [
+        "normal-day.midday-rest",
+        "normal-day.evening-return",
+        "my-pigs",
+        "what-i-eat",
+        "weather-and-seasons",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "what-i-eat": {
+      "id": "what-i-eat",
+      "topic": "what-i-eat",
+      "depth": "intro",
+      "ask": [
+        "What kind of food do you eat?",
+        "What is for dinner in your hut?",
+        "How do you get your meals?"
+      ],
+      "replies": [
+        "Barley porridge and flatbread make up most of our meals, cooked right over our central hearth fire. We also have tangy cheese from our few goats and whatever sweet berries we find in the summer hedges. Meat is a rare treat, saved for the coldest days of the year.",
+        "Our daily bowls are filled with thick pottage made of peas, wild herbs, and ground grains. We milk our goats every morning to make simple cheeses that keep well in the cool earth. For sweet tastes, we gather wild crabapples and hazelnuts from the edges of the forest.",
+        "We live off the land, eating what we can grow, gather, or swap with passing travelers. A warm bowl of grains keeps us full, sometimes flavored with wild garlic we dig from the ditches. We must be careful with our food stores so we have enough to survive winter."
+      ],
+      "next": [
+        "what-i-eat.wild-herbs",
+        "what-i-eat.hazelnuts-berries",
+        "my-pigs",
+        "cooking-hearth",
+        "trade-and-barter",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "my-family": {
+      "id": "my-family",
+      "topic": "my-family",
+      "depth": "mid",
+      "ask": [
+        "Who lives in the hut with you?",
+        "Do you have a family here?",
+        "Tell me about your kin."
+      ],
+      "replies": [
+        "My kin share the warmth of our sunken timber hut, working together to keep our small home running. My wife spins coarse sheep's wool into thread, while our children help gather dry firewood from the forest. We are few, but we stand close against the cold and the dark.",
+        "Within our small timber-and-thatch home, my family works hard from dawn until the fire dies down. My brother helps me tend the goats and patch the thatched roof when autumn storms blow through. We share whatever food we have, grateful for each safe night spent together.",
+        "We are a small household of kin living just outside the silent, empty walls of the old town. My spouse prepares our simple meals and keeps our woollen clothing mended with bone needles. Our young ones are already learning how to watch the pigs and call them home."
+      ],
+      "next": [
+        "my-family.bone-needles",
+        "my-family.patching-the-thatch",
+        "sunken-hut",
+        "my-clothes",
+        "normal-day",
+        "cooking-hearth"
+      ],
+      "reviewed": false
+    },
+    "the-old-roads": {
+      "id": "the-old-roads",
+      "topic": "the-old-roads",
+      "depth": "intro",
+      "ask": [
+        "What are the roads like here?",
+        "Are there paths through the woods?",
+        "How do travelers get to this place?"
+      ],
+      "replies": [
+        "Broad stone roads run straight as an arrow through the thick forest, built by those who lived here long ago. Though moss and weeds grow in the cracks, the stones are still flat and easy to walk upon. We use them to drive our pigs when we move between pastures.",
+        "Old paths made of heavy grey stone cut through the wild green countryside, heading toward the distant hills. These straight tracks never seem to sink into the mud, even after three days of heavy autumn rain. They are handy for travelers, though we keep a watchful eye for strangers.",
+        "Great stone highways still connect our quiet ruins to other places far across the green valleys. Trees have grown up close to their edges, but the stone path beneath your feet remains solid and true. I often walk them to see if any traders are coming this way."
+      ],
+      "next": [
+        "the-old-roads.road-building",
+        "the-old-roads.traders-and-travelers",
+        "kings-and-news",
+        "trade-and-barter",
+        "haunted-walls",
+        "town-history"
+      ],
+      "reviewed": false
+    },
+    "town-history": {
+      "id": "town-history",
+      "topic": "town-history",
+      "depth": "mid",
+      "ask": [
+        "Who built these giant walls?",
+        "What is the history of this place?",
+        "Tell me about the empty town inside."
+      ],
+      "replies": [
+        "Folk say giant builders raised these massive walls of grey stone long ago, before the grandfathers of our grandfathers were born. Now, the old streets are completely quiet and empty. No one lives inside those towering barriers, as the grand roofs have all fallen down and the wells are choked with dirt.",
+        "Old stories tell of a great city that stood here, built by mighty folk of the past. Today, only silent stone ruins remain where trees and briars grow wild. We never build our homes inside that empty circuit, choosing to let the quiet spirits keep the crumbling streets to themselves.",
+        "Long before our kings ruled, strange folk crafted this vast place with stone and mortar. Now, the busy markets are gone and only my goats climb the grassy mounds inside. It is a peaceful, empty shell of a town, left to the wind and the wild birds."
+      ],
+      "next": [
+        "town-history.giant-builders",
+        "town-history.why-abandoned",
+        "haunted-walls",
+        "kings-and-news",
+        "old-wells",
+        "the-old-roads"
+      ],
+      "reviewed": false
+    },
+    "my-tools": {
+      "id": "my-tools",
+      "topic": "my-tools",
+      "depth": "mid",
+      "ask": [
+        "What tools do you use?",
+        "How do you watch your pigs?",
+        "What do you carry with you?"
+      ],
+      "replies": [
+        "A sturdy ash staff is my main tool, useful for guiding the stubborn swine and keeping them in line. I also wear a sharp iron knife at my waist for cutting thick rope or slicing wood. At my side hangs a hollow horn to sound a loud warning if danger comes.",
+        "I carry a long staff of ash wood to drive the herd through the thickets and brambles. A good iron knife helps me chop stakes for our pens or clean a goat's hoof. To call my family or scare away pests, I blow a loud, clear note on my horn.",
+        "My trusty wooden staff keeps the clever pigs from wandering too deep into the dark forest. I keep a small, sharp blade of iron tucked into my belt for my daily chores. When a wolf prowls too close, my horn alerts the neighbors across the valley."
+      ],
+      "next": [
+        "my-tools.the-ash-staff",
+        "my-tools.horn-and-knife",
+        "my-pigs",
+        "beasts-and-predators",
+        "trade-and-barter",
+        "my-clothes"
+      ],
+      "reviewed": false
+    },
+    "weather-and-seasons": {
+      "id": "weather-and-seasons",
+      "topic": "weather-and-seasons",
+      "depth": "mid",
+      "ask": [
+        "What is the weather like here?",
+        "How do the seasons change your work?",
+        "What do you do in winter and summer?"
+      ],
+      "replies": [
+        "When the autumn leaves turn brown and fall, my pigs grow fat on the sweet acorns in the woods. But when the bitter winter frost arrives, we must huddle close to the burning embers in our sunken hut. Spring brings fresh grass for the goats, and summer sun dries our damp wood.",
+        "Our lives follow the sun and the cold winds that sweep across the old stone walls. Autumn is the best time, for the forest floor is covered with rich feed for the beasts. In the dark cold months, we stay indoors, mending tools and keeping the fire alive.",
+        "The changing seasons govern everything we do from dawn until the stars appear. Summer days are long and warm, allowing us to wander far down the straight roads with our herd. When the frost bites our fingers, we stay close to home and pray for an early spring."
+      ],
+      "next": [
+        "weather-and-seasons.autumn-acorns",
+        "weather-and-seasons.spring-pasture",
+        "winter-cold",
+        "cooking-hearth",
+        "normal-day",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "my-clothes": {
+      "id": "my-clothes",
+      "topic": "my-clothes",
+      "depth": "mid",
+      "ask": [
+        "What kind of clothes do you wear?",
+        "How do you dress for the weather?",
+        "Where do you get your clothes?"
+      ],
+      "replies": [
+        "I wear a simple woollen tunic that is dyed with common weeds gathered from the wayside. A rough strip of animal hide acts as a belt to keep the cold wind from blowing up my back. On my feet, I bind pieces of tough leather to protect against the sharp thorns.",
+        "My garments are made of coarse wool, spun and woven by my kin in our small hut. We dye the threads with yellow weld or brown bark to give them a humble color. It is a sturdy tunic that protects me from the thick brambles when I chase the swine.",
+        "These clothes of mine are plain but warm, designed for a life spent outdoors in the woods. I wear a heavy wool tunic that reaches my knees, bound tight with a simple leather thong. When the winter rain falls, a greasy wool cloak keeps the wetness from reaching my skin."
+      ],
+      "next": [
+        "my-clothes.making-dyes",
+        "my-clothes.leather-shoes",
+        "my-family",
+        "winter-cold",
+        "trade-and-barter",
+        "my-tools"
+      ],
+      "reviewed": false
+    },
+    "trade-and-barter": {
+      "id": "trade-and-barter",
+      "topic": "trade-and-barter",
+      "depth": "mid",
+      "ask": [
+        "How do you buy things?",
+        "Do you use coins?",
+        "What do you trade for?"
+      ],
+      "replies": [
+        "Gold coins are of no use to a swineherd. Instead, we swap a fat piglet or a tub of salted lard when we need sharp iron hooks, winter grain, or salt from the coast. It is a simple way of living, but it keeps our bellies full.",
+        "Trading a plump pig is how we get what we cannot make. We barter with travelers who pass along the old road, swapping goats' cheese or warm wool for salt and good iron tools. No shiny silver is needed here in the woods.",
+        "Money is something I have only heard of in tales. We exchange our extra goat milk or a young hog for things we need, like a sturdy new cooking pot or salt to preserve our meat. Honest swapping serves us best."
+      ],
+      "next": [
+        "trade-and-barter.buying-salt",
+        "trade-and-barter.iron-tools",
+        "my-tools",
+        "kings-and-news",
+        "what-i-eat",
+        "the-old-roads"
+      ],
+      "reviewed": false
+    },
+    "kings-and-news": {
+      "id": "kings-and-news",
+      "topic": "kings-and-news",
+      "depth": "mid",
+      "ask": [
+        "Who rules this land?",
+        "Do you have a king?",
+        "What is the news from outside?"
+      ],
+      "replies": [
+        "Travelers say the West Saxon kings are growing strong down in Winchester, though we rarely see their men here. They are far away, and we keep to our woods. We only care if their warriors march this way.",
+        "Folk speak of a mighty lord in the south who claims these lands. I have never seen a king, and no tax collectors come to my hut. We live quietly under the trees, away from the troubles of great men.",
+        "News comes slowly along the old paths. They say the kings of Wessex are building their strength and fighting other lords. As long as they stay in Winchester and leave my pigs alone, I am content."
+      ],
+      "next": [
+        "kings-and-news.wessex-warriors",
+        "kings-and-news.king-taxes",
+        "the-old-roads",
+        "town-history",
+        "trade-and-barter",
+        "my-name-and-work"
+      ],
+      "reviewed": false
+    },
+    "old-wells": {
+      "id": "old-wells",
+      "topic": "old-wells",
+      "depth": "mid",
+      "ask": [
+        "Where do you get water?",
+        "Are there wells inside?",
+        "What is in the old wells?"
+      ],
+      "replies": [
+        "There are deep stone-lined shafts within the walls, but most are filled with dirt and choked with briars now. We do not use them because they belong to the ruins. We fetch our water from the running stream instead.",
+        "Deep wells sit in the silent spaces inside the town, but they are dangerous. Some are hidden by nettles, and folk say dark things dwell in the deep dark water. We steer clear of them entirely.",
+        "Inside the empty walls, you can find old stone wells. Most are dry now, filled with fallen stones and rubbish from long ago. I never let my children or goats wander near them."
+      ],
+      "next": [
+        "old-wells.fetching-water",
+        "old-wells.hidden-dangers",
+        "haunted-walls",
+        "town-history",
+        "cooking-hearth",
+        "normal-day"
+      ],
+      "reviewed": false
+    },
+    "beasts-and-predators": {
+      "id": "beasts-and-predators",
+      "topic": "beasts-and-predators",
+      "depth": "mid",
+      "ask": [
+        "Are there wild animals here?",
+        "Do wolves attack your pigs?",
+        "How do you protect your herd?"
+      ],
+      "replies": [
+        "The deep woods hold hungry wolves that would gladly steal a piglet if my trusty dog and I did not stay watchful. We must always keep an eye on the thickets when the sun goes down.",
+        "Wild beasts roam the forest around the empty town. Wolves are the main danger, especially in the winter months when food is scarce. I carry a strong staff to drive them away.",
+        "Protecting my swine from the gray wolves is my constant task. My clever dog barks to warn me when they are near, and we drive the herd back to the safety of our pens before dark."
+      ],
+      "next": [
+        "beasts-and-predators.trusty-dog",
+        "beasts-and-predators.winter-wolves",
+        "my-pigs",
+        "my-tools",
+        "haunted-walls",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "cooking-hearth": {
+      "id": "cooking-hearth",
+      "topic": "cooking-hearth",
+      "depth": "mid",
+      "ask": [
+        "How do you cook your food?",
+        "Tell me about your firepit.",
+        "Where do you cook?"
+      ],
+      "replies": [
+        "Inside our timber home, the firepit sits right in the middle of the dirt floor. We hang an iron pot from a wooden tripod to boil our barley. The grey smoke drifts up and slowly finds its way out through the thick straw thatch of our roof.",
+        "We keep a hearth fire burning inside our sunken hut for both cooking and warmth. It is a simple circle of river stones on the dry earth. My family gathers around it each evening to stir the thick porridge and share stories of the day.",
+        "Our cooking fire is the very heart of our home. We burn dry oak branches to boil wild greens and goat's milk in our clay pots. Because there is no chimney, the air is often thick with sweet woodsmoke, which keeps the bugs away."
+      ],
+      "next": [
+        "cooking-hearth.pottery-and-pots",
+        "cooking-hearth.firewood-and-smoke",
+        "sunken-hut",
+        "what-i-eat",
+        "winter-cold",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "winter-cold": {
+      "id": "winter-cold",
+      "topic": "winter-cold",
+      "depth": "mid",
+      "ask": [
+        "How do you survive the cold winter?",
+        "Is winter hard in your hut?",
+        "What do you do when it snows?"
+      ],
+      "replies": [
+        "Winter winds howl fiercely across the old ruins, so we block our door with thick hides. We pile dry straw high around our sleeping mats to keep the chill away. Our hearth fire is kept burning day and night to warm our bones.",
+        "When the bitter frost locks the ground, we stay close to our timber hut. We wear our thickest woollen cloaks and huddle together near the warm embers. The pigs are kept safe in their hurdles, shivering just as we do.",
+        "Cold days mean we must burn our stored wood carefully to last the season. We bring our youngest goats inside the hut to keep them from freezing. It is a quiet time of waiting for the sun to return to the sky."
+      ],
+      "next": [
+        "winter-cold.hut-straw",
+        "winter-cold.firewood-chores",
+        "sunken-hut",
+        "cooking-hearth",
+        "my-clothes",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "festivals-and-gods": {
+      "id": "festivals-and-gods",
+      "topic": "festivals-and-gods",
+      "depth": "mid",
+      "ask": [
+        "Do you celebrate any festivals?",
+        "Who do you pray to for your pigs?",
+        "What are your beliefs about the seasons?"
+      ],
+      "replies": [
+        "We make small offerings of barley meal and fresh milk to the earth spirits. We hope they will keep our fields kind and protect our herds from disease. When the seasons turn, we gather with nearby folk to share a simple feast.",
+        "Folk hereabouts believe the old spirits watch over the woods and fields. We leave a bowl of goat's milk by the ancient oak trees to keep them pleased. If the spirits are happy, our sows will bear many healthy piglets in spring.",
+        "We mark the shortest and longest days of the year with simple family customs. We burn special logs on our hearth and sing songs to welcome the returning sun. Keeping the old ways brings us good fortune and keeps the wolves away."
+      ],
+      "next": [
+        "festivals-and-gods.season-feasts",
+        "festivals-and-gods.earth-offerings",
+        "weather-and-seasons",
+        "my-pigs",
+        "normal-day",
+        "town-history"
+      ],
+      "reviewed": false
+    },
+    "keeping-goats": {
+      "id": "keeping-goats",
+      "topic": "keeping-goats",
+      "depth": "mid",
+      "ask": [
+        "Do you have other animals besides pigs?",
+        "Tell me about your goats.",
+        "Why do you keep goats?"
+      ],
+      "replies": [
+        "We tend a few lively goats alongside our grunting swine. They are hardy beasts that happily browse on the sharp brambles and gorse bushes. They provide my family with sweet milk and rich cheese to help fill our wooden bowls.",
+        "Our goats are excellent companions to the pigs, as they eat the weeds the swine leave behind. We keep them penned near our sunken hut at night to protect them from wolves. Their thick coats also give us coarse hair for weaving.",
+        "Goats are clever creatures that can find food even on the rocky ruins of the old walls. We milk them every morning before driving them out to the scrubland. Their milk is a blessing, especially during the lean months of early spring."
+      ],
+      "next": [
+        "keeping-goats.goat-milk-cheese",
+        "keeping-goats.goat-shelter",
+        "my-pigs",
+        "what-i-eat",
+        "beasts-and-predators",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "beasts-and-predators.trusty-dog": {
+      "id": "beasts-and-predators.trusty-dog",
+      "topic": "beasts-and-predators",
+      "depth": "deep",
+      "ask": [
+        "Tell me about your dog.",
+        "How does your dog help with wolves?",
+        "What is your sheepdog like?"
+      ],
+      "replies": [
+        "Shaggy and swift, my hound stays close to my heel whenever we venture near the trees. He catches the sharp scent of a hungry wolf long before my human nose can, barking loudly to scatter the prowling beasts. A good pig-dog is worth more than a dozen iron spearheads.",
+        "Loud barking from my hound keeps the wolves at bay when the forest turns dark. He is a brave, scruffy creature with sharp ears that hear the rustle of dry leaves instantly. With him beside me, the swine stay gathered together, and we return home safely every single evening.",
+        "Sharp teeth and a keen nose make my hound a terrible foe to forest wolves. He circles the herd constantly, nipping at stray piglets to keep them close. If a gray wolf sneaks near the bushes, my dog bristles his back fur and lets out a fierce warning growl."
+      ],
+      "next": [
+        "beasts-and-predators",
+        "beasts-and-predators.winter-wolves",
+        "my-pigs",
+        "my-tools",
+        "haunted-walls",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "beasts-and-predators.winter-wolves": {
+      "id": "beasts-and-predators.winter-wolves",
+      "topic": "beasts-and-predators",
+      "depth": "deep",
+      "ask": [
+        "Are wolves worse in the cold winter?",
+        "What do wolves do in wintertime?",
+        "Why are winter wolves so dangerous?"
+      ],
+      "replies": [
+        "Frost makes the forest beasts bold and desperate for any flesh they can find. When deep snow covers the forest floor, wild wolves grow lean and gather in larger packs. I double the barricades on my pigpens and keep a heavy oak club right beside the hearth fire.",
+        "Bitter cold drives the hungry wolves out of the deep woods toward our clearing. Because wild deer are scarce in snow, the grey hunters look toward my swine. We stay inside our timber home when night falls, keeping the outdoor torch fires lit until dawn breaks.",
+        "Deep snow turns the wolves into dangerous thieves that fear neither man nor fire. They prowl near the edge of our sunken hut, howling at the moon. I keep my iron knife ground sharp and never let the young animals wander into the thickets alone during frost."
+      ],
+      "next": [
+        "beasts-and-predators",
+        "beasts-and-predators.trusty-dog",
+        "my-pigs",
+        "my-tools",
+        "haunted-walls",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "cooking-hearth.pottery-and-pots": {
+      "id": "cooking-hearth.pottery-and-pots",
+      "topic": "cooking-hearth",
+      "depth": "deep",
+      "ask": [
+        "What kind of pots do you cook with?",
+        "Where do your cooking pots come from?",
+        "How do you boil your food?"
+      ],
+      "replies": [
+        "Thick clay pots molded by hand sit right in the hot embers of our hearth. We hang a heavy iron pot above the middle flame using stout wooden poles tied together. These pots brew our warm barley porridge and boil wild roots until they are soft to eat.",
+        "Coarse earthen pots made from local river clay hold our daily soups and goat's milk. They are rough to touch and blackened by fire, but they keep the food hot for a long time. If a pot cracks, we mend it with clay or trade for a new one.",
+        "Heavy iron vessels are rare, so we rely mostly on simple clay jars placed near the coals. They cook our meals slowly over dry oak logs. We scrub them clean using sand from the stream and dry grass after every evening meal around the hearth."
+      ],
+      "next": [
+        "cooking-hearth",
+        "cooking-hearth.firewood-and-smoke",
+        "sunken-hut",
+        "what-i-eat",
+        "winter-cold",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "cooking-hearth.firewood-and-smoke": {
+      "id": "cooking-hearth.firewood-and-smoke",
+      "topic": "cooking-hearth",
+      "depth": "deep",
+      "ask": [
+        "How do you deal with all the smoke?",
+        "What wood do you burn in the hearth?",
+        "Is it smoky inside your home?"
+      ],
+      "replies": [
+        "Dry oak branches yield clean heat and less smoke than green wood gathered from wet ditch banks. The grey plume rises naturally into the steep roof thatch, seeping through the straw without needing a stone chimney. It stings the eyes a bit, but it keeps insects away.",
+        "Gathering dead woodland sticks is a daily task for everyone in our humble family. We prefer hard oak and ash because they burn down to glowing embers that stay warm through the dark night. The lingering woodsmoke cures our hung meat and drives out damp air.",
+        "Thick thatch high above our heads absorbs the drifting smoke from our central fire pit. While the air inside can grow hazy on rainy days, the smoke serves a good purpose by keeping flies out of our home. We simply sit low on low wooden stools."
+      ],
+      "next": [
+        "cooking-hearth",
+        "cooking-hearth.pottery-and-pots",
+        "sunken-hut",
+        "what-i-eat",
+        "winter-cold",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "festivals-and-gods.season-feasts": {
+      "id": "festivals-and-gods.season-feasts",
+      "topic": "festivals-and-gods",
+      "depth": "deep",
+      "ask": [
+        "What happens during your seasonal feasts?",
+        "How do you celebrate the turning year?",
+        "Do you gather with neighbors for feasts?"
+      ],
+      "replies": [
+        "Simple gatherings take place when the harvest is safely gathered into timber barns. Families from nearby farmsteads come together to roast a fat pig, drink sweet mead, and tell ancient stories. We give thanks to the land for providing enough grain to survive the dark months ahead.",
+        "Folk from the nearby woods assemble at the turning of the sun to share whatever food remains. We sing traditional tunes and pass around wooden bowls of warm berry cider. Sharing food creates strong bonds between neighbors so we aid each other when hard frosts arrive.",
+        "Bright bonfires are lit upon the hills when winter finally turns toward spring green. We roast salted pork over open flames and offer bits of bread to the earth spirits. It brings great joy to see friendly faces after months of cold isolation."
+      ],
+      "next": [
+        "festivals-and-gods",
+        "festivals-and-gods.earth-offerings",
+        "weather-and-seasons",
+        "my-pigs",
+        "normal-day",
+        "town-history"
+      ],
+      "reviewed": false
+    },
+    "festivals-and-gods.earth-offerings": {
+      "id": "festivals-and-gods.earth-offerings",
+      "topic": "festivals-and-gods",
+      "depth": "deep",
+      "ask": [
+        "Why do you leave offerings of milk?",
+        "Where do you leave gifts for spirits?",
+        "How do you make offerings to nature?"
+      ],
+      "replies": [
+        "Pouring fresh goat's milk at the roots of ancient oak trees shows respect to the forest spirits. We ask them to keep our animals healthy and guard our swine from hungry woodland wolves. It is a quiet custom passed down through many generations of swineherds.",
+        "Wooden bowls filled with crushed barley meal are left near quiet woodland springs before planting. Folk believe the unseen guardians of the soil bless our crops if we share our harvest. A small gift costs us little but brings great peace to our hearts.",
+        "Quiet nooks beneath old thorn bushes are perfect spots to leave gifts of curds and grain. We do not offer gold or silver, just simple food grown from the soil. The spirits keep the land fruitful and protect our timber hut from raging summer storms."
+      ],
+      "next": [
+        "festivals-and-gods",
+        "festivals-and-gods.season-feasts",
+        "weather-and-seasons",
+        "my-pigs",
+        "normal-day",
+        "town-history"
+      ],
+      "reviewed": false
+    },
+    "haunted-walls.the-giant-builders": {
+      "id": "haunted-walls.the-giant-builders",
+      "topic": "haunted-walls",
+      "depth": "deep",
+      "ask": [
+        "Who built these giant stone walls?",
+        "Did real giants build the old town?",
+        "How were the heavy stones moved?"
+      ],
+      "replies": [
+        "Old tales say giant folk raised these grey stone walls in forgotten days, using magic or wild strength. No living man could lift blocks so massive, nor fit them so close together without iron tools. We leave their grand works undisturbed and live our simple lives.",
+        "Mighty beings from long ago must have placed these rocks, for the ramparts are impossibly thick. As far as I know, ordinary men could never move such heavy stones out of the earth. The ancient work stands firm while our own wooden huts rot away.",
+        "Folk tell stories of ancient giants who walked this land before our kings were born. They built high ramparts that shelter only wind and weeds today. I look at those grey stones with wonder, but I never try to move or alter them."
+      ],
+      "next": [
+        "haunted-walls",
+        "haunted-walls.empty-ruins",
+        "sunken-hut",
+        "the-old-roads",
+        "town-history",
+        "old-wells"
+      ],
+      "reviewed": false
+    },
+    "haunted-walls.empty-ruins": {
+      "id": "haunted-walls.empty-ruins",
+      "topic": "haunted-walls",
+      "depth": "deep",
+      "ask": [
+        "What is inside the walls now?",
+        "Why is it so quiet inside?",
+        "What do you see when driving pigs inside?"
+      ],
+      "replies": [
+        "Overgrown mounds of earth and fallen tiles hide whatever stood inside the stone circuit long ago. Wild nettles and sweet oak trees cover the old paths where pigs now search for acorns. The silence is strange and heavy, broken only by bird calls.",
+        "Thickets of bramble and elderberry bushes grow thick where grand houses used to stand. Roofs fell in long before my grandfather's time, leaving only empty stone shells filled with weeds. My swine enjoy the lush grass, but I keep moving until daylight fades.",
+        "Quiet glades and grassy hollows fill the space where people once walked in great numbers. Only rustling leaves and grunting swine break the deep hush within the circuit. It feels like stepping into another world, so I leave before shadows stretch across the grass."
+      ],
+      "next": [
+        "haunted-walls",
+        "haunted-walls.the-giant-builders",
+        "sunken-hut",
+        "the-old-roads",
+        "town-history",
+        "old-wells"
+      ],
+      "reviewed": false
+    },
+    "keeping-goats.goat-milk-cheese": {
+      "id": "keeping-goats.goat-milk-cheese",
+      "topic": "keeping-goats",
+      "depth": "deep",
+      "ask": [
+        "How do you make cheese from goat milk?",
+        "What do you do with the milk from goats?",
+        "Do you make cheese with goat milk?"
+      ],
+      "replies": [
+        "Fresh milk sits in earthen jars until it sours into thick curds. My kin press out the watery whey using woven linen cloths, then sprinkle sea salt to keep it sweet. The small, white cheeses sit on dry wooden shelves inside our cool hut until they are ready to fill our wooden bowls.",
+        "We drink the sweet milk fresh or turn it into rich cheese. Curds are pressed in clean cloths to drain away the liquid whey, then seasoned with salt bought from traveling traders. These small cheeses keep well through the lean months, offering us good food when the winter cold bites.",
+        "My household pours fresh milk into clay pots to curdle in the warm hut. Once the curds separate from the whey, we squeeze them tight in linen bags and add salt. The resulting cheese is firm, salty, and keeps us fed when berries and acorns grow scarce."
+      ],
+      "next": [
+        "keeping-goats",
+        "keeping-goats.goat-shelter",
+        "my-pigs",
+        "what-i-eat",
+        "beasts-and-predators",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "keeping-goats.goat-shelter": {
+      "id": "keeping-goats.goat-shelter",
+      "topic": "keeping-goats",
+      "depth": "deep",
+      "ask": [
+        "Where do the goats sleep at night?",
+        "How do you keep goats safe from wolves?",
+        "Where do you keep your goats when it rains?"
+      ],
+      "replies": [
+        "Nightfall drives us to herd the goats into a sturdy wattle pen right beside our sunken hut. We weave thorn bushes into the fence to stop hungry wolves from leaping over. Living close to my doorstep means my sharp-eared dog wakes at the first sign of any nighttime thief.",
+        "A thick hedge of woven hazel branches keeps our small herd safe beside the hut. I pile extra gorse bushes along the bottom so no clever predator can crawl beneath. When heavy rain lashes the trees, we pull the goats under our deep thatch eaves to keep them dry.",
+        "We pen them right outside our timber door before the sun drops behind the trees. The high fence of woven stakes stops prowling beasts from creeping near. Having them sleep close by lets us hear if anything disturbs them, so my iron spear is always ready at hand."
+      ],
+      "next": [
+        "keeping-goats",
+        "keeping-goats.goat-milk-cheese",
+        "my-pigs",
+        "what-i-eat",
+        "beasts-and-predators",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "kings-and-news.wessex-warriors": {
+      "id": "kings-and-news.wessex-warriors",
+      "topic": "kings-and-news",
+      "depth": "deep",
+      "ask": [
+        "Have you ever seen a king's warrior?",
+        "What happens if armed men come to your hut?",
+        "Do warriors ever visit the empty town?"
+      ],
+      "replies": [
+        "Rarely do armed riders come down the overgrown stone paths from Winchester. When spear-bearing men appear on the horizon, I quickly drive my pigs deep into the thickets to hide. Simple folk like us stay out of sight until the dust settles and the iron weapons have passed away.",
+        "Riders in iron helmets pass by on the ancient roads once in a great while. We do not speak to them, nor do they care for simple swineherds. My family hides our grain and goats in the woods until those stern men ride on toward their battles far away.",
+        "A band of men carrying tall shields trod the ancient highway last summer. I watched them from behind a great oak tree while keeping my dog quiet. They did not stop at our ruined walls, preferring to march straight on toward the south without troubling our quiet hut."
+      ],
+      "next": [
+        "kings-and-news",
+        "kings-and-news.king-taxes",
+        "the-old-roads",
+        "town-history",
+        "trade-and-barter",
+        "my-name-and-work"
+      ],
+      "reviewed": false
+    },
+    "kings-and-news.king-taxes": {
+      "id": "kings-and-news.king-taxes",
+      "topic": "kings-and-news",
+      "depth": "deep",
+      "ask": [
+        "Do you have to pay taxes to the king?",
+        "Does anyone make you pay money or food?",
+        "Who claims ownership of this old land?"
+      ],
+      "replies": [
+        "No lord demands silver or grain from my small hut. The West Saxon kings stay down in Winchester, far beyond our ancient trees. So long as we live quietly among these overgrown stones and do not cause trouble, no reeve or officer comes searching for my fat piglets.",
+        "Lords far to the south claim big kingdoms, but nobody gathers taxes in these silent ruins. We are forgotten by great men, which suits me well enough. We keep our goats, tend our swine, and pay no tribute to anyone beyond what we barter with local folk.",
+        "Nobody comes to measure our timber hut or count my grunting beasts. The royal lords have greater towns to rule and battles to fight elsewhere. As far as I know, this land belongs to the woods and the ancient spirits, so we live here without paying any tribute."
+      ],
+      "next": [
+        "kings-and-news",
+        "kings-and-news.wessex-warriors",
+        "the-old-roads",
+        "town-history",
+        "trade-and-barter",
+        "my-name-and-work"
+      ],
+      "reviewed": false
+    },
+    "my-clothes.making-dyes": {
+      "id": "my-clothes.making-dyes",
+      "topic": "my-clothes",
+      "depth": "deep",
+      "ask": [
+        "How do you dye your wool tunic?",
+        "Where do you get colors for your clothes?",
+        "What plants make dyes for your garments?"
+      ],
+      "replies": [
+        "We gather yellow weld, green lichen, and thick oak bark from the deep forest. My kin boil the gather in a large earthen pot over our hearth fire before soaking the spun wool inside. It gives our heavy tunics simple, earthy shades that blend right into the woodland bushes.",
+        "Wild plants provide every bit of color for our woollen clothes. We boil ditch weeds for muted yellows or walnut husks for deep dark browns in our clay pot. The dyes keep our rough garments looking neat without needing rare stains brought from distant trading places.",
+        "Ditches and forest floors yield all the color we need for spinning yarn. Bark from young alder trees yields rich reddish-browns, while onion skins produce bright golden hues. We simmer the wool over the hearth until the shade holds fast against the rain and scrubby brush."
+      ],
+      "next": [
+        "my-clothes",
+        "my-clothes.leather-shoes",
+        "my-family",
+        "winter-cold",
+        "trade-and-barter",
+        "my-tools"
+      ],
+      "reviewed": false
+    },
+    "my-clothes.leather-shoes": {
+      "id": "my-clothes.leather-shoes",
+      "topic": "my-clothes",
+      "depth": "deep",
+      "ask": [
+        "What kind of shoes do you wear?",
+        "How do you protect your feet from thorns?",
+        "What are your footwear made from?"
+      ],
+      "replies": [
+        "Tough cowhide wrapped securely around my feet keeps the sharp brambles from piercing my skin. I bind the thick leather tight with thongs cut from deer skin, wrapping them up around my ankles. They are simple turnshoes, made to endure wet clay and rough flint paths.",
+        "Sturdy leather wraps protect my toes whenever I drive the herd through prickly gorse. My spouse stitches tough soles using heavy deer sinew and a sharp bone awl. When winter frost hardens the ground, I stuff soft moss inside them to keep the bitter chill away.",
+        "I wear thick hide shoes bound securely with long leather laces. They are soft enough for quiet walking in the forest, yet thick enough to stop flint stones and thorny briars. When they wear thin, we patch the bottoms with fresh scraps of tanned leather."
+      ],
+      "next": [
+        "my-clothes",
+        "my-clothes.making-dyes",
+        "my-family",
+        "winter-cold",
+        "trade-and-barter",
+        "my-tools"
+      ],
+      "reviewed": false
+    },
+    "my-family.bone-needles": {
+      "id": "my-family.bone-needles",
+      "topic": "my-family",
+      "depth": "deep",
+      "ask": [
+        "How does your family mend your clothes?",
+        "What do you use for needles and thread?",
+        "Who makes the clothes for your family?"
+      ],
+      "replies": [
+        "Smooth needles carved from pig bone serve to mend our woollen tunics beside the fire. My spouse uses tight-spun wool or dried animal sinew to stitch up tears made by wild brambles. Every piece of cloth takes hard work to craft, so we patch every hole.",
+        "My kin carve fine needles from animal splinters using a small iron blade. They spin sturdy thread from goat hair and sheep wool using a wooden drop spindle. Sitting by the hearth light, they stitch together warm tunics to keep us all covered against the wind.",
+        "Thin bone tools rubbing against sandstone make sharp needles for our household. My family spends long evening hours patching frayed hems and torn sleeves before the fire burns low. Nothing is thrown away in our hut until the fabric has served us for years."
+      ],
+      "next": [
+        "my-family",
+        "my-family.patching-the-thatch",
+        "sunken-hut",
+        "my-clothes",
+        "normal-day",
+        "cooking-hearth"
+      ],
+      "reviewed": false
+    },
+    "my-family.patching-the-thatch": {
+      "id": "my-family.patching-the-thatch",
+      "topic": "my-family",
+      "depth": "deep",
+      "ask": [
+        "How do you fix your house roof?",
+        "What do you do when the roof leaks?",
+        "Who patches the thatch on your hut?"
+      ],
+      "replies": [
+        "Autumn gales often loosen the straw high above our sunken floor. My brother and I cut fresh water reeds from nearby marshy ditches and bind them into tight bundles. We climb up to push the new thatch deep into the old roof using curved wooden hazel pins.",
+        "Whenever rain drips down into our sleeping straw, my kin gather dry straw and reed bundles. We fix the weak spots together before the big winter rains begin. A thick roof keeps our hearth fire dry and ensures the whole household stays warm throughout the night.",
+        "We watch the roof closely when heavy winds blow across the plain. Replacing old rot with fresh bundles of dried reeds keeps the weather outside where it belongs. Working as a family, we can patch the whole thatched roof in less than a day."
+      ],
+      "next": [
+        "my-family",
+        "my-family.bone-needles",
+        "sunken-hut",
+        "my-clothes",
+        "normal-day",
+        "cooking-hearth"
+      ],
+      "reviewed": false
+    },
+    "my-name-and-work.daily-routine": {
+      "id": "my-name-and-work.daily-routine",
+      "topic": "my-name-and-work",
+      "depth": "deep",
+      "ask": [
+        "What do you do first thing in the morning?",
+        "How does your workday usually start?",
+        "What is your very first task each day?"
+      ],
+      "replies": [
+        "First light sees me stepping out into the cold grass to check on the pigs in their pen. I give them a little dry fodder, check that the water trough is full, and whistle for my hound before we head out toward the trees.",
+        "Dawn brings the chore of unlatching the hurdle gate to let the grunting swine stretch their legs. Once I see every piglet is healthy and moving, I grab my staff and lead them out toward the damp oak woods.",
+        "Morning begins with checking the sky to see if rain will soak our cloaks today. After that, I check each pig's hooves for thorns, unpen the herd, and guide them out to search for roots among the ancient mounds."
+      ],
+      "next": [
+        "my-name-and-work",
+        "my-name-and-work.learning-the-trade",
+        "my-pigs",
+        "normal-day",
+        "my-tools",
+        "sunken-hut"
+      ],
+      "reviewed": false
+    },
+    "my-name-and-work.learning-the-trade": {
+      "id": "my-name-and-work.learning-the-trade",
+      "topic": "my-name-and-work",
+      "depth": "deep",
+      "ask": [
+        "How did you learn to herd pigs?",
+        "Who taught you to be a swineherd?",
+        "Did your family teach you this job?"
+      ],
+      "replies": [
+        "My father showed me how to read the woods when I was no bigger than a piglet. He taught me which calls bring the herd running, how to spot wolf tracks in soft mud, and where the sweetest acorns fall.",
+        "Folk in my family have always kept beasts along these woods. As a boy, I ran behind my uncle's herd, learning to handle the heavy ash staff and whistle loudly enough to turn a stubborn boar around.",
+        "Learning this work took years of walking these very ditches beside my elders. They showed me how to keep the grunting beasts calm and how to find good water when the small streams dry up in high summer."
+      ],
+      "next": [
+        "my-name-and-work",
+        "my-name-and-work.daily-routine",
+        "my-pigs",
+        "normal-day",
+        "my-tools",
+        "sunken-hut"
+      ],
+      "reviewed": false
+    },
+    "my-pigs.pig-acorns": {
+      "id": "my-pigs.pig-acorns",
+      "topic": "my-pigs",
+      "depth": "deep",
+      "ask": [
+        "What do your pigs like to eat most?",
+        "Where do you find food for the swine?",
+        "Do the pigs eat acorns all year?"
+      ],
+      "replies": [
+        "Acorns are their favourite treat by far, especially when autumn gales shake them from the old branches. During spring and summer, they crunch on juicy fern roots, wild garlic bulbs, and whatever fallen crabapples they can snuffle up.",
+        "Green beechmast and ripe oak acorns make my beasts happiest and fattest before winter comes. When the nuts are gone, they happily dig deep into the soft earth for grubs, plump worms, and thick plant tubers.",
+        "Sweet acorns make up their best autumn feast under the canopy. For the rest of the year, I lead them to damp hollows where they can root for juicy bulbs, tender shoots, and fungi hidden under the leaves."
+      ],
+      "next": [
+        "my-pigs",
+        "my-pigs.piglets-and-pens",
+        "what-i-eat",
+        "beasts-and-predators",
+        "my-tools",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "my-pigs.piglets-and-pens": {
+      "id": "my-pigs.piglets-and-pens",
+      "topic": "my-pigs",
+      "depth": "deep",
+      "ask": [
+        "Where do the baby pigs stay?",
+        "How do you protect young piglets?",
+        "Do piglets stay inside at night?"
+      ],
+      "replies": [
+        "Tiny piglets stay inside a sheltered wicker pen right beside our hut until they grow strong enough to walk far. We lay fresh dry straw inside to keep them warm and away from prowling woodland foxes.",
+        "Young ones are kept safe in a sturdy hazel hurdle ring close to our fire pit when winds blow cold. Out in the woods, their mother watches them closely, and my dog keeps any greedy hawks away.",
+        "Small piglets sleep penned near our doorway so we can hear if any trouble comes near. Once they are big enough to trot alongside the old sows, they join the rest of the herd in the forest glades."
+      ],
+      "next": [
+        "my-pigs",
+        "my-pigs.pig-acorns",
+        "what-i-eat",
+        "beasts-and-predators",
+        "my-tools",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "my-tools.the-ash-staff": {
+      "id": "my-tools.the-ash-staff",
+      "topic": "my-tools",
+      "depth": "deep",
+      "ask": [
+        "How did you make your wooden staff?",
+        "What makes a good herding staff?",
+        "Why do you use ash wood for your stick?"
+      ],
+      "replies": [
+        "Ash wood is strong and bends without snapping when a heavy boar leans against it. I cut a straight sapling from the grove, peeled its green bark away, and smoothed it over our hearth fire until it hardened.",
+        "A proper staff must be tall enough to rest your chin on and tough enough to turn a stray sow. I shaped mine from a seasoned ash branch, rubbing fat into the grain so damp river mist would not rot it.",
+        "Wood from the ash tree serves a swineherd best because it stays light in the hand yet hits hard against bad briars. I carved the top smooth to fit my palm comfortably during long days of walking."
+      ],
+      "next": [
+        "my-tools",
+        "my-tools.horn-and-knife",
+        "my-pigs",
+        "beasts-and-predators",
+        "trade-and-barter",
+        "my-clothes"
+      ],
+      "reviewed": false
+    },
+    "my-tools.horn-and-knife": {
+      "id": "my-tools.horn-and-knife",
+      "topic": "my-tools",
+      "depth": "deep",
+      "ask": [
+        "What is your horn made of?",
+        "How do you use your horn and knife?",
+        "Where did you get your iron knife?"
+      ],
+      "replies": [
+        "My horn came from a wide-horned ox we traded for seasons ago. I scraped the inside clean and hollowed it out; a short blow makes a sharp call that my pigs know means it is time to head home.",
+        "An iron blade is precious, so I keep mine greased with tallow to stop rust. I use it to trim hazel pegs or mend leather straps, while the horn hangs nearby to blast a warning if a dog spots a wolf.",
+        "Crafted by a smith down the valley, my iron knife cut many a sturdy rope. The horn beside it was smoothed with sand and carries a clear, booming note that echoes right across the empty stone walls."
+      ],
+      "next": [
+        "my-tools",
+        "my-tools.the-ash-staff",
+        "my-pigs",
+        "beasts-and-predators",
+        "trade-and-barter",
+        "my-clothes"
+      ],
+      "reviewed": false
+    },
+    "normal-day.midday-rest": {
+      "id": "normal-day.midday-rest",
+      "topic": "normal-day",
+      "depth": "deep",
+      "ask": [
+        "What do you do around noon?",
+        "Do you rest during the middle of the day?",
+        "Where do you sit when the sun is high?"
+      ],
+      "replies": [
+        "When the sun stands highest, the swine grow lazy and lie down in the cool mud near a ditch. I sit nearby under a shady hazel tree, chew a piece of dried rye bread, and check my staff for splinters.",
+        "Midday is time to let the herd snooze beneath the leafy oaks after hours of digging. I lean against an old bank, pull a small rind of cheese from my pouch, and keep my ears open for snapping twigs.",
+        "High noon finds us resting in a grassy glade away from the heat. While the pigs wallow in wet silt to stay cool, I sit with my hound and take a deep drink from my leather water skin."
+      ],
+      "next": [
+        "normal-day",
+        "normal-day.evening-return",
+        "my-pigs",
+        "what-i-eat",
+        "weather-and-seasons",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "normal-day.evening-return": {
+      "id": "normal-day.evening-return",
+      "topic": "normal-day",
+      "depth": "deep",
+      "ask": [
+        "What happens when the sun starts to go down?",
+        "How do you bring the pigs home at night?",
+        "What is the end of your day like?"
+      ],
+      "replies": [
+        "As long shadows stretch across the grass, I blow a short note on my horn to gather the grunting herd. They trot back down the beaten path toward our sunken hut, eager for the safety of their night pen.",
+        "Dusk means it is time to count every head before driving the swine out of the woods. We reach our timber hut just as the sky turns purple, and I latch the hurdle gates tight before sitting by the fire.",
+        "When evening mist rises off the ditch, I call my dog and turn the pigs toward home. Once the animals are safely penned and fed a handful of grain, I step inside our hut to share warm broth."
+      ],
+      "next": [
+        "normal-day",
+        "normal-day.midday-rest",
+        "my-pigs",
+        "what-i-eat",
+        "weather-and-seasons",
+        "my-family"
+      ],
+      "reviewed": false
+    },
+    "old-wells.fetching-water": {
+      "id": "old-wells.fetching-water",
+      "topic": "old-wells",
+      "depth": "deep",
+      "ask": [
+        "Where do you get your drinking water?",
+        "If you do not use the old wells, where is your water from?",
+        "How do you get fresh water for the pigs?"
+      ],
+      "replies": [
+        "Fresh water comes from the clear brook that flows past our timber hut outside the walls. Every morning, we walk down with wooden buckets to scoop up what we need. The pigs drink from the muddy shallows further downstream. That running stream is far sweeter and safer than any dark, forgotten hole.",
+        "A sweet stream running through the wood provides all the water we need. My children carry wooden pails back and forth each morning to fill our clay jars. We let the swine lap from the cool banks nearby. We never touch the strange water trapped deep inside those spooky old ruins.",
+        "Pure water is scooped daily from the small river flowing near our clearing. I carry two heavy wooden buckets on a pole across my shoulders for the hearth cooking. The swine slake their thirst at the gravelly edge. Running water brings life, while the quiet well shafts hold only old shadows."
+      ],
+      "next": [
+        "old-wells",
+        "old-wells.hidden-dangers",
+        "haunted-walls",
+        "town-history",
+        "cooking-hearth",
+        "normal-day"
+      ],
+      "reviewed": false
+    },
+    "old-wells.hidden-dangers": {
+      "id": "old-wells.hidden-dangers",
+      "topic": "old-wells",
+      "depth": "deep",
+      "ask": [
+        "Why are the old wells so dangerous?",
+        "What happens if you go near the ruined wells?",
+        "Are the stone wells safe to look inside?"
+      ],
+      "replies": [
+        "Thick nettles and crawling ivy cover the openings, making them easy to step into by accident. A stray goat or child could tumble straight down into the cold dark and never get out. Folk say bad air settles in the bottom of such deep shafts, so we keep our animals far away.",
+        "Darkness hides deep drops where the old stonework has collapsed inwards over time. Brambles hide the rotten lips of the holes, trapping the unwary in the deep shadows. I warn the young ones constantly never to wander near those mossy edges, lest they slip on the wet, slippery stones.",
+        "Deep holes lie hidden beneath thick wild briars where you least expect to find them. If a young piglet falls down one of those forgotten shafts, there is no getting it back up. We stay well clear because the damp stone walls crumble easily if you lean over the edge."
+      ],
+      "next": [
+        "old-wells",
+        "old-wells.fetching-water",
+        "haunted-walls",
+        "town-history",
+        "cooking-hearth",
+        "normal-day"
+      ],
+      "reviewed": false
+    },
+    "sunken-hut.roof-and-walls": {
+      "id": "sunken-hut.roof-and-walls",
+      "topic": "sunken-hut",
+      "depth": "deep",
+      "ask": [
+        "How did you build the roof and walls?",
+        "What is your home built from?",
+        "How does the straw roof keep you dry?"
+      ],
+      "replies": [
+        "Thick oak posts hold up the main roof beam, set deep into the solid earth. We weave hazel hurdles between the posts and plaster them with clay to stop the draughts. Bundle upon bundle of dry reed thatch keeps every drop of heavy autumn rain off our sleeping mats.",
+        "Sturdy timber logs form the strong frame of our shelter, dug straight into the soil. We weave springy hazel rods between the upright beams and coat them in thick mud. On top, steep bundles of dry straw shed the rainwater easily, keeping our earthen floor dry through the worst storms.",
+        "Strong wooden poles cut from the oak forest form the sturdy walls around our pit. My kin plastered the woven hurdles with mud and straw to block out the biting gale. Over head, a thick cap of bundled river reeds keeps us dry even when downpours last for days."
+      ],
+      "next": [
+        "sunken-hut",
+        "sunken-hut.floor-and-pit",
+        "haunted-walls",
+        "my-family",
+        "winter-cold",
+        "cooking-hearth"
+      ],
+      "reviewed": false
+    },
+    "sunken-hut.floor-and-pit": {
+      "id": "sunken-hut.floor-and-pit",
+      "topic": "sunken-hut",
+      "depth": "deep",
+      "ask": [
+        "Why is the floor dug into the ground?",
+        "What is it like inside the dirt pit?",
+        "Is it damp living underground?"
+      ],
+      "replies": [
+        "Digging two feet into the cool earth shields us from the howling winter winds. The surrounding dirt holds the warmth of our small fire, keeping the room cozy when frost covers the grass. We lay thick dry straw across the earthen floor so it stays warm and soft to walk on.",
+        "Cool earth surrounds us on all sides, blocking out the bitter chill of the open fields. Once the ground dries in summer, it stays solid and firm under foot. We spread fresh rushes and sweet herbs over the soil to keep the air smelling sweet and our bedding clean.",
+        "Earth acts like a thick cloak around our sleeping place, trapping heat from the glowing hearth fire. The wind sweeps right over the low roof instead of battering our walls. It stays surprisingly dry down inside, provided we dig a small drainage ditch right outside our timber doorway."
+      ],
+      "next": [
+        "sunken-hut",
+        "sunken-hut.roof-and-walls",
+        "haunted-walls",
+        "my-family",
+        "winter-cold",
+        "cooking-hearth"
+      ],
+      "reviewed": false
+    },
+    "the-old-roads.road-building": {
+      "id": "the-old-roads.road-building",
+      "topic": "the-old-roads",
+      "depth": "deep",
+      "ask": [
+        "How stay these stone roads so flat?",
+        "Why do the old roads not get muddy?",
+        "What are the stone paths made of?"
+      ],
+      "replies": [
+        "Heavy grey stones were set deep into gravel layers by those ancient folk long ago. Rain washes right off the smooth, rounded surface into the ditches alongside the track. Even when heavy herds of cattle pass by after a winter storm, the solid foundation never sinks into swampy mire.",
+        "Deep layers of broken flints and heavy stone slabs form a foundation that never gives way. The middle of the path is slightly higher than the sides, so rainwater runs straight off into the grass. Moss grows in the cracks now, but the firm stones remain as flat as ever.",
+        "Packed gravel and flat flagstones were laid so craftily that no mud can churn them up. Trees try to push their roots under the edges, but the heavy track holds fast against the wet weather. My swine trot easily along the dry path even in the wettest months."
+      ],
+      "next": [
+        "the-old-roads",
+        "the-old-roads.traders-and-travelers",
+        "kings-and-news",
+        "trade-and-barter",
+        "haunted-walls",
+        "town-history"
+      ],
+      "reviewed": false
+    },
+    "the-old-roads.traders-and-travelers": {
+      "id": "the-old-roads.traders-and-travelers",
+      "topic": "the-old-roads",
+      "depth": "deep",
+      "ask": [
+        "Who walks along these old roads now?",
+        "Do you meet strangers on the stone paths?",
+        "Are the stone tracks busy with people?"
+      ],
+      "replies": [
+        "Occasional pedlars carrying bags of salt or iron tools come walking down from the west. Sometimes a messenger riding a lean horse hurries past, bound for the king's hall far away. Mostly, it is just me, my swine, and the wild deer stepping quietly across the stones.",
+        "Lonely wanderers pass by now and then, seeking a safe route through the dense oak woods. We watch them carefully from the trees until we know they mean no harm. Most travelers carry news of distant villages, glad to find a dry road that leads through the forest.",
+        "Few folk travel this way these days, though a trader might pass once every few weeks. They bring news of the southern kingdoms while their pack ponies rest near our clearing. The track is quiet most days, left entirely to the birds and my grunting herd."
+      ],
+      "next": [
+        "the-old-roads",
+        "the-old-roads.road-building",
+        "kings-and-news",
+        "trade-and-barter",
+        "haunted-walls",
+        "town-history"
+      ],
+      "reviewed": false
+    },
+    "town-history.giant-builders": {
+      "id": "town-history.giant-builders",
+      "topic": "town-history",
+      "depth": "deep",
+      "ask": [
+        "Who were the giant builders of the town?",
+        "What do old stories say about the old people?",
+        "Did giants really build the stone walls?"
+      ],
+      "replies": [
+        "Old tales say men of great stature raised these giant stones using ancient skills lost to us now. They must have been strong as oaks to lift such huge grey blocks so high. Nobody knows where those mysterious folk went, only that they left their empty stone shells behind.",
+        "Folk tell stories of ancient people who possessed strange power over stone and mortar. They built walls higher than three tall men to protect their vast city. We know nothing of their language or names, only that they vanished long before my grandfathers came to these woods.",
+        "Grandfathers used to whisper that mighty beings crafted the vast stone enclosure before our people settled the land. Looking at how high the walls stand, no ordinary woodsman could have piled those heavy flints. Their ghost stories keep us from wandering inside after the sun sets."
+      ],
+      "next": [
+        "town-history",
+        "town-history.why-abandoned",
+        "haunted-walls",
+        "kings-and-news",
+        "old-wells",
+        "the-old-roads"
+      ],
+      "reviewed": false
+    },
+    "town-history.why-abandoned": {
+      "id": "town-history.why-abandoned",
+      "topic": "town-history",
+      "depth": "deep",
+      "ask": [
+        "Why did everyone leave the old town?",
+        "Why is the town empty now?",
+        "What happened to the people who lived inside?"
+      ],
+      "replies": [
+        "Sickness or hard winters may have drove them out, or perhaps their great fires ran out of wood. As far as I know, the folk simply walked away and never returned to fix the roofs. Nature slowly took back the empty streets, covering everything in green ivy and thorn.",
+        "No man living knows for certain why the old city fell quiet and grey. Some say trade dried up and the markets closed, so folk moved out to farm the fertile valleys. Once the wooden roofs rotted away, only the cold stone shell was left standing in the wild.",
+        "Folk say the old dwellers ran out of food or fled from dark sicknesses long ago. When the grand buildings decayed, no one was left to clear the clogged drains or fix the fallen timbers. Now only wild owls nest where crowds of people once walked."
+      ],
+      "next": [
+        "town-history",
+        "town-history.giant-builders",
+        "haunted-walls",
+        "kings-and-news",
+        "old-wells",
+        "the-old-roads"
+      ],
+      "reviewed": false
+    },
+    "trade-and-barter.buying-salt": {
+      "id": "trade-and-barter.buying-salt",
+      "topic": "trade-and-barter",
+      "depth": "deep",
+      "ask": [
+        "Where do you get your salt?",
+        "How do you trade for salt?",
+        "Why is salt so precious to you?"
+      ],
+      "replies": [
+        "White salt arrives with pedlars coming along the south trail. We must give up our best dried goat cheese or a tub of pork fat to earn a small linen pouch of it. Without salt, our butchered meat would spoil quickly before the hard frosts come.",
+        "Men carrying sacks of salt sometimes walk the old road from the sea. It costs us dearly, perhaps a woven blanket or a lively shoat. We need it badly to rub into joints of pork, keeping the cold meat edible all through the barren months.",
+        "Swapping for pure salt takes our most valuable goods. I trade smoked lard or fine wool yarn when those coastal travelers pass our clearing. Every pinch is treasured, for it preserves our food and keeps our bellies from turning sour when winter locks the woods down."
+      ],
+      "next": [
+        "trade-and-barter",
+        "trade-and-barter.iron-tools",
+        "my-tools",
+        "kings-and-news",
+        "what-i-eat",
+        "the-old-roads"
+      ],
+      "reviewed": false
+    },
+    "trade-and-barter.iron-tools": {
+      "id": "trade-and-barter.iron-tools",
+      "topic": "trade-and-barter",
+      "depth": "deep",
+      "ask": [
+        "How do you get your iron tools?",
+        "Who makes the metal things you need?",
+        "What do you swap for iron goods?"
+      ],
+      "replies": [
+        "Travelling metal-smiths bring small blades and heavy axe heads past our trail. I must give a fine, squealing weaner pig to secure a sharp scythe or sturdy scraper. Good black iron lasts for winters on end, making it well worth parting with a healthy young hog.",
+        "Blacksmiths down south fashion the heavy iron knives and cooking hooks we need. When one stops nearby, my household offers cured hides and rich lard to barter for their ironwork. Without their hard tools, chopping wood and skinning game would be nearly impossible in these rough woods.",
+        "Sharp iron hooks and sturdy spade edges come only from skilled smiths. We trade two fat bundles of wool or a prime hog to secure even one knife. A sturdy iron edge is worth more than any fancy trinket when you work all day in the dense forest."
+      ],
+      "next": [
+        "trade-and-barter",
+        "trade-and-barter.buying-salt",
+        "my-tools",
+        "kings-and-news",
+        "what-i-eat",
+        "the-old-roads"
+      ],
+      "reviewed": false
+    },
+    "weather-and-seasons.autumn-acorns": {
+      "id": "weather-and-seasons.autumn-acorns",
+      "topic": "weather-and-seasons",
+      "depth": "deep",
+      "ask": [
+        "What is autumn like in the woods?",
+        "How do the pigs fatten in the fall?",
+        "Why is acorn season your favourite time?"
+      ],
+      "replies": [
+        "Golden leaves drop everywhere as autumn settles over the silent stone ruins. The swine run wild beneath the giant oaks, crunching fallen acorns until their bellies drag along the damp dirt. It is our happiest season, filled with easy foraging and plenty of food for every beast.",
+        "Crisp autumn mornings bring showers of rich brown acorns crashing through branches. My herd knows the sound well and scampers across the brush to gobble every nut. The beasts grow plump and glossy, saving us from worrying about their fodder before the bitter frost freezes the earth.",
+        "Brown oak nuts cover the paths once the cold winds begin shaking the trees. Driving the swine out is joyful work then, as they feed greedily on mast and chestnuts. Seeing my herd fat and content gives my heart great ease before the bleak winter arrives."
+      ],
+      "next": [
+        "weather-and-seasons",
+        "weather-and-seasons.spring-pasture",
+        "winter-cold",
+        "cooking-hearth",
+        "normal-day",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "weather-and-seasons.spring-pasture": {
+      "id": "weather-and-seasons.spring-pasture",
+      "topic": "weather-and-seasons",
+      "depth": "deep",
+      "ask": [
+        "What happens when spring finally returns?",
+        "How does spring change your daily chores?",
+        "What do your animals eat in the spring?"
+      ],
+      "replies": [
+        "Warm breezes melt the frost and coax bright green shoots from the sodden ground. The goats leap with joy to nibble fresh briar leaves and tender clover among the old fallen rubble. My daily wanderings grow easier as the sun lingers longer in the high sky.",
+        "Longer days bring sweet wild grasses sprouting through cracks in the old masonry. I lead the herd out at early dawn, watching the pigs dig for tender roots while goats browse bramble tips. After months of darkness, smelling the rich damp earth feels like a blessing.",
+        "Green shoots covering the ditch banks signal that the bitter starvation days have ended. We drive our lean beasts toward sunny hollows inside the mossy walls where fresh weeds grow thick. The milk flows rich again, and everyone finds more energy to rebuild fallen hurdle pens."
+      ],
+      "next": [
+        "weather-and-seasons",
+        "weather-and-seasons.autumn-acorns",
+        "winter-cold",
+        "cooking-hearth",
+        "normal-day",
+        "festivals-and-gods"
+      ],
+      "reviewed": false
+    },
+    "what-i-eat.wild-herbs": {
+      "id": "what-i-eat.wild-herbs",
+      "topic": "what-i-eat",
+      "depth": "deep",
+      "ask": [
+        "What wild plants do you collect for food?",
+        "Do you gather greens from the woods?",
+        "How do you make your porridge taste good?"
+      ],
+      "replies": [
+        "Green sorrel, sour dock leaves, and pungent wild garlic grow thick along ditch banks. We toss handfuls of these chopped greens right into our bubbling grain kettle every evening. They add a sharp, pleasant bite to our otherwise plain mush, keeping our blood strong and healthy.",
+        "Broad leaves of wild mustard and crushed watercress grow near muddy forest pools. I scoop them up during my herding rounds and carry them home in my wool tunic. Boiled into thin grain porridge, they keep the mush tasty and save our precious barley from vanishing too quickly.",
+        "Wild herbs gathered from the damp shadows give our simple meals plenty of hearty flavour. Young nettle tops and ditch garlic stew nicely alongside dried peas in the clay pot. Eating these wild greens keeps our bellies content whenever our supply of dried bread runs low."
+      ],
+      "next": [
+        "what-i-eat",
+        "what-i-eat.hazelnuts-berries",
+        "my-pigs",
+        "cooking-hearth",
+        "trade-and-barter",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "what-i-eat.hazelnuts-berries": {
+      "id": "what-i-eat.hazelnuts-berries",
+      "topic": "what-i-eat",
+      "depth": "deep",
+      "ask": [
+        "Do you ever eat sweet things?",
+        "Where do you find nuts and berries?",
+        "What snacks do you find while herding?"
+      ],
+      "replies": [
+        "Dark blackberries ripen along the bramble hedges when late summer sun warms the ancient walls. I pick them straight into my mouth while my pigs graze quietly nearby. Later, we collect dry hazelnuts from the coppiced groves to crack by the hearth through long winter evenings.",
+        "Sweet wild strawberries hide low in sunny grass clearings within the old town boundaries. My kin dry small baskets of them on warm stones alongside small sour crabapples. Chewing a handful of hard hazelnuts and dried fruit is the finest treat we could ever hope for.",
+        "Ripe elderberries and wild plums offer sweet bites when the sun is fierce. I knock clusters down with my herding pole and share the fallen bounty with my younger kin. We crack hazel nuts between flat stones, storing the sweet meats away in hollowed wooden jars."
+      ],
+      "next": [
+        "what-i-eat",
+        "what-i-eat.wild-herbs",
+        "my-pigs",
+        "cooking-hearth",
+        "trade-and-barter",
+        "keeping-goats"
+      ],
+      "reviewed": false
+    },
+    "winter-cold.hut-straw": {
+      "id": "winter-cold.hut-straw",
+      "topic": "winter-cold",
+      "depth": "deep",
+      "ask": [
+        "How do you stay warm at night in winter?",
+        "What kind of bedding keeps you warm?",
+        "How does straw help in the freezing cold?"
+      ],
+      "replies": [
+        "Deep mounds of dry barley straw line the sunken earth floor where we sleep. We burrow into the fragrant stalks like our swine do, pulling greasy woollen cloaks tight across our ears. The thick straw traps our body heat, keeping the biting draughts from freezing our toes.",
+        "Piles of dried meadow grass and clean straw provide our soft, insulating nest each night. My kin sleep huddled together under heavy sheepskins right near the dying embers. The ground stays warm down in our pit, sheltered far beneath the cruel winter winds howling overhead.",
+        "Clean golden straw piled waist-high keeps the fierce night chill from biting into our limbs. We tuck ourselves deep into the bedding alongside our woven blankets. Even when ice coats the thatch outside, our sleeping pit stays surprisingly snug until the morning chores begin."
+      ],
+      "next": [
+        "winter-cold",
+        "winter-cold.firewood-chores",
+        "sunken-hut",
+        "cooking-hearth",
+        "my-clothes",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    },
+    "winter-cold.firewood-chores": {
+      "id": "winter-cold.firewood-chores",
+      "topic": "winter-cold",
+      "depth": "deep",
+      "ask": [
+        "How do you get firewood for the winter?",
+        "What kind of wood do you burn to stay warm?",
+        "Is it hard to find dry logs in the snow?"
+      ],
+      "replies": [
+        "Dead oak branches and dry birch limbs are dragged home throughout the crisp autumn months. We stack them high against our sunken hut walls beneath broad thatch eaves. When heavy blizzards bury the paths, having seasoned logs close at hand keeps our hearth fed without freezing our hands.",
+        "Gathering dry fuel means searching the dense thickets with a sharp iron billhook. I chop fallen ash boughs and bind them into tight faggots to carry on my back. Burning seasoned wood produces sweet, clear heat that chases away the damp chill settling over our earth floor.",
+        "Dry fallen wood must be found before the deep snow blankets the forest floor completely. I drag dead elm trunks across the hard frozen ground, stacking them near our doorway. We burn thick hardwood boles slowly through the nights so we never lose our precious cooking embers."
+      ],
+      "next": [
+        "winter-cold",
+        "winter-cold.hut-straw",
+        "sunken-hut",
+        "cooking-hearth",
+        "my-clothes",
+        "weather-and-seasons"
+      ],
+      "reviewed": false
+    }
+  }
+}

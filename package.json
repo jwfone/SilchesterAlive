@@ -1,0 +1,35 @@
+{
+  "name": "silchester-calleva",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "tsc --noEmit",
+    "audit": "npm audit --omit=dev",
+    "perf": "node scripts/perf-budget.mjs",
+    "smoke": "tsc -p tsconfig.smoke.json && node .smoke/smoke.js",
+    "import:plan": "node scripts/import-town-plan.mjs",
+    "import:gis": "node scripts/import-gis.mjs",
+    "import:collectibles": "node scripts/import-collectibles.mjs",
+    "build:domain": "tsc -p tsconfig.domain.json",
+    "bank:generate": "npm run build:domain && node --env-file-if-exists=.env scripts/generate-dialogue-bank.mjs",
+    "bank:validate": "npm run build:domain && node scripts/validate-dialogue-bank.mjs"
+  },
+  "dependencies": {
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "proj4": "^2.22.0",
+    "shpjs": "^6.2.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}

@@ -1,0 +1,66 @@
+# Silchester (Calleva Atrebatum) — Netlify deployment.
+# Publish directory is Vite output only, so GIS sources / scripts are never served.
+
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions.dialogue]
+  timeout = 26
+
+# Immutable caching for Vite-hashed assets (filename changes on every build).
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML must never be kept by the browser: a cached index.html would keep
+# pointing at old hashed JS. no-store covers Safari, which can ignore
+# max-age=0 / must-revalidate. The CDN may cache HTML; atomic deploys
+# invalidate it, so visitors still get the new document after a publish.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = '''
+    max-age=0,
+    no-cache,
+    no-store,
+    must-revalidate'''
+    Pragma = "no-cache"
+    Expires = "0"
+    Netlify-CDN-Cache-Control = "public, s-maxage=31536000, must-revalidate"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = '''
+    max-age=0,
+    no-cache,
+    no-store,
+    must-revalidate'''
+    Pragma = "no-cache"
+    Expires = "0"
+    Netlify-CDN-Cache-Control = "public, s-maxage=31536000, must-revalidate"
+
+# Security headers for all pages.
+# NOTE: COOP is intentionally set WITHOUT COEP (no cross-origin isolation
+# needed — no SharedArrayBuffer). Adding COEP: require-corp would break the
+# same-origin/blob: canvas textures and map relief images, so don't "fix" this.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Resource-Policy = "same-origin"
+    X-Permitted-Cross-Domain-Policies = "none"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # style-src has NO 'unsafe-inline': all CSS lives in src/styles.css
+    # (bundled same-origin). JS style.* assignments are unaffected by style-src.
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src https://sketchfab.com https://*.sketchfab.com; frame-ancestors 'none'; upgrade-insecure-requests"

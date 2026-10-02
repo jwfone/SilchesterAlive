@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Silchester — Calleva Atrebatum (walkable greybox)</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <details id="hud">
+      <summary>
+        <h1>Calleva atrebatum 3D about</h1>
+        <button type="button" id="about-open" aria-haspopup="dialog" aria-controls="about-modal">About</button>
+      </summary>
+      <p id="controls-hint">Arrow keys move, <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> look, <kbd>Shift</kbd> run, <kbd>Space</kbd> jump, <kbd>M</kbd> map.</p>
+      <fieldset id="controls">
+        <legend>Controls</legend>
+        <label><input type="radio" name="controlmode" value="desktop" checked> Keyboard + mouse</label>
+        <label><input type="radio" name="controlmode" value="touch"> Touch D-pad (drag scene to look)</label>
+      </fieldset>
+      <fieldset id="layers">
+        <legend>Show / hide (keys <kbd>1</kbd>–<kbd>6</kbd>, <kbd>G</kbd> ghosts)</legend>
+        <label title="GIS 26 roads + 27 drains"><input type="checkbox" data-3dlayer="roads" checked> Roads</label>
+        <label title="Interpretive reconstructions: forum, baths, mansio, temples, church, amphitheatre"><input type="checkbox" data-3dlayer="key" checked> Key buildings</label>
+        <label title="GIS 10-14 Great Plan shades 1-5 + infill (extruded massing)"><input type="checkbox" data-3dlayer="buildings" checked> Other buildings</label>
+        <label title="GIS 10-14 Great Plan outlines — flat overlay, same rings as the 2D map"><input type="checkbox" data-3dlayer="footprints" checked> Other building footprints</label>
+        <label title="GIS 04 wall circuit"><input type="checkbox" data-3dlayer="walls" checked> Town walls &amp; gates</label>
+        <label title="Street-walking ghost NPCs (key G)"><input type="checkbox" data-ghost="ghosts" checked> Ghosts</label>
+      </fieldset>
+      <details id="sources">
+        <summary>Sources (model largely based on Silchester GIS)</summary>
+        <p class="cite">Roads, town wall, water features, buildings, earthworks and terrain in this model are largely derived from the GIS files of the Silchester Mapping Project 2005–10. Please cite as: Silchester Mapping Project 2005–10, John Creighton with Robert Fry (2016), University of Reading.</p>
+        <ul>
+          <li><a href="https://archaeologydataservice.ac.uk/archives/view/silchester_ba_2016/downloads.cfm" target="_blank" rel="noopener noreferrer">Silchester GIS downloads (Archaeology Data Service)</a> — source of the road, wall, water, building, earthwork and contour layers used</li>
+          <li><a href="https://www.english-heritage.org.uk/visit/places/silchester-roman-city-walls-and-amphitheatre/history/" target="_blank" rel="noopener noreferrer">English Heritage history of Calleva Atrebatum</a></li>
+          <li><a href="https://www.english-heritage.org.uk/siteassets/home/visit/places-to-visit/silchester-roman-city-walls-and-ampitheatre/silchester-roman-town-phased-plan.pdf" target="_blank" rel="noopener noreferrer">English Heritage phased plan of Silchester (PDF)</a> — background reference</li>
+          <li><a href="https://archaeologydataservice.ac.uk/library/browse/issue.xhtml?recordId=1161494&amp;recordType=MonographSeries" target="_blank" rel="noopener noreferrer">Silchester: Changing Visions of a Roman Town (Britannia Monograph 28)</a></li>
+        </ul>
+      </details>
+    </details>
+    <div id="stats">…</div>
+    <div id="progress">
+      <div id="collection" title="3D scans you have collected">
+        <span id="collection-count">0/0 collected</span>
+        <button type="button" id="collection-open" title="Browse your collection (I)">Collection</button>
+      </div>
+      <div id="ghosts-log" title="Ghosts you have spoken to">
+        <span id="ghosts-count">0/11 spoken to</span>
+        <button type="button" id="ghosts-open" title="See who you have met (J)">Ghosts</button>
+      </div>
+    </div>
+    <div id="collect-toast" hidden></div>
+    <div id="paused">Paused — click here to walk again (panels below stay clickable)</div>
+    <div id="dialogue" hidden>
+      <div id="dialogue-panel">
+        <div id="dialogue-speaker">
+          <div id="dialogue-role">A ghost</div>
+          <div id="dialogue-name"></div>
+          <div id="dialogue-year"></div>
+        </div>
+        <div id="dialogue-line">Hello.</div>
+        <div id="dialogue-responses">
+          <button type="button"><kbd>1</kbd> Hello — who are you?</button>
+          <button type="button"><kbd>2</kbd> What happened here?</button>
+          <button type="button"><kbd>3</kbd> What is this place?</button>
+          <button type="button"><kbd>4</kbd> Farewell.</button>
+        </div>
+        <div id="dialogue-status" aria-live="polite"></div>
+      </div>
+    </div>
+    <canvas id="minimap" width="180" height="180"></canvas>
+    <div id="overlay">
+      <div id="overlay-card">
+        <h2 id="overlay-title">Enter Calleva Atrebatum</h2>
+        <ol id="overlay-controls">
+          <li>Arrow keys to move around</li>
+          <li><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> change the direction you are facing</li>
+          <li>Hold <kbd>Shift</kbd> to run</li>
+          <li><kbd>Space</kbd> to jump</li>
+          <li><kbd>M</kbd> key opens and closes the map</li>
+        </ol>
+        <button type="button" id="overlay-ok">OK</button>
+      </div>
+    </div>
+    <div id="collectible-modal" hidden>
+      <div id="collectible-panel" role="dialog" aria-modal="true" aria-labelledby="collectible-title">
+        <div id="collectible-head">
+          <div>
+            <div id="collectible-kind">3D scan</div>
+            <h2 id="collectible-title">Scan</h2>
+          </div>
+          <button type="button" id="collectible-close" title="Close (Esc)">× Close</button>
+        </div>
+        <div id="collectible-frame-wrap">
+          <iframe id="collectible-frame" title="3D scan" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share></iframe>
+        </div>
+        <p id="collectible-caption"></p>
+        <p id="collectible-attr"></p>
+        <div id="collectible-foot">
+          <span id="collectible-progress"></span>
+          <button type="button" id="collectible-browse" title="Browse your collection (I)">Browse collection</button>
+        </div>
+      </div>
+    </div>
+    <div id="inventory-modal" hidden>
+      <div id="inventory-panel" role="dialog" aria-modal="true" aria-labelledby="inventory-title">
+        <div id="inventory-head">
+          <h2 id="inventory-title">Your collection</h2>
+          <button type="button" id="inventory-close" title="Close (Esc)">× Close</button>
+        </div>
+        <div id="inventory-list"></div>
+        <div id="inventory-foot">
+          <p id="inventory-remaining"></p>
+          <button type="button" id="inventory-clear" title="Reset collected scans and spoken ghosts">Clear inventories</button>
+          <div id="inventory-clear-confirm" hidden>
+            <p id="inventory-clear-prompt">Clear your collection and the ghosts you have spoken to? This cannot be undone.</p>
+            <div id="inventory-clear-actions">
+              <button type="button" id="inventory-clear-cancel">Cancel</button>
+              <button type="button" id="inventory-clear-yes">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="about-modal" hidden>
+      <div id="about-panel" role="dialog" aria-modal="true" aria-labelledby="about-title">
+        <div id="about-head">
+          <h2 id="about-title">About</h2>
+          <button type="button" id="about-close" title="Close (Esc)">× Close</button>
+        </div>
+        <div id="about-body">
+          <h3>What this is</h3>
+          <p>A walkable 3D model of Calleva Atrebatum, the Roman town at Silchester. You can collect 3D scans of actual artefacts and dig sites, and talk with ghosts from different periods of Silchester’s history. The aim was to give a sense of what the place might have been like, in an interactive way.</p>
+          <p>This was a quick project made mainly using AI coding models with about 1 day’s worth of effort, drawing on freely available archeological data. For the historical accuracy see below.</p>
+          <p>It should work on most modern web browsers and mobile devices.</p>
+          <h3>The structures</h3>
+          <p>The roads, building footprints, earthworks and the ground contours are taken from the GIS scanning data of the Silchester Mapping Project 2005–10.</p>
+          <p>Since these are based on real mapping data, the positions are true to life, though the building footprints don’t represent the full range of structures that have been present in the town over it’s 500-year inhabited period. They likely represent the most long-lasting Roman buildings.</p>
+          <p>The buildings themselves are just extruded from the footprints and can only give a vague sense of what the real ones were like.</p>
+          <p>Several key buildings: the forum, baths, mansio, temples, church and amphitheatre are rough 3D reconstructions and are not exact archeological models.</p>
+          <h3>Collectable 3D scans</h3>
+          <p>These are 3D models linked directly to their source in Reading University and Reading Museum-linked websites. There are more of these that can be added, and I suspect many people are not aware they are available.</p>
+          <h3>Ghosts</h3>
+          <p>You can find and talk to a number of ghosts from throughout the site’s key history. Each ghost only knows their own time, for example the Iron Age Atrebates farmer will not talk about the Roman forum or the stone walls, as these would not be built until hundreds of years later.</p>
+          <p>The ghost dialogue is all pre-scripted and appropriate for children say over 9 and over. It was generated and checked using the Gemini AI model so may not be 100% accurate, but is hopefully evocative. There is no live ‘AI chat’ access.</p>
+          <h3>Sources</h3>
+          <p class="cite">Please cite the mapping data as: Silchester Mapping Project 2005–10, John Creighton with Robert Fry (2016), University of Reading.</p>
+          <ul>
+            <li><a href="https://archaeologydataservice.ac.uk/archives/view/silchester_ba_2016/downloads.cfm" target="_blank" rel="noopener noreferrer">Silchester GIS downloads (Archaeology Data Service)</a></li>
+            <li><a href="https://www.english-heritage.org.uk/visit/places/silchester-roman-city-walls-and-amphitheatre/history/" target="_blank" rel="noopener noreferrer">English Heritage history of Calleva Atrebatum</a></li>
+            <li><a href="https://www.english-heritage.org.uk/siteassets/home/visit/places-to-visit/silchester-roman-city-walls-and-ampitheatre/silchester-roman-town-phased-plan.pdf" target="_blank" rel="noopener noreferrer">English Heritage phased plan of Silchester (PDF)</a></li>
+            <li><a href="https://archaeologydataservice.ac.uk/library/browse/issue.xhtml?recordId=1161494&amp;recordType=MonographSeries" target="_blank" rel="noopener noreferrer">Silchester: Changing Visions of a Roman Town (Britannia Monograph 28)</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="ghosts-modal" hidden>
+      <div id="ghosts-panel" role="dialog" aria-modal="true" aria-labelledby="ghosts-title">
+        <div id="ghosts-head">
+          <h2 id="ghosts-title">Ghosts of Calleva</h2>
+          <button type="button" id="ghosts-close" title="Close (Esc)">× Close</button>
+        </div>
+        <div id="ghosts-list"></div>
+        <p id="ghosts-remaining"></p>
+      </div>
+    </div>
+    <div id="touch-ui" hidden>
+      <div id="dpad" aria-label="Move (D-pad)">
+        <button type="button" data-dir="forward" aria-label="Move forward">▲</button>
+        <button type="button" data-dir="left" aria-label="Move left">◀</button>
+        <button type="button" data-dir="right" aria-label="Move right">▶</button>
+        <button type="button" data-dir="back" aria-label="Move back">▼</button>
+      </div>
+      <button type="button" id="run-toggle" aria-pressed="false" title="Hold to run">RUN</button>
+    </div>
+    <div id="map-overlay" hidden>
+      <div id="map-panel">
+        <div id="map-head">
+          <span id="map-title">GIS viewer<span>exact imported surfaces</span></span>
+          <span id="map-tools">
+            <span class="map-tool-group">
+              <button type="button" id="map-zoom-in" title="Zoom in (+)">+</button>
+              <button type="button" id="map-zoom-out" title="Zoom out (−)">−</button>
+            </span>
+            <button type="button" id="map-find" title="Centre on your position">◎<span class="map-btn-extra"> You</span></button>
+            <button type="button" id="map-reset" title="Reset view (0)">Reset</button>
+            <button type="button" id="map-close" title="Close">×<span class="map-btn-extra"> Close</span></button>
+          </span>
+        </div>
+        <div id="map-body">
+          <div id="map-stage">
+            <div id="map-canvas-wrap">
+              <canvas id="detailmap" width="720" height="720"></canvas>
+              <canvas id="detailmap-markers" width="720" height="720" aria-hidden="true"></canvas>
+            </div>
+          </div>
+          <aside id="map-sidebar">
+            <div id="map-legend">
+              <h2>Show / hide</h2>
+              <div class="map-legend-group">
+                <h3>Terrain</h3>
+                <label title="GIS 01 contours — relief backdrop (IDW heightfield from 1m contours)"><input type="checkbox" data-layer="terrain" checked> relief (01)</label>
+                <label title="GIS 01 contours — exact 1m contour vectors with elevations"><input type="checkbox" data-layer="contours" checked> <span class="sw sw-contours"></span>contours (01)</label>
+                <label title="GIS 02 water"><input type="checkbox" data-layer="water" checked> <span class="sw sw-water"></span>water (02)</label>
+                <label title="GIS 03 upstanding earthworks — OS hatchures chained into banks, height from GIS 01 contours, rendered as turf mounds"><input type="checkbox" data-layer="earthworks" checked> <span class="sw sw-earthworks"></span>earthworks (03)</label>
+              </div>
+              <div class="map-legend-group">
+                <h3>Buildings</h3>
+                <label title="GIS 10 shade 1 footprints"><input type="checkbox" data-layer="shade1" checked> <span class="sw sw-shade1"></span>shade 1 (10)</label>
+                <label title="GIS 11 shade 2 footprints"><input type="checkbox" data-layer="shade2" checked> <span class="sw sw-shade2"></span>shade 2 (11)</label>
+                <label title="GIS 12 shade 3 footprints"><input type="checkbox" data-layer="shade3" checked> <span class="sw sw-shade3"></span>shade 3 (12)</label>
+                <label title="GIS 13 shade 4 footprints (ruins)"><input type="checkbox" data-layer="shade4" checked> <span class="sw sw-shade4"></span>shade 4 (13)</label>
+                <label title="GIS 14 shade 5 footprints"><input type="checkbox" data-layer="shade5" checked> <span class="sw sw-shade5"></span>shade 5 (14)</label>
+              </div>
+              <div class="map-legend-group">
+                <h3>Town</h3>
+                <label title="GIS 26 roads"><input type="checkbox" data-layer="streets" checked> <span class="sw sw-streets"></span>roads (26)</label>
+                <label title="GIS 27 drains"><input type="checkbox" data-layer="drains"> <span class="sw sw-drains"></span>drains (27)</label>
+                <label title="GIS 04 wall circuit + gates"><input type="checkbox" data-layer="walls" checked> <span class="sw sw-walls"></span>wall (04)</label>
+                <label><input type="checkbox" data-layer="labels" checked> labels</label>
+                <span class="map-legend-key"><span class="sw sw-you"></span>you</span>
+                <span class="map-legend-key"><span class="sw sw-ghost"></span>ghosts</span>
+                <span class="map-legend-key"><span class="sw sw-ghost-met"></span>spoken to</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div id="map-foot">
+          <div id="map-warn">Hidden by the 3D show/hide toggles (HUD, keys <kbd>1</kbd>–<kbd>5</kbd>): <span id="map-warn-list"></span><button id="map-show-all" title="Re-enable all 3D layers (also restores map content)">Show all</button></div>
+          <div id="map-hint">Drag to pan · scroll / pinch to zoom · double-click zooms in · <kbd>+</kbd>/<kbd>−</kbd> zoom, <kbd>0</kbd> resets, <kbd>M</kbd>/<kbd>Esc</kbd> closes. Each GIS file toggles separately (10–14 = shades 1–5).</div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

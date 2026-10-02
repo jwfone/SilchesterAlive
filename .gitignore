@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.smoke/
+tmp/
+.domain-out/
+.env
+.env.local
+.netlify/
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,221 @@
+{
+ "type": "FeatureCollection",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "EPSG:27700"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "forum-basilica",
+    "status": "user-pinned",
+    "source": "user lat/lon NW 51.357496,-1.083949 SE 51.356762,-1.082551"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       463881.6,
+       162445.2
+      ],
+      [
+       463978.9,
+       162446.4
+      ],
+      [
+       463979.9,
+       162364.8
+      ],
+      [
+       463882.6,
+       162363.6
+      ],
+      [
+       463881.6,
+       162445.2
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "mansio-courtyard",
+    "status": "user-pinned",
+    "source": "user lat/lon NW 51.354831,-1.082125 SE 51.354525,-1.081468"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464012.3,
+       162150.4
+      ],
+      [
+       464058,
+       162151
+      ],
+      [
+       464058.4,
+       162117
+      ],
+      [
+       464012.7,
+       162116.4
+      ],
+      [
+       464012.3,
+       162150.4
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "baths",
+    "status": "user-pinned",
+    "source": "user lat/lon NW 51.356492,-1.07979 SE 51.355912,-1.079616, img SE 51.355915,-1.079609"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464172.5,
+       162337.2
+      ],
+      [
+       464184.7,
+       162337.3
+      ],
+      [
+       464185.5,
+       162272.8
+      ],
+      [
+       464173.4,
+       162272.7
+      ],
+      [
+       464172.5,
+       162337.2
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "temple-1",
+    "status": "user-pinned-centre: position from user lat/lon 51.357019,-1.07781; size/rotation still kit placeholders until corners pinned",
+    "source": "user lat/lon centre 51.357019,-1.07781"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464300.7,
+       162406.5
+      ],
+      [
+       464318.7,
+       162406.5
+      ],
+      [
+       464318.7,
+       162388.5
+      ],
+      [
+       464300.7,
+       162388.5
+      ],
+      [
+       464300.7,
+       162406.5
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "temple-2",
+    "status": "user-pinned-centre: position from user lat/lon 51.356728,-1.077829; size/rotation still kit placeholders until corners pinned",
+    "source": "user lat/lon centre 51.356728,-1.077829"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464301.8,
+       162372.1
+      ],
+      [
+       464315.8,
+       162372.1
+      ],
+      [
+       464315.8,
+       162358.1
+      ],
+      [
+       464301.8,
+       162358.1
+      ],
+      [
+       464301.8,
+       162372.1
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "church-st-mary",
+    "status": "user-pinned-centre: position from user lat/lon 51.356724,-1.077382; size/rotation still kit placeholders until corners pinned",
+    "source": "user lat/lon centre 51.356724,-1.077382 (NW 51.356803,-1.077456 consistent: 10.2m half-diagonal SE)"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464329.5,
+       162369.1
+      ],
+      [
+       464349.4,
+       162371.1
+      ],
+      [
+       464350.3,
+       162361.1
+      ],
+      [
+       464330.4,
+       162359.1
+      ],
+      [
+       464329.5,
+       162369.1
+      ]
+     ]
+    ]
+   }
+  }
+ ]
+}
