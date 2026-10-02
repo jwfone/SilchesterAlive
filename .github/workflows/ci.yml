@@ -22,7 +22,7 @@ jobs:
       - run: npm ci
       # Secret scan: fails on committed keys/tokens (e.g. .env contents).
       - name: Secret scan (gitleaks)
-        uses: gitleaks/gitleaks-action@v2.1.0
+        uses: gitleaks/gitleaks-action@v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run check
