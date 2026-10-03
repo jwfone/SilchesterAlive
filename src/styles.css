@@ -83,13 +83,12 @@ canvas { display: block; }
   margin-bottom: 8px;
   list-style: none;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
 }
 #about-open {
   flex: 0 0 auto;
   cursor: pointer;
-  margin-top: 1px;
   background: var(--gold);
   color: var(--gold-ink);
   border: 1px solid transparent;
@@ -103,20 +102,6 @@ canvas { display: block; }
 #about-open:hover { background: #e8c043; }
 #about-open:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 #hud > summary::-webkit-details-marker { display: none; }
-#hud > summary::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  flex: 0 0 auto;
-  margin: 6px 0 0;
-  border-right: 1.5px solid var(--gold);
-  border-bottom: 1.5px solid var(--gold);
-  transform: rotate(-45deg);
-  opacity: .7;
-  transition: transform .15s ease;
-}
-#hud[open] > summary::before { transform: rotate(45deg); }
 #hud:not([open]) { padding: 8px 12px; }
 #hud:not([open]) > summary { margin-bottom: 0; }
 #hud p { font-size: 12.5px; margin: 6px 0; color: var(--ink-dim); line-height: 1.45; }
