@@ -33,11 +33,11 @@ Controls: arrow keys move, `W` `A` `S` `D` look, `Shift` run, `Space` jump, `M` 
 
 Ghost conversations are served from a pre-written dialogue bank in `public/dialogue-bank/` (drafts and review notes in `dialogue-bank/`). No API key is needed to play.
 
-The bank is generated with Gemini. To regenerate it, or to run the optional live-dialogue Netlify function (`netlify/functions/dialogue.ts`), copy `.env.example` to `.env` and set `GEMINI_API_KEY`. Never commit `.env`; it is gitignored.
+The bank was generated offline with Gemini. To regenerate it, copy `.env.example` to `.env` and set `GEMINI_API_KEY`. Never commit `.env`; it is gitignored.
 
 ## Deployment
 
-A version is deployed on Netlify at https://silchesteralive.netlify.app/ see `netlify.toml`. Production environment variables are set in the Netlify dashboard, not in the repo.
+A version is deployed on Netlify at https://silchesteralive.netlify.app/ see `netlify.toml`.
 
 ## Project layout
 

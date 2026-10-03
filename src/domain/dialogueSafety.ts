@@ -1,5 +1,5 @@
 // Shared child-safety + immersion checks for harvested dialogue.
-// `BLOCKED` matches the live proxy list in netlify/functions/dialogue.ts.
+// Child-safety blocklist applied when generating and validating the dialogue bank.
 
 export const BLOCKED = new RegExp(
   [
