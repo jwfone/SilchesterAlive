@@ -1,8 +1,8 @@
 # Silchester — Calleva Atrebatum 3D
 
-A walkable 3D reconstruction of the Roman town of Calleva Atrebatum (Silchester, Hampshire), built with [three.js](https://threejs.org/) and Vite. Walk the streets, explore the forum, baths, amphitheatre and town walls, collect 3D scans of finds, and talk to ghosts of the town's inhabitants from different eras.
+A walkable 3D reconstruction of the Roman town of Calleva Atrebatum (Silchester, Hampshire). You can walk the streets, explore key buildings, collect 3D scans of finds, and talk to ghosts of the town's inhabitants from different eras.
 
-This was a quick project made mainly with AI coding models, using freely available archaeological data. The model is a greybox interpretation, not a scholarly reconstruction.
+This was a quick project made with AI coding models, using freely available archaeological data. The model is mostly an interpretation, not a scholarly reconstruction.
 
 ## Run locally
 
