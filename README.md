@@ -37,7 +37,7 @@ The bank is generated with Gemini. To regenerate it, or to run the optional live
 
 ## Deployment
 
-Deployed on Netlify; see `netlify.toml`. Production environment variables are set in the Netlify dashboard, not in the repo.
+A version is deployed on Netlify at https://silchesteralive.netlify.app/ see `netlify.toml`. Production environment variables are set in the Netlify dashboard, not in the repo.
 
 ## Project layout
 
