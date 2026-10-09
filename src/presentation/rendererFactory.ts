@@ -9,6 +9,8 @@ export interface RenderAdapter {
   setAnimationLoop(cb: ((time: number) => void) | null): void;
   drawCalls(): number;
   triangles(): number;
+  /** The underlying WebGL2 renderer (absent on the experimental WebGPU path). */
+  webgl?: THREE.WebGLRenderer;
 }
 
 // Renderer factory: WebGPU first (modern browsers), WebGL2 fallback.
@@ -53,5 +55,6 @@ export async function createRenderer(dpr: number, preferWebGPU: boolean): Promis
     setAnimationLoop: cb => r.setAnimationLoop(cb),
     drawCalls: () => r.info.render.calls,
     triangles: () => r.info.render.triangles,
+    webgl: r,
   };
 }

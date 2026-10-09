@@ -1022,6 +1022,18 @@ function extractDrains(name, feats) {
 }
 
 // ---------- run ----------
+// --keys-only: re-read assets/key-buildings.geojson and rewrite just the
+// GENERATED_KEYS line of the existing generated plan (no GIS zips needed).
+if (flags['keys-only'] != null) {
+  const src = readFileSync(OUT, 'utf8');
+  const re = /^export const GENERATED_KEYS: GeneratedKey\[\] = .*;$/m;
+  if (!re.test(src)) { console.error('[import:gis] --keys-only: GENERATED_KEYS line not found'); process.exit(1); }
+  const next = src.replace(re, () => `export const GENERATED_KEYS: GeneratedKey[] = ${JSON.stringify(readKeyAnchors())};`);
+  writeFileSync(OUT, next);
+  console.log(`[import:gis] --keys-only: rewrote GENERATED_KEYS in ${OUT}`);
+  process.exit(0);
+}
+
 const inputs = collectInputs(targets);
 if (!inputs.length) {
   console.error('[import:gis] no .shp/.zip found. Expected GIS data/*.zip');
@@ -1325,6 +1337,9 @@ if (terrainSamples.length) {
 // assets/key-buildings.geojson: one Polygon per key in EPSG:27700 (E,N).
 // Converted to local (x = E - FORUM_E, z = FORUM_N - N); centre + PCA box
 // emitted as GENERATED_KEYS. Missing file -> empty array (hand fallback).
+// Also run standalone via --keys-only (see the run section).
+const keyAnchors = readKeyAnchors();
+function readKeyAnchors() {
 const keyAnchors = [];
 try {
   const keyPath = join(ROOT, 'assets', 'key-buildings.geojson');
@@ -1356,6 +1371,8 @@ try {
   }
 } catch (err) {
   console.warn(`[import:gis] keys: failed to read anchors (${err?.message ?? err}) — hand fallback`);
+}
+return keyAnchors;
 }
 
 // ---------- emit ----------

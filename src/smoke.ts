@@ -19,6 +19,9 @@ import {
   CollectibleController, COLLECTIBLE_COLOR_COLLECTED, COLLECTIBLE_COLOR_UNCOLLECTED,
 } from './application/CollectibleController.js';
 import * as THREE from 'three';
+import { parseAutoTierCache, parseBuildingLook, stepDownTier, tierForLook, tierFromBench } from './domain/displaySettings.js';
+import { KEY_PLANS } from './domain/keyPlans.generated.js';
+import { planToWorld } from './domain/keyPlan.js';
 
 function makeCtx(): unknown {
   const grad = { addColorStop(): void { /* no-op */ } };
@@ -392,5 +395,42 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
   if (pickReply({ ...bank.nodes.food, replies: ['only'] }, 0, () => 0).index !== 0) {
     throw new Error('single reply has no alternative to avoid');
   }
+}
+// Plan-built key buildings (baths): built from the plan, placed on its surveyed
+// footprint, with three LOD levels, colliders, and only one level counted as a draw.
+{
+  const baths = world.planBuildings.find((b) => b.id === 'baths');
+  if (!baths) throw new Error('plan-built baths missing from the world');
+  if (!KEY_PLANS.baths) throw new Error('KEY_PLANS.baths missing (npm run import:keyplans)');
+  if (baths.object.levels.length !== 3) throw new Error(`baths LOD levels ${baths.object.levels.length} != 3`);
+  const t = baths.trisByLod;
+  if (!(t[0] > t[1] && t[1] > t[2] && t[2] > 0)) throw new Error(`baths LOD tris not decreasing: ${t[0]}/${t[1]}/${t[2]}`);
+  if (t[0] > 12000) throw new Error(`baths LOD0 ${t[0]} tris over 12k budget`);
+  if (baths.polys.length < 20) throw new Error(`baths has only ${baths.polys.length} wall colliders`);
+  // Centre sits on the pinned key anchor (GENERATED_KEYS baths, ~66 x 30 m around 163.9, 144).
+  if (Math.hypot(baths.centre.x - 163.9, baths.centre.z - 144) > 3) {
+    throw new Error(`baths centre off its footprint: ${baths.centre.x.toFixed(1)}, ${baths.centre.z.toFixed(1)}`);
+  }
+  // The entrance gap in the facade must be walkable; the solid west wall must block.
+  const door = planToWorld(KEY_PLANS.baths, 13.1, 61.1);
+  if (world.polys.some((p) => hitsPoly(door.x, door.z, 0.3, p))) throw new Error('baths entrance is blocked by a collider');
+  const wall = planToWorld(KEY_PLANS.baths, 0.45, 50);
+  if (!world.polys.some((p) => hitsPoly(wall.x, wall.z, 0.3, p))) throw new Error('baths west wall has no collider');
+  let alt = 0;
+  world.group.traverse((o) => { if (o.userData.lodAlternate) alt++; });
+  if (alt !== 2 * world.planBuildings.length) throw new Error(`expected ${2 * world.planBuildings.length} LOD alternates, got ${alt}`);
+  world.setKeyBuildingDisplay('evidence');
+  world.setKeyBuildingDisplay('hybrid');
+  console.log(`plan buildings ${world.planBuildings.map((b) => `${b.id} lod ${b.trisByLod[0]}/${b.trisByLod[1]}/${b.trisByLod[2]} tris, ${b.polys.length} walls`).join('; ')}`);
+}
+// Reconstructed-buildings display setting: parsing and tier logic.
+{
+  if (parseBuildingLook(null) !== 'auto' || parseBuildingLook('plain') !== 'plain' || parseBuildingLook('junk') !== 'auto') throw new Error('parseBuildingLook');
+  if (tierFromBench(4) !== 'high' || tierFromBench(15) !== 'standard' || tierFromBench(40) !== 'plain' || tierFromBench(NaN) !== 'high') throw new Error('tierFromBench');
+  if (stepDownTier('high') !== 'standard' || stepDownTier('standard') !== 'plain' || stepDownTier('plain') !== 'plain') throw new Error('stepDownTier');
+  if (tierForLook('evidence', 'high') !== null || tierForLook('auto', 'standard') !== 'standard' || tierForLook('plain', 'high') !== 'plain') throw new Error('tierForLook');
+  if (parseAutoTierCache(JSON.stringify({ gpu: 'A', tier: 'standard', extraMs: 12 }), 'A')?.tier !== 'standard') throw new Error('auto cache');
+  if (parseAutoTierCache(JSON.stringify({ gpu: 'A', tier: 'standard' }), 'B') !== null) throw new Error('auto cache must be per GPU');
+  if (parseAutoTierCache('{bad', 'A') !== null) throw new Error('auto cache must tolerate garbage');
 }
 console.log('smoke OK');

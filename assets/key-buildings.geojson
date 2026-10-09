@@ -81,32 +81,32 @@
    "type": "Feature",
    "properties": {
     "id": "baths",
-    "status": "user-pinned",
-    "source": "user lat/lon NW 51.356492,-1.07979 SE 51.355912,-1.079616, img SE 51.355915,-1.079609"
+    "status": "user-approved-outline",
+    "source": "min-area rectangle around Great Plan rings classified in assets/key-plans/baths.review.json (1905 plan, Hope & Fox); widened from the user-pinned strip 2026-10-08"
    },
    "geometry": {
     "type": "Polygon",
     "coordinates": [
      [
       [
-       464172.5,
-       162337.2
+       464169.9,
+       162339.5
       ],
       [
-       464184.7,
-       162337.3
+       464199.7,
+       162338.7
       ],
       [
-       464185.5,
-       162272.8
+       464197.9,
+       162272.5
       ],
       [
-       464173.4,
-       162272.7
+       464168.1,
+       162273.3
       ],
       [
-       464172.5,
-       162337.2
+       464169.9,
+       162339.5
       ]
      ]
     ]

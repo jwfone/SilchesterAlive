@@ -1,0 +1,267 @@
+{
+ "id": "baths",
+ "note": "First-pass reading of Great Plan rings (tmp/audit-buildings/raw.geojson refs) for user review. cls: in | maybe | out. 'why' is Claude's reading, not established fact.",
+ "envelope_osgb": {
+  "e0": 464168.7,
+  "e1": 464199.2,
+  "n0": 162272.8,
+  "n1": 162339.1
+ },
+ "underlays": [
+  {
+   "file": "baths-1905-plan.jpg",
+   "label": "1905 Antiquaries' plan (Fulford et al. 2019, fig. 14)",
+   "source": "https://research.reading.ac.uk/silchester/wp-content/uploads/sites/33/Unorganized/Baths-final_compressed.pdf",
+   "width": 526,
+   "height": 1079,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N]: image pixel -> OSGB, matched to Great Plan ring vertices",
+   "points": [
+    [
+     140,
+     764,
+     464175.5,
+     162293.2
+    ],
+    [
+     428,
+     764,
+     464194,
+     162292.4
+    ],
+    [
+     438,
+     867,
+     464194.5,
+     162285.8
+    ],
+    [
+     254,
+     46,
+     464184.4,
+     162339.1
+    ],
+    [
+     234,
+     1076,
+     464180.6,
+     162273.1
+    ],
+    [
+     316,
+     1076,
+     464185.9,
+     162272.8
+    ]
+   ]
+  }
+ ],
+ "rings": {
+  "r675": {
+   "cls": "in",
+   "why": "south end of the furnace annex (praefurnium), 1905 phase 5"
+  },
+  "r676": {
+   "cls": "in",
+   "why": "small fragment near south room: pier or jamb?"
+  },
+  "r677": {
+   "cls": "in",
+   "why": "small fragment near south room: pier or jamb?"
+  },
+  "r678": {
+   "cls": "in",
+   "why": "small fragment by the SE apse"
+  },
+  "r679": {
+   "cls": "in",
+   "why": "small fragment, south hall"
+  },
+  "r680": {
+   "cls": "in",
+   "why": "east apse of the second (\"Destroyed\") caldarium, 1905 phase 5: keep for late 3rd c."
+  },
+  "r681": {
+   "cls": "in",
+   "why": "small fragment, east side"
+  },
+  "r682": {
+   "cls": "in",
+   "why": "east apse of the caldarium, 1905 phase 6 (green): omit for late 3rd c. under the phase-6 rule"
+  },
+  "r683": {
+   "cls": "in",
+   "why": "SW room of the central range"
+  },
+  "r684": {
+   "cls": "in",
+   "why": "palaestra: inner (ambulatory) wall, east half; flint with brick quoins"
+  },
+  "r685": {
+   "cls": "in",
+   "why": "palaestra: inner (ambulatory) wall, west half; gap between r684/r685 = central N-S axis"
+  },
+  "r686": {
+   "cls": "in",
+   "why": "palaestra: west inner wall"
+  },
+  "r687": {
+   "cls": "in",
+   "why": "main wall network: palaestra outer walls, apodyterium, frigidarium row, tepidaria, caldarium west apse (phase 1)"
+  },
+  "r1141": {
+   "cls": "out",
+   "why": "street-side band on the 1905 plan; not part of the baths (confirmed by user)"
+  },
+  "r1681": {
+   "cls": "in",
+   "why": "shade-2 fragment, south room"
+  },
+  "r1682": {
+   "cls": "in",
+   "why": "shade-2 fragment, south room"
+  },
+  "r1683": {
+   "cls": "in",
+   "why": "shade-2 wall alongside east apse r680: other phase of the apse?"
+  },
+  "r1684": {
+   "cls": "in",
+   "why": "shade-2 wall, south hall"
+  },
+  "r1685": {
+   "cls": "in",
+   "why": "shade-2 wall, south hall"
+  },
+  "r1686": {
+   "cls": "in",
+   "why": "shade-2 fragment, central range"
+  },
+  "r1687": {
+   "cls": "in",
+   "why": "east hypocaust room: post-AD 388 composite hypocaust (1905 phase 6). Omit; show the Claudian 9 x 6.4 m brick building in its place"
+  },
+  "r1688": {
+   "cls": "in",
+   "why": "shade-2 fragment, central range"
+  },
+  "r1996": {
+   "cls": "in",
+   "why": "shade-3 sliver (0 m²): digitising noise"
+  },
+  "r1997": {
+   "cls": "in",
+   "why": "shade-3 fragment by east apse"
+  },
+  "r1998": {
+   "cls": "in",
+   "why": "shade-3 fragment by east apse"
+  },
+  "r1999": {
+   "cls": "in",
+   "why": "second (\"Destroyed\") caldarium walls, 1905 phase 3"
+  },
+  "r2000": {
+   "cls": "in",
+   "why": "second caldarium, west part"
+  },
+  "r2001": {
+   "cls": "in",
+   "why": "shade-3 fragment, south hall"
+  },
+  "r2002": {
+   "cls": "in",
+   "why": "shade-3 fragment by west apse"
+  },
+  "r2003": {
+   "cls": "in",
+   "why": "shade-3 walls between the two east apses"
+  },
+  "r2004": {
+   "cls": "in",
+   "why": "shade-3 fragment, south hall north wall"
+  },
+  "r2005": {
+   "cls": "in",
+   "why": "shade-3 fragment, SW corner"
+  },
+  "r2006": {
+   "cls": "in",
+   "why": "shade-3 wall, central range"
+  },
+  "r2007": {
+   "cls": "in",
+   "why": "shade-3 cross wall, central range"
+  },
+  "r2008": {
+   "cls": "in",
+   "why": "shade-3 fragment, central range"
+  },
+  "r2009": {
+   "cls": "in",
+   "why": "shade-3 room inside r683's range (overlaps shade-1 walls: other phase)"
+  },
+  "r2010": {
+   "cls": "in",
+   "why": "latrine / NE corner room wall"
+  },
+  "r2011": {
+   "cls": "in",
+   "why": "shade-3 fragment, north of central range"
+  },
+  "r2012": {
+   "cls": "in",
+   "why": "shade-3 fragment, NW"
+  },
+  "r2013": {
+   "cls": "in",
+   "why": "latrine / NE corner room wall"
+  },
+  "r2014": {
+   "cls": "in",
+   "why": "shade-3 wall, north of central range"
+  },
+  "r2015": {
+   "cls": "in",
+   "why": "shade-3 fragment, NW corner of central range"
+  },
+  "r2016": {
+   "cls": "in",
+   "why": "shade-3 wall inside north block (inner court, east)"
+  },
+  "r2017": {
+   "cls": "in",
+   "why": "shade-3 wall inside north block (inner court, west)"
+  },
+  "r2018": {
+   "cls": "in",
+   "why": "latrine (NE corner) internal wall"
+  },
+  "r2019": {
+   "cls": "in",
+   "why": "palaestra outer walls / façade line (overlaps r687)"
+  },
+  "r794": {
+   "cls": "out",
+   "why": "north of the street: another insula"
+  },
+  "r1216": {
+   "cls": "out",
+   "why": "north of the street: another building"
+  },
+  "r2083": {
+   "cls": "out",
+   "why": "north of the street"
+  },
+  "r2024": {
+   "cls": "out",
+   "why": "separate building to the SW"
+  }
+ },
+ "reviewed": "2026-10-08: user confirmed classifications; r1141 out",
+ "omit": [
+  "r682",
+  "r1687"
+ ],
+ "omit_note": "late-3rd-c. snapshot: 1905 phase-6 work left out (caldarium east apse; post-AD 388 east hypocaust, replaced in the plan by the Claudian building)"
+}

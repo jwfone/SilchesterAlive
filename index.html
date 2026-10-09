@@ -28,6 +28,20 @@
         <label title="GIS 04 wall circuit"><input type="checkbox" data-3dlayer="walls" checked> Town walls &amp; gates</label>
         <label title="Street-walking ghost NPCs (key G)"><input type="checkbox" data-ghost="ghosts" checked> Ghosts</label>
       </fieldset>
+      <fieldset id="display">
+        <legend>Reconstructed buildings</legend>
+        <label title="How rebuilt buildings (the baths so far) are drawn">Look
+          <select id="building-look">
+            <option value="auto">Auto (suits this device)</option>
+            <option value="high">Detailed stonework</option>
+            <option value="standard">Standard</option>
+            <option value="plain">Plain</option>
+            <option value="evidence">Evidence colours</option>
+          </select>
+        </label>
+        <small id="building-look-auto"></small>
+        <p id="evidence-legend" hidden><span class="ev ev-s"></span>Found at Silchester <span class="ev ev-c"></span>From comparable sites <span class="ev ev-x"></span>Conjecture</p>
+      </fieldset>
       <details id="sources">
         <summary>Sources (model largely based on Silchester GIS)</summary>
         <p class="cite">Roads, town wall, water features, buildings, earthworks and terrain in this model are largely derived from the GIS files of the Silchester Mapping Project 2005–10. Please cite as: Silchester Mapping Project 2005–10, John Creighton with Robert Fry (2016), University of Reading.</p>

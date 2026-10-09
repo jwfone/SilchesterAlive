@@ -20,7 +20,8 @@
     "import:collectibles": "node scripts/import-collectibles.mjs",
     "build:domain": "tsc -p tsconfig.domain.json",
     "bank:generate": "npm run build:domain && node --env-file-if-exists=.env scripts/generate-dialogue-bank.mjs",
-    "bank:validate": "npm run build:domain && node scripts/validate-dialogue-bank.mjs"
+    "bank:validate": "npm run build:domain && node scripts/validate-dialogue-bank.mjs",
+    "import:keyplans": "node scripts/import-key-plans.mjs"
   },
   "dependencies": {
     "three": "^0.186.0"

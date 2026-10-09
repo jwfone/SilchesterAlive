@@ -2,7 +2,13 @@ import * as THREE from 'three';
 import { remapUV, type AtlasCell } from './atlas.js';
 import { buildGableRoofGeometry } from './roofs.js';
 import { mergeMixed } from './merge.js';
-import type { ComplexBuild } from './baths.js';
+
+export interface ComplexBuild {
+  mesh: THREE.Object3D;       // everything static merged (1 draw, shared kitMat)
+  circles: Array<{ x: number; z: number; r: number }>;
+  boxes: Array<{ minX: number; maxX: number; minZ: number; maxZ: number; h?: number }>;
+  tris: number;
+}
 
 // Walkable mansio (courtyard coaching inn near south gate, centre ~40,245):
 // N range of 4 rooms + E/W wings around a gravel courtyard, timber porticos,

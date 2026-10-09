@@ -27,7 +27,17 @@ Controls: arrow keys move, `W` `A` `S` `D` look, `Shift` run, `Space` jump, `M` 
 | `npm run smoke` | Run the smoke tests |
 | `npm run import:gis` / `import:plan` | Regenerate town data from GIS files you download yourself into `GIS data/` (see below) |
 | `npm run import:collectibles` | Regenerate collectibles from `assets/collectibles.csv` |
+| `npm run import:keyplans` | Rebuild `src/domain/keyPlans.generated.ts` from the curated building plans in `assets/key-plans/` |
 | `npm run bank:validate` | Validate the pre-written dialogue bank |
+
+## Reconstructed buildings
+
+The baths are generated from a curated plan (`assets/key-plans/baths.plan.json`) traced from the surveyed Great Plan walls and the 1905 excavation plan; the research and decisions are in `docs/key-buildings/`. With `npm run dev` running, two development pages help review them:
+
+- `/tools/elevations.html?id=baths`: measured elevations, sections and a 3D view, coloured by evidence level or material, plus the reconstruction notes.
+- `/tools/materials.html?id=baths`: wall-style comparison and GPU benchmark.
+
+In the game, the HUD's *Reconstructed buildings* setting switches between Auto, Detailed, Standard, Plain and Evidence colours. In development builds, `?at=x,z,heading` spawns the player at a given spot (for example `?at=160,104,175` in front of the baths).
 
 ## Ghost dialogue
 

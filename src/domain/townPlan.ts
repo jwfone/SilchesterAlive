@@ -20,6 +20,7 @@ import {
   GENERATED_WALLS,
   GENERATED_WATER,
 } from './townPlan.generated.js';
+import { KEY_PLANS } from './keyPlans.generated.js';
 
 /** User-pinned anchor (assets/key-buildings.geojson via GENERATED_KEYS), if present. */
 export function keyAnchor(id: string): { x: number; z: number; w: number; d: number; rotY: number } | undefined {
@@ -269,9 +270,10 @@ export function buildTownPlan(seed = 1234): TownPlan {
   // Snap key buildings to user-pinned anchors (assets/key-buildings.geojson).
   // Forum + basilica move together so the kit pair keeps its internal offset.
   // Mansio anchor is the courtyard: the whole inn recentres on it (within a
-  // few metres of the full-complex centre). Baths translate only for now —
-  // the anchor strip is one range, not the full complex, so orientation and
-  // kit size stay as designed until the full outline is pinned.
+  // few metres of the full-complex centre). The baths anchor is the full
+  // surveyed outline (assets/key-plans/baths.review.json), so the baths take its
+  // size and rotation too; the building itself is generated from its plan
+  // (assets/key-plans/baths.plan.json).
   {
     const fb = keyAnchor('forum-basilica');
     if (fb) {
@@ -297,7 +299,7 @@ export function buildTownPlan(seed = 1234): TownPlan {
     const ba = keyAnchor('baths');
     if (ba) {
       const b = buildings.find((b) => b.id === 'baths');
-      if (b) { b.x = ba.x; b.z = ba.z; }
+      if (b) { b.x = ba.x; b.z = ba.z; b.w = ba.w; b.d = ba.d; b.rotY = ba.rotY; }
     }
   }
 
@@ -318,6 +320,16 @@ export function buildTownPlan(seed = 1234): TownPlan {
   }
   const insideKey = (x: number, z: number): boolean =>
     keyFootprints.some((f) => insideKeyFootprint(x, z, f.cx, f.cz, f.w, f.d, f.rotY));
+  // Plan-built key buildings (generated from assets/key-plans) stand on their exact
+  // surveyed outline, so any GIS ring reaching into it (not just one centred on it)
+  // becomes overlay-only; otherwise e.g. a long street-side ring would be extruded
+  // straight through the baths' frontage.
+  const planBuiltFootprints = Object.keys(KEY_PLANS)
+    .map((id) => buildings.find((b) => b.id === id))
+    .filter((b): b is BuildingSpec => !!b)
+    .map((b) => ({ cx: b.x, cz: b.z, w: b.w, d: b.d, rotY: b.rotY }));
+  const reachesPlanBuilt = (outline: Array<{ x: number; z: number }> | undefined): boolean =>
+    !!outline && outline.some((p) => planBuiltFootprints.some((f) => insideKeyFootprint(p.x, p.z, f.cx, f.cz, f.w, f.d, f.rotY, 0.5)));
 
   // Imported footprints replace/augment the procedural infill when present.
   // Named key buildings (forum/baths/...) always stay; imported houses fill gaps.
@@ -332,7 +344,7 @@ export function buildTownPlan(seed = 1234): TownPlan {
     const kind = stub || shade >= 4 ? 'ruin' : (g.kind as BuildingSpec['kind']);
     if (!ALLOWED.has(kind)) continue;
     imported.push(g);
-    buildings.push({ ...g, kind, shade, stub, underKey: insideKey(g.x, g.z) || undefined });
+    buildings.push({ ...g, kind, shade, stub, underKey: insideKey(g.x, g.z) || reachesPlanBuilt(g.outline) || undefined });
   }
 
   const hasGIS = imported.length > 40;

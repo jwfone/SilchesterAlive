@@ -5,14 +5,17 @@ import * as THREE from 'three';
 // means canvas row 0 (top) is v=1; we compute rects accordingly).
 export type AtlasCell =
   | 'stone' | 'plaster' | 'timber' | 'tile'
-  | 'street' | 'grass' | 'wood' | 'arena' | 'water';
+  | 'street' | 'grass' | 'wood' | 'arena' | 'water'
+  // Plan-built key buildings (atlasTiled.ts samples these with per-pixel tiling).
+  | 'masonry' | 'plasterPink' | 'dado' | 'signinum' | 'mosaic' | 'window' | 'brick';
 
 export interface AtlasRect { u0: number; v0: number; u1: number; v1: number }
 
 const CELLS: Record<AtlasCell, [number, number]> = {
   stone: [0, 0], plaster: [1, 0], timber: [2, 0], tile: [3, 0],
   street: [0, 1], grass: [1, 1], wood: [2, 1], arena: [3, 1],
-  water: [0, 2],
+  water: [0, 2], masonry: [1, 2], plasterPink: [2, 2], dado: [3, 2],
+  signinum: [0, 3], mosaic: [1, 3], window: [2, 3], brick: [3, 3],
 };
 
 export function cellRect(cell: AtlasCell): AtlasRect {
@@ -142,6 +145,106 @@ function paintWater(ctx: CanvasRenderingContext2D, x: number, y: number, s: numb
   noiseOn(ctx, x, y, s, 200, 0.2, '#1e4256', '#4a8299');
 }
 
+// --- Cells for plan-built key buildings. Each tiles seamlessly at the size in
+// CELL_TILE_M (atlasTiled.ts), so courses and bands come out at true scale.
+
+// Greensand courses with red brick bonding bands (Silchester baths, 2018/2019
+// reports). Cell = 2.0 m wide x 1.6 m tall: two bands of 3 stone courses
+// (0.2 m) + 3 brick courses (0.067 m).
+function paintMasonry(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#c9c2b0'; ctx.fillRect(x, y, s, s); // mortar
+  const pxPerM = s / 1.6;
+  let yy = y;
+  for (let band = 0; band < 2; band++) {
+    for (let c = 0; c < 3; c++) {
+      const h = 0.2 * pxPerM;
+      const blocks = 5, off = (c % 2) * 0.5;
+      for (let b = -1; b < blocks; b++) {
+        const bx = x + ((b + off) / blocks) * s;
+        const tone = 120 + ((b * 37 + c * 53 + band * 17) % 30);
+        ctx.fillStyle = `rgb(${tone - 8},${tone},${tone - 30})`;
+        ctx.fillRect(Math.max(x, bx + 1.5), yy + 1.5, Math.min(s / blocks - 3, x + s - bx - 1.5), h - 3);
+      }
+      yy += h;
+    }
+    for (let c = 0; c < 3; c++) {
+      const h = (0.2 / 3) * pxPerM;
+      const bricks = 6, off = (c % 2) * 0.5;
+      for (let b = -1; b < bricks; b++) {
+        const bx = x + ((b + off) / bricks) * s;
+        ctx.fillStyle = (b + c) % 3 === 0 ? '#a24a32' : '#b5583a';
+        ctx.fillRect(Math.max(x, bx + 1), yy + 1, Math.min(s / bricks - 2, x + s - bx - 1), h - 2);
+      }
+      yy += h;
+    }
+  }
+  noiseOn(ctx, x, y, s, 600, 0.18, '#5e5a48', '#e2dccb');
+}
+
+// Pink lime plaster (Neronian fine plaster, Ravenglass-style pink render).
+function paintPlasterPink(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#e4c3b2'; ctx.fillRect(x, y, s, s);
+  noiseOn(ctx, x, y, s, 400, 0.14, '#c99f8c', '#f4dfd2');
+}
+
+// Painted dado: dark red with marbled flecks, a cream band at the top edge.
+// Cell = 2 m wide x 1 m tall (one dado height).
+function paintDado(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#8e3b2c'; ctx.fillRect(x, y, s, s);
+  noiseOn(ctx, x, y, s, 500, 0.3, '#5e2219', '#c4705a');
+  ctx.fillStyle = '#e9d9b8'; ctx.fillRect(x, y, s, s * 0.06);
+  ctx.fillStyle = '#3d1712'; ctx.fillRect(x, y + s * 0.06, s, s * 0.015);
+}
+
+// Opus signinum: pink mortar with crushed tile.
+function paintSigninum(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#c08a76'; ctx.fillRect(x, y, s, s);
+  noiseOn(ctx, x, y, s, 900, 0.45, '#8e4a36', '#e2b9a6');
+}
+
+// White chalk tesserae with a black meander-free border grid (1 m cell).
+function paintMosaic(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#9d9789'; ctx.fillRect(x, y, s, s);
+  const n = 40, t = s / n;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      const edge = i < 2 || j < 2;
+      const v = 222 + ((i * 7 + j * 13) % 18);
+      ctx.fillStyle = edge ? '#2a2826' : `rgb(${v},${v - 4},${v - 14})`;
+      ctx.fillRect(x + i * t + 0.6, y + j * t + 0.6, t - 1.2, t - 1.2);
+    }
+  }
+}
+
+// Glazed window: greenish cast-glass panes in a timber frame (whole window per cell).
+function paintWindow(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#4a3624'; ctx.fillRect(x, y, s, s);
+  const n = 3, f = s * 0.05, pw = (s - f * (n + 1)) / n;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      const px = x + f + i * (pw + f), py = y + f + j * (pw + f);
+      const g = ctx.createLinearGradient(px, py, px + pw, py + pw);
+      g.addColorStop(0, '#5f7f78'); g.addColorStop(0.5, '#39554f'); g.addColorStop(1, '#2a3f3b');
+      ctx.fillStyle = g; ctx.fillRect(px, py, pw, pw);
+    }
+  }
+}
+
+// Roman brick (lydion) in running bond. Cell = 1 m wide x 0.56 m tall (8 courses).
+function paintBrick(ctx: CanvasRenderingContext2D, x: number, y: number, s: number): void {
+  ctx.fillStyle = '#cfc4b0'; ctx.fillRect(x, y, s, s);
+  const rows = 8, h = s / rows, per = 2.5;
+  for (let r = 0; r < rows; r++) {
+    const off = (r % 2) * 0.5;
+    for (let b = -1; b < per; b++) {
+      const bx = x + ((b + off) / per) * s;
+      ctx.fillStyle = (b + r) % 3 ? '#b35a3c' : '#9e4a30';
+      ctx.fillRect(Math.max(x, bx + 1.5), y + r * h + 1.5, Math.min(s / per - 3, x + s - bx - 1.5), h - 3);
+    }
+  }
+  noiseOn(ctx, x, y, s, 300, 0.15, '#5a2a1a', '#e8b8a0');
+}
+
 export interface Atlas {
   texture: THREE.CanvasTexture;
   material: THREE.MeshLambertMaterial;
@@ -158,8 +261,14 @@ export function getAtlas(): Atlas {
   paintStone(ctx, 0, 0, S); paintPlaster(ctx, S, 0, S); paintTimber(ctx, S * 2, 0, S); paintTile(ctx, S * 3, 0, S);
   paintStreet(ctx, 0, S, S); paintGrass(ctx, S, S, S); paintWood(ctx, S * 2, S, S); paintArena(ctx, S * 3, S, S);
   paintWater(ctx, 0, S * 2, S);
-  // unused cells: mid grey
-  ctx.fillStyle = '#808080'; ctx.fillRect(S, S * 2, S * 3, S * 2);
+  // Clipped: these tile at cell edges, so overdraw must not bleed into neighbours.
+  const clipped = (fn: typeof paintMasonry, cx: number, cy: number): void => {
+    ctx.save(); ctx.beginPath(); ctx.rect(cx * S, cy * S, S, S); ctx.clip();
+    fn(ctx, cx * S, cy * S, S);
+    ctx.restore();
+  };
+  clipped(paintMasonry, 1, 2); clipped(paintPlasterPink, 2, 2); clipped(paintDado, 3, 2);
+  clipped(paintSigninum, 0, 3); clipped(paintMosaic, 1, 3); clipped(paintWindow, 2, 3); clipped(paintBrick, 3, 3);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;

@@ -7,8 +7,9 @@ import { buildGableRoofGeometry } from './kit/roofs.js';
 import { buildHouseWithOpeningsGeometry } from './kit/houses.js';
 import { buildColumnGeometry } from './kit/columns.js';
 import { buildForumComplex } from './kit/forum.js';
-import { buildBaths } from './kit/baths.js';
 import { buildMansio } from './kit/mansio.js';
+import { placePlanBuilding, setPlanBuildingDisplay, type KeyBuildingDisplay, type PlacedPlanBuilding } from './kit/planWorld.js';
+import { KEY_PLANS } from '../domain/keyPlans.generated.js';
 import { buildAmphitheatre, type EllipseBand } from './kit/amphitheatre.js';
 import { buildContactShadows, type ShadowSpot } from './kit/ao.js';
 import type { CircleCollider, PolyCollider } from './PlayerControls.js';
@@ -40,6 +41,10 @@ export interface BuiltWorld {
   groundY: (x: number, z: number) => number;
   /** Show/hide drain instances inside the shared roads mesh (drains hidden by default). */
   setDrainsVisible: (visible: boolean) => void;
+  /** Key buildings generated from curated plans (assets/key-plans), e.g. the baths. */
+  planBuildings: PlacedPlanBuilding[];
+  /** Display mode for plan-built buildings: a surface style (quality tier) or evidence colours. */
+  setKeyBuildingDisplay: (mode: KeyBuildingDisplay) => void;
 }
 
 // Relief is median-centred GIS terrain (up to ±16m at the plateau edge).
@@ -198,8 +203,17 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     }
     return lift;
   };
-  /** Walkable ground: contour terrain plus grass-bank lift (player rides over banks). */
-  const groundY = (x: number, z: number): number => gy(x, z) + bankLift(x, z);
+  /** Floors of plan-built buildings (filled in below): inside their rooms you walk on the floor. */
+  const planFloors: Array<(x: number, z: number) => number | undefined> = [];
+  /** Walkable ground: contour terrain plus grass-bank lift (player rides over banks), or a building floor. */
+  const groundY = (x: number, z: number): number => {
+    const ground = gy(x, z) + bankLift(x, z);
+    for (const floorAt of planFloors) {
+      const y = floorAt(x, z);
+      if (y !== undefined) return Math.max(ground, y);
+    }
+    return ground;
+  };
   let tris = 0;
   const countTris = (g: THREE.BufferGeometry, instances = 1): void => {
     const idx = g.index ? g.index.count : g.attributes.position.count;
@@ -599,21 +613,22 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     shadowsByLayer.key.push({ x: ccx + 20, z: ccz, w: 42, d: 60 });
   }
 
-  // Baths key complex (walkable heated rooms + plunge court).
-  // Kit builds in design coords around (150,150); shifted to the plan spot.
-  {
-    const pB = plan.buildings.find((b) => b.id === 'baths');
-    const bx = pB?.x ?? 150, bz = pB?.z ?? 150;
-    const dx = bx - 150, dz = bz - 150;
-    const baths = buildBaths(kitMat);
-    baths.mesh.position.x += dx; baths.mesh.position.z += dz;
-    baths.mesh.position.y += gy(bx, bz);
-    layerGroups.key.add(baths.mesh);
-    for (const c of baths.boxes) { c.minX += dx; c.maxX += dx; c.minZ += dz; c.maxZ += dz; colliders.push(c); collidersByLayer.key.push(c); }
-    for (const c of baths.circles) { c.x += dx; c.z += dz; circles.push(c); circlesByLayer.key.push(c); }
-    tris += baths.tris;
-    shadowsByLayer.key.push({ x: bx, z: bz, w: 56, d: 34 });
+  // Plan-built key buildings (assets/key-plans/*.plan.json via keyPlans.generated.ts):
+  // the baths, generated from the surveyed wall plan with three levels of detail.
+  const planBuildings: PlacedPlanBuilding[] = [];
+  for (const kp of Object.values(KEY_PLANS)) {
+    const placed = placePlanBuilding(kp, gy);
+    layerGroups.key.add(placed.object);
+    planFloors.push(placed.floorAt);
+    for (const p of placed.polys) { polys.push(p); polysByLayer.key.push(p); }
+    for (const c of placed.boxes) { colliders.push(c); collidersByLayer.key.push(c); }
+    for (const c of placed.circles) { circles.push(c); circlesByLayer.key.push(c); }
+    tris += placed.tris;
+    shadowsByLayer.key.push(placed.shadow);
+    planBuildings.push(placed);
   }
+  const planMeshes = planBuildings.flatMap((b) => b.meshes);
+  const setKeyBuildingDisplay = (mode: KeyBuildingDisplay): void => setPlanBuildingDisplay(planMeshes, mode);
 
   // Mansio key complex (walkable courtyard inn).
   // Kit builds in design coords around (40,245); shifted to the plan spot.
@@ -797,6 +812,7 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   }
 
   let drawCalls = 0;
-  group.traverse((o) => { if ((o as THREE.Mesh).isMesh || (o as THREE.InstancedMesh).isInstancedMesh) drawCalls++; });
-  return { group, layerGroups, colliders, collidersByLayer, circles, circlesByLayer, polys, polysByLayer, bands, drawCalls, tris: Math.round(tris), groundY, setDrainsVisible };
+  // LOD alternates (plan-built buildings) never draw at the same time as their level 0.
+  group.traverse((o) => { if (((o as THREE.Mesh).isMesh || (o as THREE.InstancedMesh).isInstancedMesh) && !o.userData.lodAlternate) drawCalls++; });
+  return { group, layerGroups, colliders, collidersByLayer, circles, circlesByLayer, polys, polysByLayer, bands, drawCalls, tris: Math.round(tris), groundY, setDrainsVisible, planBuildings, setKeyBuildingDisplay };
 }

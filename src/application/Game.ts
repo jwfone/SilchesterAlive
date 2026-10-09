@@ -4,6 +4,14 @@ import { LAYER_STORAGE_KEY, defaultLayerVisibility, parseLayerVisibility, type L
 import { decideRenderMode, detectCapabilities } from './quality.js';
 import { createRenderer, type RenderAdapter } from '../presentation/rendererFactory.js';
 import { buildWorld } from '../presentation/WorldBuilder.js';
+import {
+  AUTO_TIER_STORAGE_KEY, BUILDING_LOOK_STORAGE_KEY, SLOW_FRAME_MS, SLOW_WINDOW_MS,
+  parseAutoTierCache, parseBuildingLook, stepDownTier, tierForLook, tierFromBench,
+  type BuildingLook, type QualityTier,
+} from '../domain/displaySettings.js';
+import { bakeGrainTexture } from '../presentation/kit/wallBake.js';
+import { measureWallCost } from '../presentation/kit/wallBench.js';
+import type { KeyBuildingDisplay } from '../presentation/kit/planWorld.js';
 import { GhostController } from './GhostController.js';
 import {
   GHOST_COSTUMES, GHOST_COUNT, GHOST_MAX, parseSpokenCostumeIds, SPOKEN_GHOSTS_STORAGE_KEY, type GhostCostumeId,
@@ -67,6 +75,12 @@ export class Game {
   /** Overlay pulse is capped at ~24fps so a full-canvas clear never rides vsync. */
   private lastMarkerT = 0;
   private layerVisibility: Record<LayerId, boolean> = defaultLayerVisibility();
+  /** "Reconstructed buildings" look (HUD setting) and the tier Auto resolved to. */
+  private buildingLook: BuildingLook = 'auto';
+  private autoTier: QualityTier = 'high';
+  /** Slow-frame watcher for Auto: smoothed tick interval near plan-built buildings. */
+  private frameEmaMs = 16;
+  private slowSinceT = 0;
   /** Cached physics lists: rebuilt only when layer visibility changes (see applyLayerVisibility). */
   private cachedColliders: import('../presentation/WorldBuilder.js').Collider[] = [];
   private cachedCircles: import('../presentation/PlayerControls.js').CircleCollider[] = [];
@@ -162,6 +176,12 @@ export class Game {
     }
     this.scene.add(sun);
     this.scene.add(this.world.group);
+    // Reconstructed (plan-built) buildings: bake the small wall-grain tile, then pick
+    // the look. Auto runs a short GPU test once per GPU (cached) to choose its tier.
+    if (this.renderer.webgl) bakeGrainTexture(this.renderer.webgl);
+    this.buildingLook = parseBuildingLook(localStorage.getItem(BUILDING_LOOK_STORAGE_KEY));
+    if (this.buildingLook === 'auto') this.autoTier = this.resolveAutoTier();
+    this.applyBuildingLook();
     // Ghost NPCs: street-walking cloak figures (own toggle, not a 3D layer).
     this.ghosts = new GhostController(this.plan, GHOST_COUNT);
     this.scene.add(this.ghosts.group);
@@ -206,6 +226,15 @@ export class Game {
     // Face inward: forward is (-sin yaw, -cos yaw), so yaw = atan2(-idx, -idz).
     this.controls.spawn(sx, sz, Math.atan2(-idx, -idz));
     this.camera.position.y = this.world.groundY(sx, sz) + this.controls.eyeHeight;
+    // Dev only: ?at=x,z[,headingDeg] spawns elsewhere (e.g. ?at=164,95,180 at the baths' street front).
+    if (import.meta.env.DEV) {
+      const at = /[?&#]at=(-?[\d.]+),(-?[\d.]+)(?:,(-?[\d.]+))?/.exec(window.location.search + window.location.hash);
+      if (at) {
+        const ax = Number(at[1]), az = Number(at[2]);
+        this.controls.spawn(ax, az, ((Number(at[3]) || 0) * Math.PI) / 180);
+        this.camera.position.y = this.world.groundY(ax, az) + this.controls.eyeHeight;
+      }
+    }
 
     window.addEventListener('resize', () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -270,6 +299,12 @@ export class Game {
       box.checked = this.layerVisibility[id] ?? true;
       box.addEventListener('change', () => this.setLayer(id, box.checked));
     });
+    // Reconstructed buildings look: Auto / Detailed / Standard / Plain / Evidence, persisted.
+    const lookSel = document.getElementById('building-look') as HTMLSelectElement | null;
+    if (lookSel) {
+      lookSel.value = this.buildingLook;
+      lookSel.addEventListener('change', () => this.setBuildingLook(parseBuildingLook(lookSel.value)));
+    }
     // Ghost NPCs: own HUD checkbox + G / 6 shortcut, persisted separately.
     document.querySelectorAll<HTMLInputElement>('#layers input[data-ghost]').forEach((box) => {
       box.checked = this.ghostsVisible;
@@ -1294,8 +1329,73 @@ export class Game {
     this.lastRenderRX = r.x;
   }
 
+  /** Auto tier for this GPU: cached result, else a short off-screen wall test (~0.1-0.5 s, once). */
+  private resolveAutoTier(): QualityTier {
+    const webgl = this.renderer.webgl;
+    if (!webgl) return 'plain'; // experimental WebGPU path: the tiled wall shader is WebGL2-only
+    const gpu = this.gpuName();
+    const cached = parseAutoTierCache(localStorage.getItem(AUTO_TIER_STORAGE_KEY), gpu);
+    if (cached) return cached.tier;
+    const extraMs = measureWallCost(webgl);
+    const tier = tierFromBench(extraMs);
+    localStorage.setItem(AUTO_TIER_STORAGE_KEY, JSON.stringify({ gpu, tier, extraMs: Math.round(extraMs * 10) / 10 }));
+    console.debug(`[silchester] building look auto: wall test +${extraMs.toFixed(1)} ms full-screen -> ${tier}`);
+    return tier;
+  }
+
+  /** GPU description used to key the cached Auto tier. */
+  private gpuName(): string {
+    const gl = this.renderer.webgl?.getContext();
+    if (!gl) return 'webgpu';
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    return String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+  }
+
+  private setBuildingLook(look: BuildingLook): void {
+    this.buildingLook = look;
+    localStorage.setItem(BUILDING_LOOK_STORAGE_KEY, look);
+    if (look === 'auto') this.autoTier = this.resolveAutoTier();
+    this.applyBuildingLook();
+  }
+
+  private applyBuildingLook(): void {
+    const tier = tierForLook(this.buildingLook, this.autoTier);
+    const styles: Record<QualityTier, KeyBuildingDisplay> = { high: 'hybrid', standard: 'hybridLite', plain: 'plain' };
+    this.world.setKeyBuildingDisplay(tier ? styles[tier] : 'evidence');
+    const legend = document.getElementById('evidence-legend');
+    if (legend) legend.hidden = this.buildingLook !== 'evidence';
+    const note = document.getElementById('building-look-auto');
+    if (note) {
+      const names: Record<QualityTier, string> = { high: 'Detailed', standard: 'Standard', plain: 'Plain' };
+      note.textContent = this.buildingLook === 'auto' ? `Auto chose: ${names[this.autoTier]}` : '';
+    }
+    this.sceneDirty = true;
+  }
+
+  /** Auto only: if frames stay slow near a reconstructed building, step down a tier (never up). */
+  private watchBuildingFrames(ms: number, active: boolean, now: number): void {
+    if (this.buildingLook !== 'auto' || this.autoTier === 'plain' || !active || document.hidden || ms > 500) {
+      this.slowSinceT = 0;
+      return;
+    }
+    const { x, z } = this.camera.position;
+    const near = this.world.planBuildings.some((b) => Math.hypot(x - b.centre.x, z - b.centre.z) < b.radius + 60);
+    if (!near) { this.slowSinceT = 0; return; }
+    this.frameEmaMs = this.frameEmaMs * 0.9 + ms * 0.1;
+    if (this.frameEmaMs <= SLOW_FRAME_MS) { this.slowSinceT = 0; return; }
+    if (!this.slowSinceT) { this.slowSinceT = now; return; }
+    if (now - this.slowSinceT < SLOW_WINDOW_MS) return;
+    this.autoTier = stepDownTier(this.autoTier);
+    if (this.renderer.webgl) localStorage.setItem(AUTO_TIER_STORAGE_KEY, JSON.stringify({ gpu: this.gpuName(), tier: this.autoTier, extraMs: -1 }));
+    console.debug(`[silchester] building look auto: slow frames (${this.frameEmaMs.toFixed(0)} ms) -> ${this.autoTier}`);
+    this.slowSinceT = 0;
+    this.frameEmaMs = 16;
+    this.applyBuildingLook();
+  }
+
   private tick(statsEl: HTMLElement, minimap: HTMLCanvasElement): void {
-    const dt = Math.min(this.clock.getDelta(), 0.05);
+    const rawDt = this.clock.getDelta();
+    const dt = Math.min(rawDt, 0.05);
     if (this.physicsDirty) this.refreshPhysicsCache();
     this.controls.update(dt, this.cachedColliders, this.cachedCircles, this.cachedBands, this.world.groundY, this.cachedPolys);
     this.collapseHudOnMoveStart();
@@ -1309,6 +1409,7 @@ export class Game {
     const now = performance.now();
     const active = this.controls.hasMoveInput || this.cameraMovedSinceRender();
     const interval = active ? 1000 / 30 : 1000 / 12;
+    this.watchBuildingFrames(rawDt * 1000, active, now);
     if (this.sceneDirty || now - this.lastRenderT >= interval) {
       this.sceneDirty = false;
       this.lastRenderT = now;
