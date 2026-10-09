@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wall materials lab</title>
+<title>Materials lab</title>
 <style>
   :root { --bg: #f7f5ef; --ink: #23201b; --muted: #6b655b; --line: #d9d3c7; --panel: #fff; }
   * { box-sizing: border-box; }
@@ -24,11 +24,12 @@
 </head>
 <body>
 <header>
-  <h1>Wall materials lab: baths</h1>
+  <h1>Materials lab: baths</h1>
   <div class="ctl" role="group" aria-label="Camera">
     View <button data-cam="detail" aria-pressed="false">Detail</button><button data-cam="close" aria-pressed="true">Wall close-up</button><button data-cam="corner" aria-pressed="false">Corner</button><button data-cam="long" aria-pressed="false">Long wall</button><button data-cam="street" aria-pressed="false">Street front</button><button data-cam="aerial" aria-pressed="false">Aerial</button><button data-cam="aerialN" aria-pressed="false">Aerial (north)</button>
+    <span aria-hidden="true">·</span> Roofs <button data-cam="roofDetail" aria-pressed="false">Roof detail</button><button data-cam="roofClose" aria-pressed="false">Roof close-up</button><button data-cam="roofCourt" aria-pressed="false">From the court</button><button data-cam="roofAerial" aria-pressed="false">Roofscape</button>
   </div>
-  <p class="note">Same model and camera in every pane; drag to orbit, scroll to zoom. All use the same single material and draw call; only the style switch differs.</p>
+  <p class="note"><a href="?set=roof">Roof styles</a> · <a href="?">Wall styles</a>. Same model and camera in every pane; drag to orbit, scroll to zoom. All use the same single material and draw call; only the style switch differs.</p>
 </header>
 <div id="stage"></div>
 <script type="module" src="/src/tools/materials.ts"></script>

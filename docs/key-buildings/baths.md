@@ -253,3 +253,80 @@ are estimates from low-resolution report photos, not measured drawings.
   brick: mean 0.44 m, ±5%), so neighbouring courses' joints are always at least about a quarter-block
   apart. Cost at 1080p × 1.25 on an Intel HD 620: about +6 ms over the old texture with a wall filling the
   screen, and within noise at street level.
+
+## Roof tiles: tegulae and imbrices
+
+Evidence levels as above: **S** Silchester, **C** comparison, **X** conjecture. Nothing survives of the
+baths' roofs in place, so the laying is reconstructed from the tiles themselves and from Romano-British norms.
+
+### What Silchester gives us (S)
+
+| Point | Evidence | Source |
+|---|---|---|
+| Roof covering at the baths | "Tegulae, imbrices, brick and tile" in the ceramic building material from the 2018 trenches (mostly from the backfill of the 1903–4 trenches); a tegula stamped "FR"; a Nero-stamped tile from the cess pit by the latrine. | Fulford et al. 2019 (2018 season) |
+| Tegulae reused in the late baths | A drain along the south wall of the peristyle **covered by a continuous row of complete tegulae**; the late 3rd/4th-c. rebuild of the east wall used (or reused) **Minety (Wilts.) tegulae** in its tile courses. | Fulford et al. 2020 (2019 season) |
+| Tegula sizes in the town | Insula IX: 16 complete tegulae **0.386–0.492 m long**. Upper breadths **0.351–0.364 m** (0.351 × 0.408 m Group D; 0.361 × 0.472 and 0.364 × 0.492 m Group C). Later (Group D) tiles are the shortest. | Clarke, Fulford, Rains & Tootell (Internet Archaeology 21) |
+| Imbrex sizes in the town | Insula IX complete imbrices **0.403 and 0.405 m**; Victorian-excavation imbrices **0.365–0.417 m**. | same |
+| Fabric and colour | Red fabric, probably from the Reading clay beds, **colour varying with firing**; one tile in a white "Eccles" fabric; a dark red slip on one tegula, white slip on two imbrices. | same |
+| Repairs | A roof of mixed Group A–C tiles is read as an early roof **repaired with newer tiles**. Large Group C tegulae are often **longitudinally convex**, made for vaulted bath-house roofs. | same; Warry 2006 |
+
+### Comparisons (C)
+
+- **Typology and date (Warry 2006):** tegulae shrink over time (Group A to c. AD 120, B 100–180, C 160–260,
+  D from 240). Hartlip villa summary: about 0.48 m early, falling to about 0.41 m by AD 240. A 3rd-century
+  roof needed ~40% more tegulae than a 1st-century one. Early roofs were laid on mortar or daub without nails;
+  later ones on battens with the bottom row nailed. From the mid-3rd century, every other tegula was nailed or
+  dowelled, and **pitch may have increased**.
+- **Range across Britain (Brodribb survey, via Warry):** tegulae 0.305–0.59 m long, flange height at the lower
+  end 28–82 mm. Imbrices 0.315–0.54 m long and tapered (wide end 0.225 m at most, narrow end 0.095 m at least),
+  section from a full half-round to an angular arch. Dorchester (Durnovaria) examples: 0.285 m long, 0.16 / 0.12 m
+  wide, 75 / 45 mm high; and 0.37 m long, 0.15 / 0.10 m wide, 70 / 55 mm high.
+- **Laying:** tegulae lie in files down the slope, flanges up. Each tile's lower end laps over the upper end of
+  the tile below, and the cutaways let the flanges nest. An imbrex covers each pair of touching flanges. Each
+  imbrex is tapered, narrow end up the slope, and the wide end of the next one up laps over it. Rain runs off the
+  imbrices into the tegula pans and down to the eaves.
+- **Pitch:** tiles held by weight (and later the odd nail) imply **low pitches**. No British measurement has
+  been found; 22° (the model's existing value) stays.
+
+### Rules for the model
+
+| Element | Rule | Level |
+|---|---|---|
+| Tegula | **0.45 m long, 0.36 m wide**, laid in files 0.36 m apart; **0.37 m of each course shows** (~0.08 m lap). Courses start at the eaves line; every course is the same, with no staggering, because files run straight down the slope. | S (size), C/X (lap) |
+| Imbrex | Over every joint between files. **0.17 m wide at the lower end, tapering** up the slope, rising ~0.07 m; **0.33 m shows** per imbrex (~0.40 m long, ~0.07 m lap). Imbrex courses are independent of the tegula courses. | S (length), C (shape) |
+| Ridge and hips | A row of imbrices along the ridge (and the ambulatory's hips), ~0.33 m showing each. | C/X |
+| Eaves and verges | The tile edge (~3 cm) shown as a thin strip; no antefixes (none recorded at the baths). | X |
+| Colour | Red Reading-clay fabric, **tone varying tile by tile with firing** (a few over-fired purplish-brown, a few under-fired pale orange, a very rare pale white-firing tile). | S |
+| Weathering | Surface only: lichen patches, grime towards the eaves, broad colour drift, and **patches of newer, brighter replacement tiles** (repairs, as at Insula IX). Tile sizes and laying do not vary. | S (repairs), X (pattern) |
+| Pitch | 22°, unchanged. | C/X |
+
+**Not modelled:** convex tegulae on curved vault roofs (the model's hot-room roofs are pitched over the vaults),
+nails, mortar bedding under the ridge, and slips.
+
+### Roof tile sources
+
+- Fulford et al. 2019, Baths 2018 interim, "Finds: ceramic building material" (see Sources above).
+- Fulford et al. 2020, Baths 2019 interim: tegula-capped drain, Minety tegulae in the east wall rebuild.
+- Clarke, Fulford, Rains & Tootell, *Silchester Roman Town Insula IX*, Internet Archaeology 21, "The Tile".
+  <https://intarch.ac.uk/journal/issue21/4/finds_tile.htm>
+- P. Warry, *Tegulae: Manufacture, Typology and Use in Roman Britain* (BAR British Series 417, 2006), via its
+  chapter summaries <http://bleatings.blogspot.com/2006/08/tegulae-manufacturetypology-and-use-in.html>
+  and secondary citations. Not read in full; the lap and pitch figures there should be checked.
+- A Roman roof tile from Hartlip villa (Kent Archaeological Society, citing Warry 2006).
+  <https://www.kentarchaeology.org.uk/magazine/119/12-a-roman-roof-tile-from-hartlip-villa>
+- Wessex Archaeology, Dorchester County Hospital, "Ceramic building material" (imbrex dimensions).
+  <https://www.wessexarch.co.uk/sites/default/files/projects/dorchester_county_hospital/13_Ceramic_build_mat.pdf>
+- Imbrex and tegula (general laying). <https://en.wikipedia.org/wiki/Imbrex_and_tegula>
+
+### Roof style (chosen 2026-10-09)
+
+Compared in `tools/materials.html?id=baths&set=roof` (camera presets Roof detail, Roof close-up, From the
+court, Roofscape; `snap(view)` in the console saves a labelled grid). The user chose:
+- **High = R2**: generated tiles (`roofF` in `atlasTiled.ts`, style `hybrid`) plus ridge / hip cap rows and
+  tile edges at eaves and verges (`buildFromPlan` `roofTrim`, on by default at LOD 0/1; about 300 triangles).
+- **Standard = R3**: the same without fine grain, lichen or repair patches (`hybridLite`, one texture read).
+- **Low**: plain, unchanged.
+
+Lab baselines `paintedRoof` / `paintedRoofLite` keep the old painted roof for comparison. Measured cost of R1
+at 2400 × 1350 against the painted roof: about +5–6 ms with a roof filling the screen, about +1.5 ms from the
+court and from the air.

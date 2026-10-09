@@ -61,6 +61,11 @@ choosing. The current roof uses the old painted `tile` atlas cell, which repeats
    2400 × 1350, and let the user choose.
 4. Consider modest geometry: ridge cap row and eaves edge (cheap), not modelled individual tiles.
 
+**Done 2026-10-09:** the user chose R2 for High and R3 for Standard; both are in the game (styles `hybrid` /
+`hybridLite`, `roofF` in `atlasTiled.ts`; ridge / hip caps and tile edges via `buildFromPlan` `roofTrim`, on
+by default). Evidence and choice: `baths.md` "Roof tiles". Roof slopes take their UV origin from the eaves
+line. Lab: `tools/materials.html?id=baths&set=roof`.
+
 ## Done: in-game reconstruction viewer (was Next 2)
 
 Built 2026-10-09; see "As built" in `inspector-plan.md`. Open it at the baths with `I` / the prompt, from

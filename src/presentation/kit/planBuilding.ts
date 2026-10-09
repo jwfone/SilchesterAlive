@@ -26,6 +26,9 @@ export interface PlanBuildOptions {
   solidOnly?: boolean;
   /** Extend walls this far below the floor (footings), so they meet lower ground on sloping sites. */
   footingDrop?: number;
+  /** Roof trim (default on; lod 0/1): ridge and hip cap rows, and the tile edge along
+   * eaves and verges. A few hundred triangles. Off only for the materials-lab baseline. */
+  roofTrim?: boolean;
 }
 /** Collision footprint in plan coordinates: box along a->b of thickness t, or a circle. */
 export type PlanFootprint =
@@ -83,8 +86,11 @@ class Acc {
   surf(fn: () => void): void { const was = this.surface; this.surface = true; fn(); this.surface = was; }
 
   /** Planar polygon (convex, ordered); flipped if its normal opposes `want`. UVs: metres along
-   * the face's own axes (first edge = u) scaled by the cell's tile size, or `fit` 0..1. */
-  poly(pts: V3[], cell: AtlasCell, ev: Tint, want?: V3, fit = false): void {
+   * the face's own axes (first edge = u) scaled by the cell's tile size, or `fit` 0..1.
+   * `origin` puts the UV origin at a point (roofs: on the eaves line, so tile courses start
+   * there), with `dv` metres added to v (roof trim: the generated tile style reads v < 0 as
+   * an edge strip and v < -2 as a ridge or hip cap). */
+  poly(pts: V3[], cell: AtlasCell, ev: Tint, want?: V3, fit = false, origin?: V3, dv = 0): void {
     if (pts.length < 3 || (this.solidOnly && this.surface)) return;
     let p = pts;
     let n = new THREE.Vector3().subVectors(p[1], p[0]).cross(new THREE.Vector3().subVectors(p[2], p[0]));
@@ -106,6 +112,7 @@ class Acc {
       this.pos.push(q.x, q.y, q.z);
       this.nor.push(n.x, n.y, n.z);
       if (fit) this.uv.push(0.002 + 0.996 * (q.dot(e1) - uMin) / (uMax - uMin || 1), 0.002 + 0.996 * (q.dot(e2) - vMin) / (vMax - vMin || 1));
+      else if (origin) { const d = q.clone().sub(origin); this.uv.push(d.dot(e1) / tw, (d.dot(e2) + dv) / th); }
       else this.uv.push(q.dot(e1) / tw, q.dot(e2) / th);
       this.cell.push(...c4);
       if (this.evidence) this.col.push(...rgb);
@@ -193,6 +200,24 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     acc.tag = i;
   };
   const pitch = Math.tan(((plan.pitchDeg ?? 22) * Math.PI) / 180);
+  const trim = (opts.roofTrim ?? true) && lod < 2;
+  /** Roof slope: tile courses counted up the slope from `eaves` (a point on the eaves line). */
+  const roofPoly = (pts: V3[], ev: Tint, want: V3, eaves: V3): void => acc.poly(pts, 'tile', ev, want, false, eaves);
+  /** Cap row of ridge / hip tiles along a -> b: half-octagon section of radius r over the line. */
+  const capRow = (a: V3, b: V3, ev: Tint, r = 0.13): void => {
+    const ax = b.clone().sub(a).normalize();
+    const up = UP.clone().addScaledVector(ax, -ax.y).normalize(), side = new THREE.Vector3().crossVectors(ax, up);
+    const off = (t: number): V3 => side.clone().multiplyScalar(Math.cos(t) * r).addScaledVector(up, Math.sin(t) * r * 0.75);
+    for (let k = 0; k < 4; k++) {
+      const t0 = (k / 4) * Math.PI, t1 = ((k + 1) / 4) * Math.PI, o0 = off(t0), o1 = off(t1);
+      acc.poly([a.clone().add(o0), b.clone().add(o0), b.clone().add(o1), a.clone().add(o1)], 'tile', ev, off((t0 + t1) / 2), false, a, -3);
+    }
+  };
+  /** Tile edge along a roof edge a -> b (eaves or verge): a vertical strip facing `out`. */
+  const edgeStrip = (a: V3, b: V3, out: V3, ev: Tint, depth = 0.06): void => {
+    const d = new THREE.Vector3(0, -depth, 0);
+    acc.poly([a, b, b.clone().add(d), a.clone().add(d)], 'tile', ev, out, false, a, -1);
+  };
   const interiorRooms = plan.rooms.filter((r) => r.finish !== 'exterior');
 
   // Height of the roof surface over a plan point (undefined = open sky).
@@ -417,13 +442,15 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       const rr = ro + 0.3, apex = ap.h + rr * pitch * 0.8, eave = ap.h - 0.3 * pitch;
       for (let i = 0; i < n; i++) {
         const t0 = a0 + ((a1 - a0) * i) / n, t1 = a0 + ((a1 - a0) * (i + 1)) / n, tm = (t0 + t1) / 2;
-        acc.poly([at(rr, t0, eave), at(rr, t1, eave), v3(ap.c[0], apex, ap.c[1])], 'tile', ap.ev ?? 'C', at(1, tm, 0).sub(at(0, tm, 0)).add(UP));
+        roofPoly([at(rr, t0, eave), at(rr, t1, eave), v3(ap.c[0], apex, ap.c[1])], ev, at(1, tm, 0).sub(at(0, tm, 0)).add(UP), at(rr, t0, eave));
+        if (trim) edgeStrip(at(rr, t0, eave), at(rr, t1, eave), at(1, tm, 0).sub(at(0, tm, 0)), ev);
       }
       if (neck > 0) {
         // two slopes carrying the half-cone's ridge back into the main roof
         const back = neck + 0.4;
-        acc.poly([N(0, rr, eave), N(back, rr, eave), N(back, 0, apex), N(0, 0, apex)], 'tile', ap.ev ?? 'C', UP);
-        acc.poly([N(0, -rr, eave), N(back, -rr, eave), N(back, 0, apex), N(0, 0, apex)], 'tile', ap.ev ?? 'C', UP);
+        roofPoly([N(0, rr, eave), N(back, rr, eave), N(back, 0, apex), N(0, 0, apex)], ev, UP, N(0, rr, eave));
+        roofPoly([N(0, -rr, eave), N(back, -rr, eave), N(back, 0, apex), N(0, 0, apex)], ev, UP, N(0, -rr, eave));
+        if (trim) capRow(N(0, 0, apex), N(back, 0, apex), ev);
       }
     }
   }
@@ -489,7 +516,13 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       const e = rf.eaves ?? 6, hb = (b1 - b0) / 2, bm = (b0 + b1) / 2, ridgeY = e + hb * pitch, eY = e - OH * pitch;
       const slopeA = [P(a0 - OH, eY, b0 - OH), P(a1 + OH, eY, b0 - OH), P(a1 + OH, ridgeY, bm), P(a0 - OH, ridgeY, bm)];
       const slopeB = [P(a0 - OH, eY, b1 + OH), P(a1 + OH, eY, b1 + OH), P(a1 + OH, ridgeY, bm), P(a0 - OH, ridgeY, bm)];
-      acc.poly(slopeA, 'tile', ev, UP); acc.poly(slopeB, 'tile', ev, UP);
+      roofPoly(slopeA, ev, UP, slopeA[0]); roofPoly(slopeB, ev, UP, slopeB[0]);
+      if (trim) {
+        capRow(slopeA[3], slopeA[2], ev);
+        const outA = P(0, 0, -1).sub(P(0, 0, 0)), outE = P(1, 0, 0).sub(P(0, 0, 0));
+        edgeStrip(slopeA[0], slopeA[1], outA, ev); edgeStrip(slopeB[0], slopeB[1], outA.clone().negate(), ev);
+        for (const s of [slopeA, slopeB]) { edgeStrip(s[0], s[3], outE.clone().negate(), ev); edgeStrip(s[1], s[2], outE, ev); }
+      }
       if (lod === 0) { acc.poly(slopeA, 'wood', ev, DOWN); acc.poly(slopeB, 'wood', ev, DOWN); }
       // gable triangles over the end walls
       for (const a of [a0, a1]) {
@@ -511,8 +544,13 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       const depth = side === 's' || side === 'n' ? B.v1 - B.v0 : B.u1 - B.u0;
       const sOver = 1 + OH / depth, yOver = lo - (hi - lo) * (OH / depth);
       const top = [corner(0, 0, hi), corner(0, 1, hi), corner(sOver, 1, yOver), corner(sOver, 0, yOver)];
-      acc.poly(top, 'tile', ev, UP);
+      roofPoly(top, ev, UP, top[3]);
       if (lod === 0) acc.poly(top, 'wood', ev, DOWN);
+      if (trim) {
+        edgeStrip(top[3], top[2], corner(1, 0.5, 0).sub(corner(0, 0.5, 0)), ev);
+        edgeStrip(top[0], top[3], corner(0.5, 0, 0).sub(corner(0.5, 1, 0)), ev);
+        edgeStrip(top[1], top[2], corner(0.5, 1, 0).sub(corner(0.5, 0, 0)), ev);
+      }
       if (rf.closeEnds) {
         for (const t of [0, 1]) {
           // vertical gable-end triangle between the wall tops (at lowY) and the slope
@@ -531,7 +569,18 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
         [v3(O.u0, hi, O.v0), v3(O.u0, hi, O.v1), v3(Iu0, loOver, Iv1), v3(Iu0, loOver, Iv0)],
         [v3(O.u1, hi, O.v0), v3(O.u1, hi, O.v1), v3(Iu1, loOver, Iv1), v3(Iu1, loOver, Iv0)],
       ];
-      for (const s of strips) { acc.poly(s, 'tile', ev, UP); if (lod === 0) acc.poly(s, 'wood', ev, DOWN); }
+      for (const s of strips) { roofPoly(s, ev, UP, s[3]); if (lod === 0) acc.poly(s, 'wood', ev, DOWN); }
+      if (trim) {
+        const c = v3((I.u0 + I.u1) / 2, 0, (I.v0 + I.v1) / 2);
+        for (const s of strips) {
+          const mid = s[2].clone().add(s[3]).multiplyScalar(0.5);
+          edgeStrip(s[2], s[3], c.clone().sub(mid).setY(0), ev); // eaves face the court
+        }
+        // hips: outer corners down to the inner corners
+        for (const [ou, ov, iu, iv] of [[O.u0, O.v0, Iu0, Iv0], [O.u1, O.v0, Iu1, Iv0], [O.u1, O.v1, Iu1, Iv1], [O.u0, O.v1, Iu0, Iv1]]) {
+          capRow(v3(ou, hi, ov), v3(iu, loOver, iv), ev, 0.11);
+        }
+      }
     }
   }
 

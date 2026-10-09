@@ -19,12 +19,18 @@ import { BRICK_TILE_M, MASONRY_TILE_M, wallUniforms } from './wallBake.js';
 //   plain       each surface its cell's average colour (atlas mip 8 = 1 texel per cell)
 //   baked       weathered look pre-rendered once into large seamless tiles (wallBake.ts):
 //               texture-lookup cost at runtime; only the damp base is computed live
-//   hybrid      weathered look with live block layout (integer hash) and a small baked grain
-//               tile sampled at unrelated scales: no visible repeat, a fraction of C's cost
-//   hybridLite  'Standard' quality tier: hybrid without fine grain or streaks (fewer fetches)
+//   hybrid      'High' tier. Walls: weathered look with live block layout (integer hash) and a
+//               small baked grain tile sampled at unrelated scales: no visible repeat, a fraction
+//               of C's cost. Roofs: generated tegulae and imbrices (roofF): live courses and files,
+//               per-tile firing tone, imbrex relief through the lighting normal, lichen and
+//               repair patches from the grain tile.
+//   hybridLite  'Standard' tier: hybrid without fine grain or streaks on walls, and roofs
+//               without fine grain, lichen or repair patches (1 texture read)
+//   paintedRoof / paintedRoofLite  hybrid / hybridLite walls with the old painted roof cell:
+//               materials-lab baselines only
 
-export type SurfaceStyle = 'texture' | 'procedural' | 'weathered' | 'plain' | 'baked' | 'hybrid' | 'hybridLite';
-const STYLE_ID: Record<SurfaceStyle, number> = { texture: 0, procedural: 1, weathered: 2, plain: 3, baked: 4, hybrid: 5, hybridLite: 6 };
+export type SurfaceStyle = 'texture' | 'procedural' | 'weathered' | 'plain' | 'baked' | 'hybrid' | 'hybridLite' | 'paintedRoof' | 'paintedRoofLite';
+const STYLE_ID: Record<SurfaceStyle, number> = { texture: 0, procedural: 1, weathered: 2, plain: 3, baked: 4, hybrid: 5, hybridLite: 6, paintedRoof: 7, paintedRoofLite: 8 };
 
 /** Real-world size (metres, w x h) of one repeat of each cell's painting. */
 export const CELL_TILE_M: Record<AtlasCell, [number, number]> = {
@@ -59,6 +65,7 @@ const GLSL_HELPERS = /* glsl */ `
 uniform int uStyle;
 uniform vec2 uMasonryCell;
 uniform vec2 uBrickCell;
+uniform vec2 uTileCell;
 uniform sampler2D uBakedMasonry;
 uniform sampler2D uBakedBrick;
 uniform sampler2D uGrain;
@@ -70,6 +77,8 @@ float vnoise(vec2 p) {
   return mix(mix(h1(i), h1(i + vec2(1, 0)), f.x), mix(h1(i + vec2(0, 1)), h1(i + vec2(1, 1)), f.x), f.y);
 }
 float fbm(vec2 p) { float a = 0.5, s = 0.0; for (int k = 0; k < 4; k++) { s += a * vnoise(p); p *= 2.03; a *= 0.5; } return s; }
+// Wall look for the style (the lab baselines 7/8 use hybrid / hybridLite walls).
+int wallStyle() { return uStyle == 7 ? 5 : uStyle == 8 ? 6 : uStyle; }
 bool isCell(vec2 c) { return all(lessThan(abs(vCellRect.xy - c), vec2(1e-3))); }
 // Anti-aliased "inside the unit, away from the mortar joint" factor.
 float joint(float f, float len, float mortar, float w) {
@@ -166,7 +175,7 @@ vec3 masonryF(vec2 m) {
   // Distance: fade the fine grain out as it drops below a pixel, and hand its contrast
   // to things that stay visible far away (block-to-block tone, 0.4-1.7 m mottling),
   // so distant walls keep texture instead of turning flat and stripy.
-  float far = uStyle == 6 ? 1.0 : smoothstep(0.015, 0.09, px); // Standard tier: never fine grain
+  float far = wallStyle() == 6 ? 1.0 : smoothstep(0.015, 0.09, px); // Standard tier: never fine grain
   vec3 col;
   if (isBrick) {
     col = mix(vec3(0.52, 0.22, 0.13), vec3(0.74, 0.38, 0.23), r);
@@ -191,10 +200,81 @@ vec3 brickF(vec2 m) {
   float r = ih(blk.x, course), r2 = ih(course, blk.x + 9.0);
   vec3 col = mix(vec3(0.52, 0.22, 0.13), vec3(0.74, 0.38, 0.23), r);
   col = mix(col, vec3(0.45, 0.3, 0.24), step(0.9, r2) * 0.6);
-  float far = uStyle == 6 ? 1.0 : smoothstep(0.015, 0.09, px);
+  float far = wallStyle() == 6 ? 1.0 : smoothstep(0.015, 0.09, px);
   col *= 0.9 + 0.2 * (far < 1.0 ? mix(texture(uGrain, m * vec2(1.0, 2.0)).g, 0.5, far) : 0.5);
   col *= 1.0 + (texture(uGrain, m / 1.7 + 0.29).r - 0.47) * 0.45 * far;
   return mix(vec3(0.8, 0.77, 0.7), col, inside);
+}
+// --- roofs (hybrid / hybridLite): tegulae and imbrices; sizes and laying in docs/key-buildings/baths.md "Roof tiles" ---
+// m = metres: x along the eaves, y up the slope from the eaves line (planBuilding roofPoly);
+// y in -2..-0.5 is a tile edge strip (eaves / verge), y < -2 a ridge or hip cap row.
+const float RW = 0.36;  // file spacing = tegula breadth (Silchester tegulae 0.35-0.36 m wide)
+const float RC = 0.37;  // tegula course: 0.45 m tile less ~0.08 m lap over the tile below
+const float RI = 0.33;  // imbrex course: ~0.40 m imbrex less ~0.07 m lap
+vec2 gRoofGrad = vec2(0.0); // slope of the tile surface (dh/dx, dh/dy), bent into the lighting normal
+bool gRoof = false;
+// Tile colour by firing (red Reading-clay fabric; the Insula IX tiles vary with firing).
+vec3 tileTone(float r, float r2) {
+  vec3 c = mix(vec3(0.54, 0.23, 0.13), vec3(0.68, 0.33, 0.19), r);
+  c = mix(c, vec3(0.4, 0.22, 0.17), step(0.94, r2) * 0.6);            // over-fired, purplish brown
+  c = mix(c, vec3(0.74, 0.45, 0.28), step(r2, 0.05) * 0.5);           // under-fired, pale orange
+  return mix(c, vec3(0.7, 0.58, 0.44), step(0.999, fract(r2 * 97.0)));  // the rare white-firing tile
+}
+vec3 roofF(vec2 m, bool lite) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  float far = lite ? 1.0 : smoothstep(0.015, 0.09, px);  // fine grain fades as it drops below a pixel
+  // Pattern -> its average once it drops below a few pixels, judged per direction: at grazing
+  // angles the up-slope footprint is large while the files across the slope are still sharp.
+  float pxX = fwidth(m.x), pxY = fwidth(m.y);
+  float flatF = smoothstep(0.09, 0.2, pxX);               // files (0.36 m): imbrices and their shading, held to ~3 px
+  float flatY = smoothstep(0.03, 0.1, pxY);               // courses: laps and lower edges
+  float relief = 1.0 - smoothstep(0.06, 0.15, pxX);       // bent normals fade a little earlier (no shimmer)
+  vec3 col; vec2 grad = vec2(0.0);
+  if (m.y < -2.0) {
+    // ridge / hip cap: imbrices along the line, each lapping the next (~0.33 m showing)
+    float k = floor(m.x / RI), f = m.x - k * RI;
+    col = tileTone(ih(k, 701.0), ih(702.0, k)) * (1.0 - 0.4 * (1.0 - smoothstep(0.03, 0.1, pxX)) * smoothstep(RI - 0.025, RI, f));
+  } else if (m.y < -0.5) {
+    // tile edge: tegula ends (~3 cm) over the shadow under the eaves
+    float yy = m.y + 1.0, t = floor(m.x / RW);
+    col = mix(vec3(0.16, 0.11, 0.08), tileTone(ih(t, 703.0), ih(704.0, t)) * 0.85, smoothstep(-0.034, -0.03, yy));
+  } else {
+    float file = floor(m.x / RW + 0.5), dx = m.x - file * RW, ad = abs(dx); // imbrex over the joint at file * RW
+    float tf = floor(m.x / RW), course = floor(m.y / RC), fy = m.y - course * RC;
+    float ic = floor(m.y / RI), iy = m.y - ic * RI;
+    float hw = mix(0.085, 0.07, iy / RI);                 // imbrex half-width, wide end down the slope
+    // tegula pan: lower edge rounded (catches the light), step shadow where the next course laps it
+    vec3 pan = tileTone(ih(tf, course), ih(course, tf + 9.0));
+    float lap = smoothstep(RC - 0.03, RC - 0.004, fy), lip = 1.0 - smoothstep(0.0, 0.014, fy);
+    pan *= mix(1.0 - 0.45 * lap, 1.0 - 0.45 * 0.05, flatY);
+    // occlusion beside the imbrices: a dark channel at the foot of each, easing out over ~8 cm
+    pan *= mix(0.88 * mix(0.38, 1.0, smoothstep(hw - 0.004, hw + 0.06, ad)), 0.8, flatF);
+    grad.y = 0.9 * lip * (1.0 - flatY);
+    // imbrex: half-round in section (rise ~7 cm), its lapped top end shadowed by the one above
+    vec3 imb = tileTone(ih(file, ic + 300.0), ih(ic + 300.0, file)) * mix(1.0 - 0.4 * smoothstep(RI - 0.025, RI - 0.003, iy), 0.97, flatY);
+    float on = 1.0 - smoothstep(hw - 0.5 * pxX, hw + 0.5 * pxX, ad);
+    float t = min(ad / hw, 0.96), hgt = sqrt(1.0 - t * t);
+    imb *= mix(1.14 - 0.55 * t * t, 1.0, flatF);          // crown catches the sky, flanks fall into shade
+    vec2 igrad = vec2(-sign(dx) * 0.07 / hw * t / hgt, 0.0);
+    grad = mix(grad, igrad, on);
+    on = mix(on, 2.0 * 0.078 / RW, flatF);
+    col = mix(pan, imb, on);
+    // weathering: newer repair patches (whole tiles), lichen (High only: 3 texture reads), grime toward the eaves
+    if (!lite) {
+      float patchy = smoothstep(0.6, 0.64, texture(uGrain, vec2((tf + 0.5) * RW, (course + 0.5) * RC) / 13.0 + 0.71).b);
+      col *= mix(1.0, 1.1, patchy);
+      float lich = smoothstep(0.55, 0.75, texture(uGrain, m / 2.3 + 0.2).a) * (1.0 - 0.8 * patchy);
+      lich *= mix(smoothstep(0.35, 0.65, texture(uGrain, m * 1.7).r), 0.5, far);
+      col = mix(col, mix(vec3(0.6, 0.6, 0.5), vec3(0.66, 0.58, 0.34), texture(uGrain, m / 5.1).g), lich * 0.55);
+    }
+    col *= mix(0.82, 1.0, smoothstep(0.0, 2.5, m.y));
+  }
+  if (!lite) col *= 0.88 + 0.24 * mix(texture(uGrain, m * 1.1 + 0.37).r, 0.47, far);
+  float drift = lite ? texture(uGrain, m / 9.0).b : texture(uGrain, m / 9.0).b * 0.6 + texture(uGrain, m / 23.0 + 0.37).b * 0.4;
+  col *= 0.8 + 0.4 * (0.47 + (drift - 0.47) * 1.5);
+  gRoofGrad = grad * relief;
+  gRoof = true;
+  return col;
 }
 vec3 brickAt(vec2 m) {
   float ch = 0.07, course = floor(m.y / ch);
@@ -217,6 +297,7 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
       uStyle: { value: STYLE_ID[mat.userData.surfaceStyle as SurfaceStyle] },
       uMasonryCell: { value: new THREE.Vector2(...cellVec('masonry').slice(0, 2)) },
       uBrickCell: { value: new THREE.Vector2(...cellVec('brick').slice(0, 2)) },
+      uTileCell: { value: new THREE.Vector2(...cellVec('tile').slice(0, 2)) },
     };
     Object.assign(shader.uniforms, uniforms, wallUniforms);
     mat.userData.uniforms = uniforms;
@@ -236,10 +317,12 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     // stone and brick read better as clean buff / red than as their texture's average
     if (isCell(uMasonryCell)) sampledDiffuseColor = vec4(0.68, 0.64, 0.54, 1.0);
     if (isCell(uBrickCell)) sampledDiffuseColor = vec4(0.66, 0.33, 0.21, 1.0);
-  } else if ((uStyle == 5 || uStyle == 6) && isCell(uMasonryCell)) {
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uMasonryCell)) {
     sampledDiffuseColor = vec4(masonryF(tUv * vec2(2.0, 1.6)), 1.0);
-  } else if ((uStyle == 5 || uStyle == 6) && isCell(uBrickCell)) {
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uBrickCell)) {
     sampledDiffuseColor = vec4(brickF(tUv * vec2(1.0, 0.56)), 1.0);
+  } else if ((uStyle == 5 || uStyle == 6) && isCell(uTileCell)) {
+    sampledDiffuseColor = vec4(roofF(tUv * vec2(${CELL_TILE_M.tile[0]}, ${CELL_TILE_M.tile[1]}), uStyle == 6), 1.0);
   } else if (uStyle == 4 && isCell(uMasonryCell)) {
     sampledDiffuseColor = texture(uBakedMasonry, tUv * vec2(${CELL_TILE_M.masonry[0] / MASONRY_TILE_M[0]}, ${CELL_TILE_M.masonry[1] / MASONRY_TILE_M[1]}));
   } else if (uStyle == 4 && isCell(uBrickCell)) {
@@ -252,7 +335,7 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     vec2 aUv = vCellRect.xy + fract(tUv) * vCellRect.zw;
     sampledDiffuseColor = textureGrad(map, aUv, dFdx(tUv) * vCellRect.zw, dFdy(tUv) * vCellRect.zw);
   }
-  if ((uStyle == 5 || uStyle == 6) && (isCell(uMasonryCell) || isCell(uBrickCell))) {
+  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell))) {
     vec2 m = tUv * (isCell(uMasonryCell) ? vec2(2.0, 1.6) : vec2(1.0, 0.56));
     // colour drift from two unrelated scales of the grain tile: no visible period
     float drift = texture(uGrain, m / 11.0).b * 0.6 + texture(uGrain, m / 29.3 + 0.37).b * 0.4;
@@ -260,7 +343,7 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     sampledDiffuseColor.rgb *= 0.78 + 0.42 * drift;
     float damp = 1.0 - smoothstep(0.0, 0.9, vLocalY);
     sampledDiffuseColor.rgb = mix(sampledDiffuseColor.rgb, sampledDiffuseColor.rgb * vec3(0.72, 0.76, 0.66), damp * 0.95);
-    if (uStyle == 5) {
+    if (wallStyle() == 5) {
       float streak = texture(uGrain, vec2(m.x / 18.8, 0.31)).g * smoothstep(0.55, 1.0, texture(uGrain, vec2(m.x / 6.67, m.y / 40.0)).a);
       sampledDiffuseColor.rgb *= 1.0 - 0.3 * streak;
     }
@@ -280,8 +363,26 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
   }
   diffuseColor *= sampledDiffuseColor;
 #endif`,
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#include <normal_fragment_maps>
+  {
+    // Roof relief: bend the normal by the tile surface's slope (frame from screen derivatives,
+    // taken outside the branch so they are defined for every pixel of the quad).
+    vec3 q0 = dFdx(-vViewPosition), q1 = dFdy(-vViewPosition);
+    vec2 rm = vMapUv * vec2(${CELL_TILE_M.tile[0]}, ${CELL_TILE_M.tile[1]});
+    vec2 st0 = dFdx(rm), st1 = dFdy(rm);
+    if (gRoof) {
+      vec3 q1perp = cross(q1, normal), q0perp = cross(normal, q0);
+      vec3 T = q1perp * st0.x + q0perp * st1.x, B = q1perp * st0.y + q0perp * st1.y;
+      float det = max(dot(T, T), dot(B, B));
+      float sc = det == 0.0 ? 0.0 : inversesqrt(det);
+      normal = normalize(normal - sc * (gRoofGrad.x * T + gRoofGrad.y * B));
+    }
+  }`,
       );
   };
-  mat.customProgramCacheKey = () => 'atlas-tiled-v5';
+  mat.customProgramCacheKey = () => 'atlas-tiled-v7';
   return mat;
 }

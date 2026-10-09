@@ -88,11 +88,14 @@ painted texture (`tools/materials.html`, `await bench(30, view, [2400, 1350])`):
 
 As more buildings use it, a **quality fallback** is needed:
 
-| Tier | Walls | Notes |
-|---|---|---|
-| High | F | default where the GPU allows |
-| Standard | F without fine grain and streaks (block layout, colour drift, damp base) | about half of F's extra cost (to measure) |
-| Low | Plain | same cost as today's texture or less |
+| Tier | Walls | Roofs (added 2026-10-09, `baths.md` "Roof tiles") | Notes |
+|---|---|---|---|
+| High | F | generated tegulae and imbrices with lichen and repairs (lab R2) | default where the GPU allows |
+| Standard | F without fine grain and streaks (block layout, colour drift, damp base) | the same tiles without fine grain, lichen or repairs (R3) | about half of F's extra cost (to measure) |
+| Low | Plain | plain | same cost as today's texture or less |
+
+Ridge / hip caps and tile edges are geometry (LOD 0/1) and are present in every tier. The Auto start-up
+test still times a wall only; a roof filling the screen costs about the same as a wall.
 
 - **Auto (default):** pick the starting tier with a short start-up micro-benchmark (render a test wall
   off-screen for ~10 frames, reusing the lab's bench code), then step down a tier if frame time stays over
