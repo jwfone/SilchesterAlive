@@ -93,9 +93,10 @@ export function buildAmphitheatre(detail: AmphiDetail, mat: THREE.Material): Amp
     const g = new THREE.CircleGeometry(1, 28);
     remapUV(g, 'arena', 4, 4);
     const m = new THREE.Mesh(g, mat);
+    m.name = 'arena';
     m.rotation.x = -Math.PI / 2;
     m.scale.set(arx, arz, 1);
-    m.position.set(ax, 0.12, az);
+    m.position.set(ax, 0.03, az); // on the ground: the caller adds a depth bias so it never z-fights the terrain
     extras.push(m);
     count(g);
   }

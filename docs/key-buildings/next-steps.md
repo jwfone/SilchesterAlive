@@ -41,6 +41,14 @@ State on 2026-10-09, at the end of the baths pilot session.
 - After editing a plan JSON run `npm run import:keyplans` (the game and smoke test read the generated TS).
 - Dev spawn: `http://localhost:5173/?at=160,104,175` (baths street front). **Spawning onto a
   collectible marks it collected** in localStorage (`silchester-collectibles-v1`); undo after testing.
+- **One ground level** (`src/domain/terrainSurface.ts`): the drawn ground mesh and every height query (`gy`,
+  `groundY`, `world.terrainY`) are the same surface. Key buildings (baths, forum complex, mansio, temples,
+  amphitheatre) stand on levelled platforms (flat 2 m beyond the footprint, 6 m ramp), added in `WorldBuilder`;
+  a new key building needs a platform there too. Place things with `gy`, not `sampleTerrain`. Ground decals (roads,
+  footprints, water, shadows) lie 6-8 cm up, cut to the terrain's triangles (`drapeOnGround` in `kit/decal.ts`) and
+  layered by a per-layer depth bias (`DECAL_BIAS` in `WorldBuilder`), not by height, so they do not flicker at distance. The smoke test checks mesh = `terrainY`
+  and that plan buildings stand on level ground.
+- Wall shaders: below floor level (`m.y < 0`) the coursing is plain Greensand, so no brick band shows at the foot.
 - The Read tool can't render PDFs here: use `pdftotext` (mingw64) and PyMuPDF in a scratch venv.
 - Excavation report PDFs and the 1905 plan image live in gitignored `tmp/research/`; they are the
   University of Reading's and are not committed. Sources are linked in `baths.md`.

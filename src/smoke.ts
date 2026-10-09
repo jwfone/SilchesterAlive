@@ -2,7 +2,7 @@
 // without a renderer/GPU. Run via `npm run smoke`. Throws on failure.
 // The atlas/contact-shadow painters get a no-op 2D context — geometry
 // construction is what we're verifying, not pixels.
-import { buildTownPlan, PERF_BUDGET, sampleTerrain, earthworkWidth, earthworkHeight, earthworkProfile } from './domain/townPlan.js';
+import { buildTownPlan, PERF_BUDGET, earthworkWidth, earthworkHeight, earthworkProfile } from './domain/townPlan.js';
 import { buildWorld } from './presentation/WorldBuilder.js';
 import { hitsPoly, pointInRing } from './presentation/PlayerControls.js';
 import {
@@ -201,14 +201,13 @@ world.layerGroups.walls.visible = true;
 // Ground lift: cosine mound, crest = earthworkHeight, quarter-width = profile(0.5).
 // Lower bound only — overlapping banks (opposite scarps) may add more lift.
 {
-  const RELIEF = 0.25;
   const segs = plan.earthworks.filter((s) => Math.hypot(s.x2 - s.x1, s.z2 - s.z1) >= 0.5).slice(0, 8);
   if (!segs.length) throw new Error('no earthworks to lift-check');
   const mound = world.group.children.find((o) => o.name === 'gis-earthworks');
   if (!mound) throw new Error('missing earthwork mound mesh');
   for (const s of segs) {
     const mx = (s.x1 + s.x2) / 2, mz = (s.z1 + s.z2) / 2;
-    const base = sampleTerrain(plan.terrain, mx, mz) * RELIEF;
+    const base = world.terrainY(mx, mz);
     const H = earthworkHeight(s);
     const crest = world.groundY(mx, mz);
     if (crest < base + H - 0.08) {
@@ -218,12 +217,36 @@ world.layerGroups.walls.visible = true;
     const len = Math.hypot(dx, dz) || 1;
     const w = earthworkWidth(s);
     const qx = mx + (-dz / len) * (w / 4), qz = mz + (dx / len) * (w / 4);
-    const qbase = sampleTerrain(plan.terrain, qx, qz) * RELIEF;
+    const qbase = world.terrainY(qx, qz);
     const quarter = world.groundY(qx, qz);
     const wantQ = qbase + earthworkProfile(0.5) * H;
     if (quarter < wantQ - 0.08) {
       throw new Error(`earthwork flank lift missing at (${qx},${qz}): got ${quarter}, want >= ${wantQ}`);
     }
+  }
+}
+// One ground level: the drawn terrain mesh is exactly the surface every height query reads, key
+// buildings stand on flat platforms (footprint ground within a centimetre of level), and nothing
+// walkable sits more than a few centimetres off the ground it is built on.
+{
+  const ground = world.group.children.find((o) => o.name === 'ground') as THREE.Mesh | undefined;
+  if (!ground) throw new Error('missing ground mesh');
+  const gp = ground.geometry.attributes.position, gi = ground.geometry.index!;
+  for (let t = 0; t < gi.count / 3; t += 11) {
+    const a = gi.getX(t * 3), b = gi.getX(t * 3 + 1), c = gi.getX(t * 3 + 2);
+    const x = (gp.getX(a) + gp.getX(b) + gp.getX(c)) / 3, z = (gp.getZ(a) + gp.getZ(b) + gp.getZ(c)) / 3;
+    const y = (gp.getY(a) + gp.getY(b) + gp.getY(c)) / 3;
+    if (Math.abs(y - world.terrainY(x, z)) > 1e-3) throw new Error(`ground mesh differs from terrainY at (${x.toFixed(0)},${z.toFixed(0)}): ${y} vs ${world.terrainY(x, z)}`);
+  }
+  for (const pb of world.planBuildings) {
+    let lo = Infinity, hi = -Infinity;
+    for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) {
+      const y = world.terrainY(pb.centre.x + (i * pb.radius) / 6, pb.centre.z + (j * pb.radius) / 6);
+      if (Math.hypot(i, j) <= 3) { lo = Math.min(lo, y); hi = Math.max(hi, y); }
+    }
+    if (hi - lo > 0.05) throw new Error(`${pb.id} is not on a levelled platform: ground varies ${(hi - lo).toFixed(2)} m under it`);
+    const floor = pb.floorAt(pb.centre.x, pb.centre.z);
+    if (floor !== undefined && (floor < lo || floor > hi + 0.1)) throw new Error(`${pb.id} floor ${floor} is off the ground ${lo}..${hi}`);
   }
 }
 if (houses > PERF_BUDGET.maxHouses) throw new Error(`house budget exceeded: ${houses}`);
@@ -444,5 +467,6 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
   if (parseAutoTierCache(JSON.stringify({ gpu: 'A', tier: 'standard', extraMs: 12 }), 'A')?.tier !== 'standard') throw new Error('auto cache');
   if (parseAutoTierCache(JSON.stringify({ gpu: 'A', tier: 'standard' }), 'B') !== null) throw new Error('auto cache must be per GPU');
   if (parseAutoTierCache('{bad', 'A') !== null) throw new Error('auto cache must tolerate garbage');
+  if (parseAutoTierCache(JSON.stringify({ gpu: 'A', tier: 'plain', extraMs: 24 }), 'A') !== null) throw new Error('a cached plain must be re-tested, not trusted');
 }
 console.log('smoke OK');

@@ -48,7 +48,7 @@ export class Game {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 1100);
   private controls!: PlayerControls;
-  private clock = new THREE.Clock();
+  private clock = new THREE.Timer();
   private plan: TownPlan = buildTownPlan(1234);
   private world = buildWorld(this.plan);
   /** Rendered frames in the current 500ms HUD window (tick runs unthrottled). */
@@ -1358,7 +1358,7 @@ export class Game {
     if (cached) return cached.tier;
     const extraMs = measureWallCost(webgl);
     const tier = tierFromBench(extraMs);
-    localStorage.setItem(AUTO_TIER_STORAGE_KEY, JSON.stringify({ gpu, tier, extraMs: Math.round(extraMs * 10) / 10 }));
+    if (tier !== 'plain') localStorage.setItem(AUTO_TIER_STORAGE_KEY, JSON.stringify({ gpu, tier, extraMs: Math.round(extraMs * 10) / 10 }));
     console.debug(`[silchester] building look auto: wall test +${extraMs.toFixed(1)} ms full-screen -> ${tier}`);
     return tier;
   }
@@ -1406,7 +1406,7 @@ export class Game {
     if (!this.slowSinceT) { this.slowSinceT = now; return; }
     if (now - this.slowSinceT < SLOW_WINDOW_MS) return;
     this.autoTier = stepDownTier(this.autoTier);
-    if (this.renderer.webgl) localStorage.setItem(AUTO_TIER_STORAGE_KEY, JSON.stringify({ gpu: this.gpuName(), tier: this.autoTier, extraMs: -1 }));
+    if (this.renderer.webgl && this.autoTier !== 'plain') localStorage.setItem(AUTO_TIER_STORAGE_KEY, JSON.stringify({ gpu: this.gpuName(), tier: this.autoTier, extraMs: -1 }));
     console.debug(`[silchester] building look auto: slow frames (${this.frameEmaMs.toFixed(0)} ms) -> ${this.autoTier}`);
     this.slowSinceT = 0;
     this.frameEmaMs = 16;
@@ -1414,6 +1414,7 @@ export class Game {
   }
 
   private tick(statsEl: HTMLElement, minimap: HTMLCanvasElement): void {
+    this.clock.update();
     const rawDt = this.clock.getDelta();
     const dt = Math.min(rawDt, 0.05);
     if (this.physicsDirty) this.refreshPhysicsCache();
@@ -1781,7 +1782,7 @@ export class Game {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.clock.getDelta(); // the paused time is not one long frame
+    this.clock.update(); // the paused time is not one long frame
     this.sceneDirty = true;
     this.reconNearId = null; // re-show the prompt on the next check
     this.reconCheckT = 0;

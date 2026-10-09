@@ -69,6 +69,18 @@ function inApse(u: number, v: number, ap: NonNullable<BuildingPlan['apses']>[num
   return s >= 0 && s <= (ap.neck ?? 0) && Math.abs(c) <= ap.r;
 }
 
+/** World-space axis-aligned bounds of a plan's wall extent (the ground it must stand on). */
+export function planFootprintBounds(plan: BuildingPlan): { minX: number; maxX: number; minZ: number; maxZ: number } {
+  let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+  for (const w of plan.walls) for (const [u, v] of [w.a, w.b]) { u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+  const b = { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity };
+  for (const [u, v] of [[u0, v0], [u1, v0], [u1, v1], [u0, v1]]) {
+    const p = planToWorld(plan, u, v);
+    b.minX = Math.min(b.minX, p.x); b.maxX = Math.max(b.maxX, p.x); b.minZ = Math.min(b.minZ, p.z); b.maxZ = Math.max(b.maxZ, p.z);
+  }
+  return b;
+}
+
 export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: number) => number): PlacedPlanBuilding {
   // Plan extent from its walls (u, v), and its centre in plan and world space.
   let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;

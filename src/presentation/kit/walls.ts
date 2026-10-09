@@ -4,7 +4,8 @@ import { mergeMixed } from './merge.js';
 
 // Roman town wall segment along local Z: coursed rubble core + coping + foundation.
 // Low-poly merged single geometry (~30 tris), stone atlas UVs tiled by length.
-export function buildWallSegmentGeometry(len: number, h: number, t: number): THREE.BufferGeometry {
+/** `sink`: how far the footing runs below the base line, so the wall meets lower ground on a slope. */
+export function buildWallSegmentGeometry(len: number, h: number, t: number, sink = 0): THREE.BufferGeometry {
   const parts: THREE.BufferGeometry[] = [];
   const core = new THREE.BoxGeometry(t, h, len);
   remapUV(core, 'stone', Math.max(1, Math.round(len / 4)), 1);
@@ -20,6 +21,12 @@ export function buildWallSegmentGeometry(len: number, h: number, t: number): THR
   remapUV(footing, 'stone', Math.max(1, Math.round(len / 4)), 1);
   footing.translate(0, 0.3, 0);
   parts.push(footing);
+  if (sink > 0.01) {
+    const under = new THREE.BoxGeometry(t + 0.9, sink, len);
+    remapUV(under, 'stone', Math.max(1, Math.round(len / 4)), 1);
+    under.translate(0, -sink / 2, 0);
+    parts.push(under);
+  }
 
   // pilaster buttress every ~16m (cheap rhythm detail, 1 box each)
   const n = Math.floor(len / 16);
@@ -38,8 +45,12 @@ export function buildWallSegmentGeometry(len: number, h: number, t: number): THR
 // Single merged geometry, instanced 4x for N/S/E/W gates.
 export function buildGateGeometry(): THREE.BufferGeometry {
   const parts: THREE.BufferGeometry[] = [];
-  const towerH = 9, towerW = 4;
+  const towerH = 9, towerW = 4, sink = 1.2; // tower footings run below the base line (sloping sites)
   for (const sx of [-5, 5]) {
+    const foot = new THREE.BoxGeometry(towerW, sink, towerW);
+    remapUV(foot, 'stone', 1, 1);
+    foot.translate(sx, -sink / 2, 0);
+    parts.push(foot);
     const tower = new THREE.BoxGeometry(towerW, towerH, towerW);
     remapUV(tower, 'stone', 1, 2);
     tower.translate(sx, towerH / 2, 0);

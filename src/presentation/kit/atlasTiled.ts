@@ -88,6 +88,7 @@ float joint(float f, float len, float mortar, float w) {
 // Greensand courses (0.2 m) with bands of 3 brick courses every 0.8 m; m = metres (x along, y up).
 vec3 masonryAt(vec2 m) {
   float band = floor(m.y / 0.8), yb = m.y - band * 0.8;
+  if (m.y < 0.0) yb = mod(m.y, 0.6); // below floor level (footings): Greensand only, no brick band at the foot of the wall
   bool isBrick = yb >= 0.6;
   float ch = isBrick ? 0.2 / 3.0 : 0.2;
   float cy = isBrick ? yb - 0.6 : yb;
@@ -149,6 +150,7 @@ vec3 masonryF(vec2 m) {
   // (~0.12 m, heights varying a little) then 3 brick courses of ~0.067 m
   // (4-4.5 cm brick + ~2 cm mortar). Height-only, so bands meet at corners.
   float band = floor(m.y / 0.8), yb = m.y - band * 0.8;
+  if (m.y < 0.0) yb = mod(m.y, 0.6); // below floor level (footings): Greensand only, no brick band at the foot of the wall
   bool isBrick = yb >= 0.6;
   float ch, fy, course;
   if (isBrick) {

@@ -1,14 +1,16 @@
 import * as THREE from 'three';
-import { sampleTerrain, wallGapIntervals, insideReserve, earthworkWidth, earthworkHeight, earthworkProfile, type TownPlan } from '../domain/townPlan.js';
+import { wallGapIntervals, insideReserve, earthworkWidth, earthworkHeight, earthworkProfile, type TownPlan } from '../domain/townPlan.js';
 import { getAtlas, remapUV } from './kit/atlas.js';
 import { mergeMixed } from './kit/merge.js';
+import { carveRects, drapeOnGround, type Rect } from './kit/decal.js';
 import { buildWallSegmentGeometry, buildGateGeometry } from './kit/walls.js';
 import { buildGableRoofGeometry } from './kit/roofs.js';
 import { buildHouseWithOpeningsGeometry } from './kit/houses.js';
 import { buildColumnGeometry } from './kit/columns.js';
 import { buildForumComplex } from './kit/forum.js';
 import { buildMansio } from './kit/mansio.js';
-import { placePlanBuilding, setPlanBuildingDisplay, type KeyBuildingDisplay, type PlacedPlanBuilding } from './kit/planWorld.js';
+import { buildTerrainSurface, type Platform } from '../domain/terrainSurface.js';
+import { placePlanBuilding, planFootprintBounds, setPlanBuildingDisplay, type KeyBuildingDisplay, type PlacedPlanBuilding } from './kit/planWorld.js';
 import { KEY_PLANS } from '../domain/keyPlans.generated.js';
 import { buildAmphitheatre, type EllipseBand } from './kit/amphitheatre.js';
 import { buildContactShadows, type ShadowSpot } from './kit/ao.js';
@@ -39,6 +41,8 @@ export interface BuiltWorld {
   drawCalls: number;
   tris: number;
   groundY: (x: number, z: number) => number;
+  /** Drawn terrain surface height (no banks or building floors): what the ground mesh shows. */
+  terrainY: (x: number, z: number) => number;
   /** Show/hide drain instances inside the shared roads mesh (drains hidden by default). */
   setDrainsVisible: (visible: boolean) => void;
   /** Key buildings generated from curated plans (assets/key-plans), e.g. the baths. */
@@ -50,6 +54,16 @@ export interface BuiltWorld {
 // Relief is median-centred GIS terrain (up to ±16m at the plateau edge).
 // Full relief would bury streets/AO decals, so the greybox plays it at 25%.
 const RELIEF_SCALE = 0.25;
+/** Levelled ground under key buildings: flat this far beyond the footprint, then a ramp. */
+const PLATFORM_MARGIN = 2;
+const PLATFORM_RAMP = 6;
+/**
+ * Ground decals (roads, footprint overlay, water) lie this far above the ground. Order between layers
+ * and against the terrain at any distance comes from a depth bias per layer (DECAL_BIAS, in depth-buffer
+ * units, so it scales with distance the way depth precision does), not from height.
+ */
+const DECAL_LIFT = 0.06;
+const DECAL_BIAS = { earthworks: -2, water: -4, footprints: -7, roads: -10, arena: -7 };
 
 function emptyLayerPolys(): LayerPolys {
   return { roads: [], key: [], buildings: [], footprints: [], walls: [] };
@@ -161,7 +175,59 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   const shadowsByLayer: Record<LayerId, ShadowSpot[]> = { roads: [], key: [], buildings: [], footprints: [], walls: [] };
   const atlas = getAtlas();
   const kitMat = atlas.material;
-  const gy = (x: number, z: number): number => sampleTerrain(plan.terrain, x, z) * RELIEF_SCALE;
+  /** The kit material with a depth bias: for surfaces that lie on the ground (see DECAL_BIAS). */
+  const decalMaterial = (units: number): THREE.MeshLambertMaterial => {
+    const m = kitMat.clone();
+    m.polygonOffset = true; m.polygonOffsetFactor = 0; m.polygonOffsetUnits = units;
+    return m;
+  };
+  // Key buildings stand on levelled platforms (the terrain is flattened under each, with a short
+  // ramp back to the contours), so floors, walls and the ground agree. Their kits do not depend on
+  // the ground, so they are built first to learn their footprints.
+  const fB = plan.buildings.find((b) => b.id === 'forum');
+  const bB = plan.buildings.find((b) => b.id === 'basilica');
+  const forumCx = fB && bB ? (fB.x + bB.x) / 2 : 8, forumCz = fB && bB ? (fB.z + bB.z) / 2 : -8;
+  const forumDx = forumCx - 8, forumDz = forumCz - -8;
+  const forum = buildForumComplex(kitMat);
+  const pM = plan.buildings.find((b) => b.id === 'mansio');
+  const mansioX = pM?.x ?? 40, mansioZ = pM?.z ?? 245;
+  const mansioDx = mansioX - 40, mansioDz = mansioZ - 245;
+  const mansio = buildMansio(kitMat);
+  const amphi = buildAmphitheatre(plan.amphitheatre, kitMat);
+  const publicBs = plan.buildings.filter((x) => x.kind === 'temple' || x.kind === 'church');
+  const platforms: Platform[] = [];
+  /** Key buildings' own footprints: ground decals (roads) are cut out of these, the reconstruction has its own floors. */
+  const keepOuts: Rect[] = [];
+  const addPlatform = (minX: number, maxX: number, minZ: number, maxZ: number): void => {
+    keepOuts.push({ minX, maxX, minZ, maxZ });
+    const p: Platform = { minX: minX - PLATFORM_MARGIN, maxX: maxX + PLATFORM_MARGIN, minZ: minZ - PLATFORM_MARGIN, maxZ: maxZ + PLATFORM_MARGIN, ramp: PLATFORM_RAMP };
+    // Neighbouring buildings (the two temples) share one platform: fewer grid lines, no thin ridge between.
+    const near = PLATFORM_RAMP * 2 + 6;
+    const q = platforms.find((o) => p.minX < o.maxX + near && p.maxX > o.minX - near && p.minZ < o.maxZ + near && p.maxZ > o.minZ - near);
+    if (!q) { platforms.push(p); return; }
+    q.minX = Math.min(q.minX, p.minX); q.maxX = Math.max(q.maxX, p.maxX); q.minZ = Math.min(q.minZ, p.minZ); q.maxZ = Math.max(q.maxZ, p.maxZ);
+  };
+  {
+    const kitBounds = (mesh: THREE.Object3D, dx: number, dz: number): void => {
+      const g = (mesh as THREE.Mesh).geometry;
+      g.computeBoundingBox();
+      const b = g.boundingBox!;
+      addPlatform(b.min.x + dx, b.max.x + dx, b.min.z + dz, b.max.z + dz);
+    };
+    for (const m of forum.meshes) kitBounds(m, forumDx, forumDz);
+    kitBounds(mansio.mesh, mansioDx, mansioDz);
+    const a = plan.amphitheatre;
+    addPlatform(a.x - a.rx - 1.5, a.x + a.rx + 1.5, a.z - a.rz - 1.5, a.z + a.rz + 1.5);
+    for (const b of publicBs) {
+      const c = Math.abs(Math.cos(b.rotY)), sn = Math.abs(Math.sin(b.rotY));
+      const ex = (b.w / 2) * c + (b.d / 2) * sn, ez = (b.w / 2) * sn + (b.d / 2) * c;
+      addPlatform(b.x - ex, b.x + ex, b.z - ez, b.z + ez);
+    }
+    for (const kp of Object.values(KEY_PLANS)) { const b = planFootprintBounds(kp); addPlatform(b.minX, b.maxX, b.minZ, b.maxZ); }
+  }
+  const surface = buildTerrainSurface(plan.terrain, RELIEF_SCALE, platforms);
+  /** Drawn ground height: the terrain mesh itself (see domain/terrainSurface). */
+  const gy = surface.sample;
   // Spatial hash over earthwork bank segments so ground-lift and mound meshing
   // only test nearby centre-lines (chained GIS 03 hatchures).
   const BANK_CELL = 25;
@@ -220,24 +286,35 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     tris += (idx / 3) * instances;
   };
 
-  // Ground: displaced plane from GIS contours when present (1 draw).
-  // 64x64 segments matches the 64-grid heightfield exactly (grid nodes land on
-  // texel centres), so no detail is lost vs a finer mesh; falls back to flat quad pre-import.
+  // Ground: the terrain surface as a mesh (1 draw): nodes at the heightfield's texel centres plus
+  // grid lines at each platform edge. Falls back to a flat quad pre-import.
   {
-    const SEG = plan.terrain.heights.length ? 64 : 1;
-    const g = new THREE.PlaneGeometry(1400, 1400, SEG, SEG);
-    g.rotateX(-Math.PI / 2);
-    if (SEG > 1) {
-      const pos = g.attributes.position as THREE.BufferAttribute;
-      for (let i = 0; i < pos.count; i++) {
-        pos.setY(i, gy(pos.getX(i), pos.getZ(i)));
+    const { coords, heights } = surface;
+    const n = coords.length;
+    const positions = new Float32Array(n * n * 3), uvs = new Float32Array(n * n * 2);
+    const half = plan.terrain.size / 2;
+    for (let j = 0; j < n; j++) {
+      for (let i = 0; i < n; i++) {
+        const k = j * n + i;
+        positions.set([coords[i], heights[k], coords[j]], k * 3);
+        uvs.set([(coords[i] + half) / (2 * half), 1 - (coords[j] + half) / (2 * half)], k * 2);
       }
-      pos.needsUpdate = true;
-      g.computeVertexNormals();
     }
+    const index: number[] = [];
+    for (let j = 0; j < n - 1; j++) {
+      for (let i = 0; i < n - 1; i++) {
+        const v00 = j * n + i, v10 = v00 + 1, v01 = v00 + n, v11 = v01 + 1;
+        index.push(v00, v01, v10, v10, v01, v11); // split along the diagonal TerrainSurface.sample uses
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    g.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+    g.setIndex(index);
+    g.computeVertexNormals();
     remapUV(g, 'grass', 90, 90);
     const ground = new THREE.Mesh(g, kitMat);
-    ground.position.y = 0;
+    ground.name = 'ground';
     group.add(ground);
     countTris(g);
   }
@@ -265,17 +342,15 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
             if (hole.length < 3) continue;
             shape.holes.push(new THREE.Path(hole.map((p) => new THREE.Vector2(p.x, -p.z))));
           }
-          const g = new THREE.ShapeGeometry(shape);
-          if (!g.attributes.position || g.attributes.position.count < 3) continue;
-          g.rotateX(-Math.PI / 2); // shape (x,-z) -> world (x, 0, z)
-          const pos = g.attributes.position as THREE.BufferAttribute;
-          for (let i = 0; i < pos.count; i++) {
-            pos.setY(i, gy(pos.getX(i), pos.getZ(i)) + 0.22);
-          }
-          pos.needsUpdate = true;
-          g.computeVertexNormals();
-          remapUV(g, 'street', 1, 1);
-          roadParts.push(g);
+          const flat = new THREE.ShapeGeometry(shape);
+          if (!flat.attributes.position || flat.attributes.position.count < 3) continue;
+          flat.rotateX(-Math.PI / 2); // shape (x,-z) -> world (x, 0, z)
+          const g = carveRects(flat, keepOuts);
+          if (!g) continue;
+          const draped = drapeOnGround(g, gy, DECAL_LIFT, surface.coords);
+          draped.computeVertexNormals();
+          remapUV(draped, 'street', 1, 1);
+          roadParts.push(draped);
         } catch {
           continue; // per-poly skip (bad ring): rest of network still renders
         }
@@ -286,28 +361,33 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     }
     if (roadParts.length) {
       const merged = mergeMixed(roadParts, 'roads');
-      const mesh = new THREE.Mesh(merged, kitMat);
+      const mesh = new THREE.Mesh(merged, decalMaterial(DECAL_BIAS.roads));
+      mesh.name = 'roads';
       mesh.renderOrder = 1; // above ground, below AO blobs
       layerGroups.roads.add(mesh);
       countTris(merged);
     }
     const items = [
-      ...roadFallback.map((s) => ({ s, y: 0.08 })),
-      ...plan.drains.map((s) => ({ s, y: 0.02 })),
+      ...roadFallback.map((s) => ({ s, y: DECAL_LIFT - 0.075 })),
+      ...plan.drains.map((s) => ({ s, y: 0.01 - 0.075 })), // top just under the road surface
     ];
     const drainBase = roadFallback.length;
     const g = new THREE.BoxGeometry(1, 0.15, 1);
     remapUV(g, 'street', 1, 1);
-    const inst = new THREE.InstancedMesh(g, kitMat, Math.max(1, items.length));
+    const inst = new THREE.InstancedMesh(g, decalMaterial(DECAL_BIAS.water), Math.max(1, items.length));
     const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), P = new THREE.Vector3(), E = new THREE.Euler();
     const writeInstance = (it: { s: { x1: number; z1: number; x2: number; z2: number; width: number }; y: number }, i: number, visible: boolean): void => {
       const s = it.s;
       const dx = s.x2 - s.x1, dz = s.z2 - s.z1;
       const len = Math.hypot(dx, dz);
       const ang = Math.atan2(dx, dz);
-      P.set((s.x1 + s.x2) / 2, gy((s.x1 + s.x2) / 2, (s.z1 + s.z2) / 2) + it.y, (s.z1 + s.z2) / 2);
+      // Flat top at the middle's height; the box is deepened to reach the lowest ground along it.
+      const cx = (s.x1 + s.x2) / 2, cz = (s.z1 + s.z2) / 2;
+      const top = gy(cx, cz) + it.y + 0.075;
+      const bottom = Math.min(top - 0.15, gy(s.x1, s.z1) - 0.05, gy(s.x2, s.z2) - 0.05, gy(cx, cz) - 0.05);
+      P.set(cx, (top + bottom) / 2, cz);
       E.set(0, ang + Math.PI / 2, 0); Q.setFromEuler(E);
-      if (visible) S.set(len, 1, s.width);
+      if (visible) S.set(len, (top - bottom) / 0.15, s.width);
       else S.set(0, 0, 0);
       M.compose(P, Q, S);
       inst.setMatrixAt(i, M);
@@ -349,9 +429,14 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
         const plen = (t1 - t0) * len;
         if (plen < 0.5) continue;
         const cx = a.x + (dx * (t0 + t1)) / 2, cz = a.z + (dz * (t0 + t1)) / 2;
-        const g = buildWallSegmentGeometry(plen, plan.wallHeight, plan.wallThickness);
+        // Stand on the ground at the middle; the footing runs down to the lowest ground along the segment.
+        const baseY = gy(cx, cz);
+        let low = baseY;
+        const sx = dx / len, sz = dz / len, mid = (t0 + t1) / 2 * len;
+        for (let k = 0; k <= 6; k++) { const s = mid + (k / 6 - 0.5) * plen; low = Math.min(low, gy(a.x + sx * s, a.z + sz * s)); }
+        const g = buildWallSegmentGeometry(plen, plan.wallHeight, plan.wallThickness, baseY - low > 0.03 ? baseY - low + 0.2 : 0);
         g.rotateY(ang);
-        g.translate(cx, gy(cx, cz), cz);
+        g.translate(cx, baseY, cz);
         segs.push(g);
         shadowsByLayer.walls.push({ x: cx, z: cz, w: plan.wallThickness + 3, d: plen + 2, rotY: ang });
       }
@@ -403,6 +488,17 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       }
       return shape;
     };
+    /**
+     * Extrusion base and depth for a ring: the top stays at the centre-ground height + `h`, but the
+     * base runs down to the lowest ground under the ring, so no side of it hangs above a slope.
+     */
+    const standOnGround = (b: (typeof gisFootprints)[number], h: number): [number, number] => {
+      const top = gy(b.x, b.z) + h;
+      let low = gy(b.x, b.z);
+      for (const p of b.outline!) low = Math.min(low, gy(p.x, p.z));
+      low -= 0.05;
+      return [low, top - low];
+    };
     const masonryParts: THREE.BufferGeometry[] = [];
     const slabParts: THREE.BufferGeometry[] = [];
     const masonryBs: typeof gisFootprints = [];
@@ -417,22 +513,24 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
         let g: THREE.BufferGeometry;
         if (isSlab) {
           // Thin solid extrusion (not a floating flat plane): the flat
-          // footprints overlay below uses the same rings at gy+0.18, so a
+          // footprints overlay below uses the same rings just above the ground, so a
           // flat slab at gy+0.3 left a visible 12cm double layer when both
           // the "Other buildings" and "Other building footprints" layers
           // were on. Extruding from the ground up swallows the coincident
           // footprint plane inside the solid (top stays at the old height),
           // so only one surface is ever visible.
           const slabH = Math.max(0.2, b.h * 0.5);
-          g = new THREE.ExtrudeGeometry(shape, { depth: slabH, bevelEnabled: false, steps: 1, curveSegments: 1 });
+          const [low, depth] = standOnGround(b, slabH);
+          g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, steps: 1, curveSegments: 1 });
           if (!g.attributes.position || g.attributes.position.count < 3) { g.dispose(); continue; }
           g.rotateX(-Math.PI / 2);
-          g.translate(0, gy(b.x, b.z), 0);
+          g.translate(0, low, 0);
         } else {
-          g = new THREE.ExtrudeGeometry(shape, { depth: b.h, bevelEnabled: false, steps: 1, curveSegments: 1 });
+          const [low, depth] = standOnGround(b, b.h);
+          g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, steps: 1, curveSegments: 1 });
           if (!g.attributes.position || g.attributes.position.count < 3) { g.dispose(); continue; }
           g.rotateX(-Math.PI / 2);
-          g.translate(0, gy(b.x, b.z), 0);
+          g.translate(0, low, 0);
         }
         g.computeVertexNormals();
         if (g.attributes.uv) remapUV(g, isSlab ? 'stone' : 'plaster', 1, 1);
@@ -499,7 +597,7 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       }
     }
     // Flat GIS outline overlay: same gisFootprints rings+holes as the extrusions
-    // above and the 2D map, draped just above ground (below roads/AO/slabs so a
+    // above and the 2D map, draped just above ground (depth-biased below roads/AO/slabs so a
     // coincident slab or road always wins — no z-fighting either way). Single
     // merged mesh = +1 draw. No colliders, no AO spots.
     const footprintParts: THREE.BufferGeometry[] = [];
@@ -508,20 +606,17 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
         const g = new THREE.ShapeGeometry(toShape(b.outline!, b.holes));
         if (!g.attributes.position || g.attributes.position.count < 3) { g.dispose(); continue; }
         g.rotateX(-Math.PI / 2);
-        const pos = g.attributes.position as THREE.BufferAttribute;
-        const y0 = gy(b.x, b.z) + 0.18;
-        for (let i = 0; i < pos.count; i++) pos.setY(i, y0);
-        pos.needsUpdate = true;
-        g.computeVertexNormals();
-        if (g.attributes.uv) remapUV(g, 'stone', 1, 1);
-        footprintParts.push(g);
+        const draped = drapeOnGround(g, gy, DECAL_LIFT, surface.coords);
+        draped.computeVertexNormals();
+        remapUV(draped, 'stone', 1, 1);
+        footprintParts.push(draped);
       } catch {
         continue;
       }
     }
     if (footprintParts.length) {
       const merged = mergeMixed(footprintParts, 'gis-footprints-flat');
-      const mesh = new THREE.Mesh(merged, kitMat);
+      const mesh = new THREE.Mesh(merged, decalMaterial(DECAL_BIAS.footprints));
       mesh.name = 'gis-footprints-flat';
       mesh.renderOrder = 1;
       layerGroups.footprints.add(mesh);
@@ -594,15 +689,10 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   // Forum-basilica key complex (walkable interior).
   // The kit is authored around (8,-8) then yawed 90° (basilica west, forum east);
   // the whole complex is shifted so its centre lands on the plan centre
-  // (user-pinned GIS insula when present).
+  // (user-pinned GIS insula when present). Built above, so its platform exists.
   const forumColSpots: Array<{ x: number; z: number; h: number }> = [];
   {
-    const fB = plan.buildings.find((b) => b.id === 'forum');
-    const bB = plan.buildings.find((b) => b.id === 'basilica');
-    const ccx = fB && bB ? (fB.x + bB.x) / 2 : 8;
-    const ccz = fB && bB ? (fB.z + bB.z) / 2 : -8;
-    const dx = ccx - 8, dz = ccz - -8;
-    const forum = buildForumComplex(kitMat);
+    const dx = forumDx, dz = forumDz, ccx = forumCx, ccz = forumCz;
     const fy = gy(ccx, ccz);
     for (const m of forum.meshes) { m.position.x += dx; m.position.z += dz; m.position.y += fy; layerGroups.key.add(m); }
     for (const c of forum.boxColliders) { c.minX += dx; c.maxX += dx; c.minZ += dz; c.maxZ += dz; colliders.push(c); collidersByLayer.key.push(c); }
@@ -611,6 +701,14 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     tris += forum.tris;
     shadowsByLayer.key.push({ x: ccx - 20, z: ccz, w: 24, d: 78 });
     shadowsByLayer.key.push({ x: ccx + 20, z: ccz, w: 42, d: 60 });
+    // The basilica floor and forum pavement are raised slabs: walking on them means standing on their tops.
+    // Kit slabs (centre, size) before the 90° yaw about (8,-8), as authored in forum.ts.
+    for (const [kx, kz, w, d] of [[8, -28, 72, 18], [8, 12, 56, 38]]) {
+      const yawX = (x: number, z: number): number => 8 + (z + 8), yawZ = (x: number): number => -8 - (x - 8);
+      const xs = [yawX(kx - w / 2, kz - d / 2), yawX(kx + w / 2, kz + d / 2)], zs = [yawZ(kx - w / 2), yawZ(kx + w / 2)];
+      const r = { minX: Math.min(...xs) + dx, maxX: Math.max(...xs) + dx, minZ: Math.min(...zs) + dz, maxZ: Math.max(...zs) + dz };
+      planFloors.push((x, z) => (x >= r.minX && x <= r.maxX && z >= r.minZ && z <= r.maxZ ? fy + 0.245 : undefined));
+    }
   }
 
   // Plan-built key buildings (assets/key-plans/*.plan.json via keyPlans.generated.ts):
@@ -631,12 +729,9 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   const setKeyBuildingDisplay = (mode: KeyBuildingDisplay): void => setPlanBuildingDisplay(planMeshes, mode);
 
   // Mansio key complex (walkable courtyard inn).
-  // Kit builds in design coords around (40,245); shifted to the plan spot.
+  // Kit builds in design coords around (40,245); shifted to the plan spot (built above).
   {
-    const pM = plan.buildings.find((b) => b.id === 'mansio');
-    const mx = pM?.x ?? 40, mz = pM?.z ?? 245;
-    const dx = mx - 40, dz = mz - 245;
-    const mansio = buildMansio(kitMat);
+    const mx = mansioX, mz = mansioZ, dx = mansioDx, dz = mansioDz;
     mansio.mesh.position.x += dx; mansio.mesh.position.z += dz;
     mansio.mesh.position.y += gy(mx, mz);
     layerGroups.key.add(mansio.mesh);
@@ -644,17 +739,19 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     for (const c of mansio.circles) { c.x += dx; c.z += dz; circles.push(c); circlesByLayer.key.push(c); }
     tris += mansio.tris;
     shadowsByLayer.key.push({ x: mx, z: mz, w: 56, d: 30 });
+    // Courtyard slab (36 x 18 about (40,249) in kit coordinates, 0.2 m thick).
+    const cy = gy(mx, mz) + 0.2;
+    planFloors.push((x, z) => (Math.abs(x - (40 + dx)) <= 18 && Math.abs(z - (249 + dz)) <= 9 ? cy : undefined));
   }
 
   // Solid public buildings (temples, church only — rest are hollow key buildings)
   {
-    const publicBs = plan.buildings.filter(x => x.kind === 'temple' || x.kind === 'church');
     for (const b of publicBs) {
       const g = new THREE.BoxGeometry(b.w, b.h, b.d);
       const cell = b.kind === 'baths' ? 'stone' : 'plaster';
       remapUV(g, cell, Math.max(1, Math.round(b.w / 8)), 1);
       const mesh = new THREE.Mesh(g, kitMat);
-      mesh.position.set(b.x, gy(b.x, b.z) + b.h / 2 + 0.1, b.z);
+      mesh.position.set(b.x, gy(b.x, b.z) + b.h / 2 - 0.05, b.z); // base sunk 5 cm into its platform
       mesh.rotation.y = b.rotY;
       mesh.updateMatrix();
       layerGroups.key.add(mesh);
@@ -671,18 +768,14 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       const shape = new THREE.Shape(ring.map((p) => new THREE.Vector2(p.x, -p.z)));
       const g = new THREE.ShapeGeometry(shape);
       g.rotateX(-Math.PI / 2); // shape (x,-z) -> world (x, 0, z)
-      const pos = g.attributes.position as THREE.BufferAttribute;
-      for (let i = 0; i < pos.count; i++) {
-        pos.setY(i, gy(pos.getX(i), pos.getZ(i)) + 0.15);
-      }
-      pos.needsUpdate = true;
-      g.computeVertexNormals();
-      remapUV(g, 'water', 1, 1);
-      parts.push(g);
+      const draped = drapeOnGround(g, gy, DECAL_LIFT, surface.coords);
+      draped.computeVertexNormals();
+      remapUV(draped, 'water', 1, 1);
+      parts.push(draped);
     }
     if (parts.length) {
       const merged = mergeMixed(parts, 'water');
-      const mesh = new THREE.Mesh(merged, kitMat);
+      const mesh = new THREE.Mesh(merged, decalMaterial(DECAL_BIAS.water));
       mesh.renderOrder = 2; // above ground, below AO blobs
       group.add(mesh);
       countTris(merged);
@@ -745,7 +838,8 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       g.setIndex(index);
       g.computeVertexNormals();
       remapUV(g, 'grass', 1, 1);
-      const mesh = new THREE.Mesh(g, kitMat);
+      // Its rim lies exactly on the ground mesh: bias it so the two never fight.
+      const mesh = new THREE.Mesh(g, decalMaterial(DECAL_BIAS.earthworks));
       mesh.name = 'gis-earthworks';
       group.add(mesh);
       countTris(g);
@@ -789,10 +883,12 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
 
   // Amphitheatre key building: LOD stepped cavea + podium/arena/outer/entrances
   {
-    const amphi = buildAmphitheatre(plan.amphitheatre, kitMat);
     const ay = gy(plan.amphitheatre.x, plan.amphitheatre.z);
     amphi.lod.position.y = ay;
     for (const m of amphi.extras) m.position.y += ay;
+    // The arena floor lies on the ground: bias its depth (not its height) so it wins over the terrain at any distance.
+    const arenaMat = decalMaterial(DECAL_BIAS.arena);
+    for (const m of amphi.extras) if (m.name === 'arena') (m as THREE.Mesh).material = arenaMat;
     layerGroups.key.add(amphi.lod);
     for (const m of amphi.extras) layerGroups.key.add(m);
     bands.push(amphi.band);
@@ -806,13 +902,12 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     (Object.keys(shadowsByLayer) as LayerId[]).forEach((id) => {
       const list = shadowsByLayer[id];
       if (!list.length) return;
-      for (const s of list) s.y = gy(s.x, s.z) + 0.25;
-      layerGroups[id].add(buildContactShadows(list));
+      layerGroups[id].add(buildContactShadows(list, gy, surface.coords));
     });
   }
 
   let drawCalls = 0;
   // LOD alternates (plan-built buildings) never draw at the same time as their level 0.
   group.traverse((o) => { if (((o as THREE.Mesh).isMesh || (o as THREE.InstancedMesh).isInstancedMesh) && !o.userData.lodAlternate) drawCalls++; });
-  return { group, layerGroups, colliders, collidersByLayer, circles, circlesByLayer, polys, polysByLayer, bands, drawCalls, tris: Math.round(tris), groundY, setDrainsVisible, planBuildings, setKeyBuildingDisplay };
+  return { group, layerGroups, colliders, collidersByLayer, circles, circlesByLayer, polys, polysByLayer, bands, drawCalls, tris: Math.round(tris), groundY, terrainY: gy, setDrainsVisible, planBuildings, setKeyBuildingDisplay };
 }

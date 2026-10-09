@@ -16,7 +16,12 @@ function wallQuad(widthM: number, heightM: number): THREE.BufferGeometry {
   return g;
 }
 
-export function measureWallCost(renderer: THREE.WebGLRenderer, frames = 6): number {
+/**
+ * Extra ms per frame High costs over Plain: the best (lowest) of several rounds, since
+ * a single run on a laptop GPU is easily inflated by power state, throttling or shader
+ * compilation, and the result decides the tier.
+ */
+export function measureWallCost(renderer: THREE.WebGLRenderer, frames = 6, rounds = 3): number {
   const size = renderer.getDrawingBufferSize(new THREE.Vector2());
   const rt = new THREE.WebGLRenderTarget(size.x, size.y);
   // ~6 m of wall across the screen: about what fills the view when standing close.
@@ -29,23 +34,29 @@ export function measureWallCost(renderer: THREE.WebGLRenderer, frames = 6): numb
   scene.add(mesh);
   const gl = renderer.getContext(), px = new Uint8Array(4);
   const prev = renderer.getRenderTarget();
-  const time = (style: SurfaceStyle): number => {
-    const mat = createTiledAtlasMaterial({}, style);
+  const mats: Record<'plain' | 'high', THREE.Material> = {
+    plain: createTiledAtlasMaterial({}, 'plain'),
+    high: createTiledAtlasMaterial({}, 'hybrid'),
+  };
+  const time = (mat: THREE.Material): number => {
     mesh.material = mat;
-    renderer.setRenderTarget(rt);
-    renderer.render(scene, cam); // warm-up: compile + first draw
-    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
     const t0 = performance.now();
     for (let i = 0; i < frames; i++) { renderer.render(scene, cam); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); }
-    const ms = (performance.now() - t0) / frames;
-    mat.dispose();
-    return ms;
+    return (performance.now() - t0) / frames;
   };
   try {
-    const plain = time('plain'), high = time('hybrid');
-    return Math.max(0, high - plain);
+    renderer.setRenderTarget(rt);
+    for (const mat of Object.values(mats)) { // warm-up: compile + first draw, not timed
+      mesh.material = mat;
+      renderer.render(scene, cam);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    }
+    let best = Infinity;
+    for (let r = 0; r < rounds; r++) best = Math.min(best, time(mats.high) - time(mats.plain));
+    return Math.max(0, best);
   } finally {
     renderer.setRenderTarget(prev);
+    for (const mat of Object.values(mats)) mat.dispose();
     rt.dispose(); geo.dispose();
   }
 }

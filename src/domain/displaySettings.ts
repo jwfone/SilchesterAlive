@@ -43,14 +43,18 @@ export function tierForLook(look: BuildingLook, autoTier: QualityTier): QualityT
   return look;
 }
 
-/** Cached Auto result, keyed by the GPU it was measured on. */
+/**
+ * Cached Auto result, keyed by the GPU it was measured on. Only high / standard are
+ * cached: a noisy measurement that landed on plain must not lock the textures out,
+ * so plain is re-tested each load (and plain entries stored by older builds are ignored).
+ */
 export interface AutoTierCache { gpu: string; tier: QualityTier; extraMs: number }
 
 export function parseAutoTierCache(raw: string | null, gpu: string): AutoTierCache | null {
   if (!raw) return null;
   try {
     const v = JSON.parse(raw) as Partial<AutoTierCache>;
-    if (v.gpu !== gpu || (v.tier !== 'high' && v.tier !== 'standard' && v.tier !== 'plain')) return null;
+    if (v.gpu !== gpu || (v.tier !== 'high' && v.tier !== 'standard')) return null;
     return { gpu, tier: v.tier, extraMs: Number(v.extraMs) || 0 };
   } catch {
     return null;
