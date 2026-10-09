@@ -43,7 +43,8 @@ export async function createRenderer(dpr: number, preferWebGPU: boolean): Promis
       // fall through to WebGL2
     }
   }
-  const r = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  // stencil: section caps in the reconstruction viewer, which borrows this renderer
+  const r = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: true });
   r.setPixelRatio(Math.min(dpr, 2));
   r.setSize(window.innerWidth, window.innerHeight);
   return {

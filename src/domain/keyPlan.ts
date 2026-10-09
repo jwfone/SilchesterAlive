@@ -9,24 +9,27 @@ export const FORUM_ORIGIN_EN: [number, number] = [464020, 162450];
 export type Ev = 'S' | 'C' | 'X';
 export type UV = [number, number];
 
-export interface PlanOpening { at: number; w: number; oh: number; conjecture?: boolean }
-export interface PlanWindow { at: number; w: number; sill: number; head: number; ev?: Ev }
+export interface PlanOpening { at: number; w: number; oh: number; conjecture?: boolean; note?: string }
+export interface PlanWindow { at: number; w: number; sill: number; head: number; ev?: Ev; note?: string }
 export interface PlanWall {
   id: string; a: UV; b: UV; t: number; h: number; ev?: Ev;
   kind?: 'stylobate'; material?: 'stone' | 'brick';
-  openings?: PlanOpening[]; windows?: PlanWindow[];
+  openings?: PlanOpening[]; windows?: PlanWindow[]; note?: string;
 }
 export interface PlanRoom {
   id: string; name: string; poly: UV[]; floor?: string; finish?: 'exterior';
-  vault?: boolean;
+  vault?: boolean; note?: string;
+  /** Plan drawing: label position and relative size (default: polygon centre, 1). */
+  labelAt?: UV; labelSize?: number;
   pool?: { poly: UV[]; depth: number; rimT: number };
   labrum?: { c: UV; r: number };
-  base?: { poly: UV[]; h: number };
+  base?: { poly: UV[]; h: number; note?: string };
 }
 export interface PlanApse {
   id: string; c: UV; r: number; t: number; start: number; end: number; h: number; ev?: Ev;
   roof?: 'semidome' | 'none';
-  windows?: Array<{ angle: number; w: number; sill: number; head: number }>;
+  windows?: Array<{ angle: number; w: number; sill: number; head: number; note?: string }>;
+  note?: string;
   /** Distance from the apse centre (its chord) back to the room's wall line, when the
    * surveyed apse is a shallow segment: the gap gets a ceiling, roof and floor. */
   neck?: number;
@@ -34,7 +37,7 @@ export interface PlanApse {
 export interface PlanColumns {
   id: string; kind?: 'pier'; d: number; h: number; y0?: number; ev?: Ev;
   at?: UV[]; spacing?: number; on?: string[];
-  beam?: boolean | { from: UV; to: UV }; arch?: boolean;
+  beam?: boolean | { from: UV; to: UV }; arch?: boolean; note?: string;
 }
 export interface PlanRoof {
   id: string; type: 'gable' | 'lean-to' | 'peristyle'; ev?: Ev;
@@ -42,8 +45,16 @@ export interface PlanRoof {
   highSide?: 'n' | 's' | 'e' | 'w'; highY?: number; lowY?: number; closeEnds?: boolean;
   outer?: UV[]; inner?: UV[];
 }
+/** A drawing for the reconstruction viewer: an elevation seen from one side, or a
+ * section cut at `at` metres (u for views from e/w, v for views from n/s). */
+export interface PlanDrawing { from: 'n' | 's' | 'e' | 'w'; cut?: number; caption: string }
 export interface BuildingPlan {
   id: string; pitchDeg?: number;
+  /** Display name (viewer title, HUD list). */
+  name?: string;
+  /** Short date shown, e.g. "c. AD 270–280". */
+  dateShown?: string;
+  drawings?: PlanDrawing[];
   frame: { originEN: [number, number]; angleDeg: number };
   rooms: PlanRoom[]; walls: PlanWall[]; apses?: PlanApse[]; columns?: PlanColumns[]; roofs?: PlanRoof[];
 }

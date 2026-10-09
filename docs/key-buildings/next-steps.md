@@ -7,7 +7,7 @@ State on 2026-10-09, at the end of the baths pilot session.
 - **The baths are in the game**, generated from `assets/key-plans/baths.plan.json`. They're the pilot for
   rebuilding the key buildings (forum, mansio, temples to follow, one by one).
 - Research, sources and every decision: [`baths.md`](baths.md). User-facing notes: `assets/key-plans/baths.about.md`.
-- Integration plan for the in-game viewer: [`inspector-plan.md`](inspector-plan.md) (steps 3–7 remain).
+- In-game reconstruction viewer: built; design and "as built" notes in [`inspector-plan.md`](inspector-plan.md).
 
 ### Decisions already made (don't re-open)
 
@@ -31,7 +31,8 @@ State on 2026-10-09, at the end of the baths pilot session.
 | Grain tile bake; start-up GPU test | `src/presentation/kit/wallBake.ts`, `wallBench.ts` |
 | Plan types + frame maths (pure) | `src/domain/keyPlan.ts`; data via `npm run import:keyplans` → `keyPlans.generated.ts` |
 | Display setting logic (pure, smoke-tested) | `src/domain/displaySettings.ts`; HUD in `index.html`, wiring in `Game.ts` |
-| Drawings page (elevations, sections, 3D, notes) | `tools/elevations.html` + `src/tools/elevations.ts` |
+| Reconstruction viewer (views, picking, overlay, plan, notes) | `src/presentation/inspector/` (`BuildingInspector.ts`, `ReconstructionViewer.ts`) |
+| Drawings page (thin wrapper round the viewer) | `tools/elevations.html` + `src/tools/elevations.ts` |
 | Materials lab (style comparison, `await bench(...)`) | `tools/materials.html` + `src/tools/materials.ts` |
 | Plan review tooling (GIS rings, plan sheet) | `scripts/key-review.mjs`, `key-walls.mjs`, `key-plan-sheet.mjs` |
 
@@ -60,10 +61,8 @@ choosing. The current roof uses the old painted `tile` atlas cell, which repeats
    2400 × 1350, and let the user choose.
 4. Consider modest geometry: ridge cap row and eaves edge (cheap), not modelled individual tiles.
 
-## Next 2: in-game reconstruction viewer
+## Done: in-game reconstruction viewer (was Next 2)
 
-`inspector-plan.md` steps 3–7: extract `BuildingInspector` from `src/tools/elevations.ts` (single
-WebGL renderer with scissor viewports, no extra contexts), an in-game overlay with tabs (3D model,
-Drawings, Plan, How it was made), entry points ("I" near the building, map click, HUD list), pause and
-resume, Esc and focus handling, mobile layout, then element picking with evidence tooltips. Keep the dev
-page working as a thin wrapper.
+Built 2026-10-09; see "As built" in `inspector-plan.md`. Open it at the baths with `I` / the prompt, from
+the map (click the building) or the HUD. Possible follow-ups: keyboard access to the hover notes (they
+are pointer-only, with an aria-live echo), and a per-building camera start if later buildings need one.

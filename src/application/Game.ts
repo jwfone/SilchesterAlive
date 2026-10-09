@@ -12,6 +12,9 @@ import {
 import { bakeGrainTexture } from '../presentation/kit/wallBake.js';
 import { measureWallCost } from '../presentation/kit/wallBench.js';
 import type { KeyBuildingDisplay } from '../presentation/kit/planWorld.js';
+import type { SurfaceStyle } from '../presentation/kit/atlasTiled.js';
+import { KEY_PLANS } from '../domain/keyPlans.generated.js';
+import type { ReconstructionViewer } from '../presentation/inspector/ReconstructionViewer.js';
 import { GhostController } from './GhostController.js';
 import {
   GHOST_COSTUMES, GHOST_COUNT, GHOST_MAX, parseSpokenCostumeIds, SPOKEN_GHOSTS_STORAGE_KEY, type GhostCostumeId,
@@ -33,6 +36,9 @@ import {
 
 /** localStorage key for the desktop / touch-D-pad control mode choice. */
 const CONTROL_MODE_KEY = 'silchester.controls';
+
+/** Show the "explore the reconstruction" prompt within this many metres of a rebuilt building. */
+const RECON_PROMPT_M = 15;
 
 /** localStorage key for the ghost-NPC toggle (separate from 3D layers). */
 const GHOSTS_STORAGE_KEY = 'silchester-ghosts-v1';
@@ -155,6 +161,14 @@ export class Game {
   private insideCollectible = new Set<string>();
   private collectCheckT = 0;
   private toastTimer = 0;
+  /** Reconstruction viewer (code-split, loaded on first open). Open = game paused. */
+  private reconOpen = false;
+  private recon: ReconstructionViewer | null = null;
+  /** Plan-built building the player is near (prompt shown), if any. */
+  private reconNearId: string | null = null;
+  private reconCheckT = 0;
+  /** The game loop, stopped while the viewer is open. */
+  private loop: (() => void) | null = null;
 
   async init(app: HTMLElement, statsEl: HTMLElement, minimap: HTMLCanvasElement): Promise<void> {
     const tier = decideRenderMode(detectCapabilities());
@@ -347,9 +361,12 @@ export class Game {
       if ((e.target as HTMLElement).id === 'about-modal') this.closeAbout();
     });
     document.getElementById('collect-toast')?.addEventListener('click', () => this.hideToast());
+    this.initReconstructionEntryPoints();
     this.updateCollectionHud();
     this.updateGhostsHud();
     document.addEventListener('keydown', (e) => {
+      // Reconstruction viewer: it handles its own keys (Esc closes it) while the game is paused.
+      if (this.reconOpen) return;
       if (e.code === 'Escape' && this.aboutOpen) { this.closeAbout(); return; }
       // Start overlay: any keypress enters town (same as clicking it).
       // Consumed here so the dismissing key can't also toggle layers/map.
@@ -379,6 +396,8 @@ export class Game {
       if (this.collectibleOpen || this.inventoryOpen || this.ghostsJournalOpen || this.aboutOpen) return;
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
       if (e.code === 'KeyI' && !e.repeat) {
+        // Near a rebuilt building (prompt showing) I explores it; elsewhere it opens the collection.
+        if (this.reconNearId && !this.mapOpen) { void this.openReconstruction(this.reconNearId); return; }
         if (this.inventoryOpen) this.closeInventory();
         else this.openInventory();
         return;
@@ -410,7 +429,8 @@ export class Game {
       this.setLayer(id, !this.layerVisibility[id]);
     });
 
-    this.renderer.setAnimationLoop(() => this.tick(statsEl, minimap));
+    this.loop = () => this.tick(statsEl, minimap);
+    this.renderer.setAnimationLoop(this.loop);
   }
 
   private entered = false;
@@ -1403,6 +1423,7 @@ export class Game {
     this.checkGhostDialogue(dt);
     this.collectibles?.update(dt, this.world.groundY);
     this.checkCollectibleDiscovery(dt);
+    this.checkReconstructionPrompt(dt);
     // GPU saver: cheap sim stays per-vsync (small dt keeps collisions
     // accurate), expensive GPU render is throttled. Active (walking or
     // looking) targets ~30fps; idle (static view, ghost bob only) ~12fps.
@@ -1462,6 +1483,8 @@ export class Game {
 
   private closeMap(): void {
     this.mapOpen = false;
+    const pop = document.getElementById('map-recon');
+    if (pop) pop.hidden = true;
     const el = document.getElementById('map-overlay');
     if (el) el.style.display = 'none';
   }
@@ -1636,6 +1659,133 @@ export class Game {
     };
     canvas.addEventListener('pointerup', endPointer);
     canvas.addEventListener('pointercancel', endPointer);
+    // A click (not a drag) on a rebuilt building offers its reconstruction.
+    let clickFrom: { x: number; y: number } | null = null;
+    canvas.addEventListener('pointerdown', (e) => { clickFrom = pointers.size <= 1 ? { x: e.clientX, y: e.clientY } : null; });
+    canvas.addEventListener('pointerup', (e) => {
+      if (clickFrom && Math.hypot(e.clientX - clickFrom.x, e.clientY - clickFrom.y) < 6) this.mapClick(e.clientX, e.clientY);
+      clickFrom = null;
+    });
+  }
+
+  /** Map click: offer "Explore the reconstruction" beside a rebuilt building, else hide the offer. */
+  private mapClick(clientX: number, clientY: number): void {
+    const canvas = document.getElementById('detailmap') as HTMLCanvasElement | null;
+    const pop = document.getElementById('map-recon');
+    if (!canvas || !pop) return;
+    const rect = canvas.getBoundingClientRect(), v = this.mapView;
+    const cssToPx = canvas.width / Math.max(1, rect.width);
+    const x = v.cx + ((clientX - rect.left) * cssToPx - canvas.width / 2) / v.scale;
+    const z = v.cz + ((clientY - rect.top) * cssToPx - canvas.height / 2) / v.scale;
+    const slop = (6 * cssToPx) / v.scale; // about 6 css px
+    const hit = this.layerVisibility.key ? this.world.planBuildings.find((b) => b.distanceTo(x, z) <= slop) : undefined;
+    if (!hit) { pop.hidden = true; return; }
+    const name = document.getElementById('map-recon-name');
+    if (name) name.textContent = KEY_PLANS[hit.id]?.name ?? hit.id;
+    pop.dataset.id = hit.id;
+    pop.hidden = false;
+    // beside the click, kept inside the map
+    const wrap = pop.parentElement!.getBoundingClientRect();
+    pop.style.left = `${Math.max(8, Math.min(clientX - wrap.left + 10, wrap.width - pop.offsetWidth - 8))}px`;
+    pop.style.top = `${Math.max(8, Math.min(clientY - wrap.top + 10, wrap.height - pop.offsetHeight - 8))}px`;
+    pop.querySelector('button')?.focus();
+  }
+
+  /** HUD list, proximity prompt and map offer for the reconstruction viewer. */
+  private initReconstructionEntryPoints(): void {
+    const list = document.getElementById('recon-list');
+    for (const b of this.world.planBuildings) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('aria-haspopup', 'dialog');
+      btn.textContent = `Explore the reconstruction: ${KEY_PLANS[b.id]?.name ?? b.id}`;
+      btn.addEventListener('click', () => void this.openReconstruction(b.id));
+      list?.append(btn);
+    }
+    document.getElementById('recon-prompt')?.addEventListener('click', () => {
+      if (this.reconNearId) void this.openReconstruction(this.reconNearId);
+    });
+    document.getElementById('map-recon-open')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = document.getElementById('map-recon')?.dataset.id;
+      if (id) void this.openReconstruction(id);
+    });
+  }
+
+  /** Show the prompt while the player is near or inside a rebuilt building (checked ~4x a second). */
+  private checkReconstructionPrompt(dt: number): void {
+    this.reconCheckT -= dt;
+    if (this.reconCheckT > 0) return;
+    this.reconCheckT = 0.25;
+    const { x, z } = this.camera.position;
+    const near = this.layerVisibility.key ? this.world.planBuildings.find((b) => b.distanceTo(x, z) < RECON_PROMPT_M) : undefined;
+    const id = near?.id ?? null;
+    if (id === this.reconNearId) return;
+    this.reconNearId = id;
+    const el = document.getElementById('recon-prompt');
+    if (!el) return;
+    el.hidden = !id;
+    if (!id) return;
+    el.replaceChildren();
+    if (this.controlMode !== 'touch') {
+      const k = document.createElement('kbd');
+      k.textContent = 'I';
+      el.append(k);
+    }
+    const name = KEY_PLANS[id]?.name ?? id;
+    el.append(window.innerWidth < 500 ? 'Explore the reconstruction' : `Explore the reconstruction: ${name}`);
+    el.setAttribute('aria-label', `Explore the reconstruction of the ${name.toLowerCase()}`);
+  }
+
+  /** Open the reconstruction viewer: pauses the game (simulation and rendering) and frees the mouse. */
+  private async openReconstruction(id: string): Promise<void> {
+    const plan = KEY_PLANS[id];
+    if (this.reconOpen || !plan) return;
+    this.reconOpen = true;
+    this.closeDialogue();
+    this.closeCollectible();
+    this.closeInventory();
+    this.closeGhostsJournal();
+    this.closeAbout();
+    this.closeMap();
+    if (document.pointerLockElement) {
+      try { document.exitPointerLock(); } catch { /* already unlocked */ }
+    }
+    this.controls.clearKeys();
+    this.renderer.setAnimationLoop(null);
+    const prompt = document.getElementById('recon-prompt');
+    if (prompt) prompt.hidden = true;
+    try {
+      const { ReconstructionViewer } = await import('../presentation/inspector/ReconstructionViewer.js');
+      // Materials mode shows walls in the game's current style (Evidence look: the Auto tier's).
+      const styles: Record<QualityTier, SurfaceStyle> = { high: 'hybrid', standard: 'hybridLite', plain: 'plain' };
+      this.recon = new ReconstructionViewer(plan, {
+        renderer: this.renderer.webgl,
+        surfaceStyle: styles[tierForLook(this.buildingLook, this.autoTier) ?? this.autoTier],
+        touch: this.controlMode === 'touch',
+        onClose: () => this.resumeFromReconstruction(),
+      });
+      this.recon.open();
+    } catch (err) {
+      console.error('[silchester] reconstruction viewer failed to load', err);
+      this.resumeFromReconstruction();
+      this.showToast('The reconstruction viewer could not be loaded.');
+    }
+  }
+
+  /** Viewer closed: give the renderer back its size and resume where the player was. */
+  private resumeFromReconstruction(): void {
+    this.recon = null;
+    this.reconOpen = false;
+    this.controls.clearKeys();
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.clock.getDelta(); // the paused time is not one long frame
+    this.sceneDirty = true;
+    this.reconNearId = null; // re-show the prompt on the next check
+    this.reconCheckT = 0;
+    if (this.loop) this.renderer.setAnimationLoop(this.loop);
   }
 
   /** Cached legend-checkbox set; invalidated on every legend `change`

@@ -1,6 +1,7 @@
 # Plan: the reconstruction viewer in the game
 
-Status: **step 2 done** (2026-10-09): the baths are in the game with the Display setting and Auto tiers; the viewer (steps 3–6) is next. The dev pages `tools/elevations.html` (drawings + 3D + notes) and
+Status: **steps 2–7 done** (2026-10-09): the baths are in the game with the Display setting and Auto tiers,
+and the in-game reconstruction viewer is built (see "As built" at the end). The dev pages `tools/elevations.html` (drawings + 3D + notes) and
 `tools/materials.html` (wall-style lab) stay as they are; this plan turns the first into an in-game
 feature without losing anything it shows today.
 
@@ -106,3 +107,23 @@ dropped. Now the grain fades out gradually, and its contrast is handed to featur
 away: stronger block-to-block tone and 0.4–1.7 m mottling. (Varying the number of brick courses per band
 was tried and rejected: no evidence for it within a single wall; bands stay at 3 courses.) Re-measured at 2400 × 1350: right against a wall about +3 ms over the old texture
 (C about +14 ms); street and aerial views within measurement noise of the old texture.
+
+## As built (2026-10-09)
+
+- `src/presentation/inspector/BuildingInspector.ts`: views (drawings from `plan.drawings`, 3D), section caps,
+  grid / ruler / scale bar, picking. One renderer: each view is rendered into a viewport + scissor at the
+  corner of the drawing buffer and copied (`drawImage`, same task) onto the view's own 2D canvas, so views are
+  ordinary DOM that scrolls. In the game it borrows the game's renderer (now created with `stencil: true` for
+  the caps) and restores its size, pixel ratio and clipping on close; the dev page makes one off-screen renderer.
+- `ReconstructionViewer.ts` + `reconstruction.css`: overlay, tabs, toolbar + legend, Technical (LOD) toggle,
+  focus trap, Esc, aria-live for picked parts, phone layout. Loaded with `import()` (≈50 KB + 5 KB CSS);
+  `aboutNotes.ts` bundles each `about.md` as its own lazy chunk.
+- `planDrawing.ts`: the Plan tab (rooms, walls by evidence, doorways, windows, columns, north arrow, scale;
+  names that don't fit are numbered with a key). `elementInfo.ts`: the hover / tap wording.
+- Picking: `buildFromPlan` tags every triangle with its plan element (`elements`, `elementRanges`;
+  `elementAtFace`, `elementTriangles`); the smoke test checks nothing is untagged.
+- Plan JSON gained `name`, `dateShown`, `drawings` (side + optional cut + caption) and some notes.
+- Entry points (`Game.ts`): prompt within 15 m of the building (`I`, or tap; elsewhere `I` is still the
+  collection), click the building on the map (M), HUD buttons under "Reconstructed buildings". Opening stops
+  the animation loop (simulation and rendering) and frees the mouse; closing resizes the renderer and resumes.
+

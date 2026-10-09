@@ -41,6 +41,7 @@
         </label>
         <small id="building-look-auto"></small>
         <p id="evidence-legend" hidden><span class="ev ev-s"></span>Found at Silchester <span class="ev ev-c"></span>From comparable sites <span class="ev ev-x"></span>Conjecture</p>
+        <div id="recon-list" aria-label="Explore a reconstruction"></div>
       </fieldset>
       <details id="sources">
         <summary>Sources (model largely based on Silchester GIS)</summary>
@@ -65,6 +66,7 @@
       </div>
     </div>
     <div id="collect-toast" hidden></div>
+    <button type="button" id="recon-prompt" hidden aria-haspopup="dialog"></button>
     <div id="paused">Paused — click here to walk again (panels below stay clickable)</div>
     <div id="dialogue" hidden>
       <div id="dialogue-panel">
@@ -209,6 +211,10 @@
             <div id="map-canvas-wrap">
               <canvas id="detailmap" width="720" height="720"></canvas>
               <canvas id="detailmap-markers" width="720" height="720" aria-hidden="true"></canvas>
+              <div id="map-recon" hidden>
+                <strong id="map-recon-name"></strong>
+                <button type="button" id="map-recon-open" aria-haspopup="dialog">Explore the reconstruction</button>
+              </div>
             </div>
           </div>
           <aside id="map-sidebar">

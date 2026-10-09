@@ -33,6 +33,8 @@ export interface PlacedPlanBuilding {
   centre: { x: number; z: number }; radius: number;
   /** Walkable floor height inside the building's rooms, else undefined (open ground). */
   floorAt: (x: number, z: number) => number | undefined;
+  /** Metres from a world point to the building's plan rectangle (0 inside). */
+  distanceTo: (x: number, z: number) => number;
 }
 
 export type KeyBuildingDisplay = SurfaceStyle | 'evidence';
@@ -128,6 +130,10 @@ export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: nu
     id: plan.id, object: lod, meshes, tris: trisByLod[0], trisByLod, polys, boxes, circles,
     shadow: { x: centre.x, z: centre.z, w: (u1 - u0) * 1.08, d: (v1 - v0) * 1.04, rotY },
     centre, radius: Math.hypot(u1 - u0, v1 - v0) / 2,
+    distanceTo: (x, z) => {
+      const [u, v] = worldToPlan(plan, x, z);
+      return Math.hypot(Math.max(u0 - u, 0, u - u1), Math.max(v0 - v, 0, v - v1));
+    },
     floorAt: (x, z) => {
       const [u, v] = worldToPlan(plan, x, z);
       if (u < u0 - 1 || u > u1 + 1 || v < v0 - 1 || v > v1 + 1) return undefined;

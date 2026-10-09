@@ -12,6 +12,9 @@ import { CELL_TILE_M, cellVec } from './atlasTiled.js';
 //   lod 2  massing: exterior walls without openings, roofs
 // `evidenceColors` adds a vertex `color` per element from its evidence level
 // (S Silchester / C comparison / X conjecture) for the elevation drawings.
+// Every triangle is tagged with the plan element it belongs to (wall, window,
+// roof...) as run-length triangle ranges, so the reconstruction viewer can say
+// what a picked face is (elementAtFace) and highlight it (elementTriangles).
 
 import type { Ev, UV, PlanOpening, PlanWindow, PlanWall, PlanRoom, PlanApse, PlanColumns, PlanRoof, BuildingPlan } from '../../domain/keyPlan.js';
 export type { Ev, UV, PlanOpening, PlanWindow, PlanWall, PlanRoom, PlanApse, PlanColumns, PlanRoof, BuildingPlan };
@@ -28,7 +31,33 @@ export interface PlanBuildOptions {
 export type PlanFootprint =
   | { kind: 'box'; a: UV; b: UV; t: number; h: number }
   | { kind: 'circle'; c: UV; r: number; h: number };
-export interface PlanBuild { geometry: THREE.BufferGeometry; tris: number; footprints: PlanFootprint[] }
+export type PlanElementKind =
+  | 'wall' | 'stylobate' | 'window' | 'door' | 'apse' | 'floor' | 'pool' | 'labrum' | 'base'
+  | 'roof' | 'vault' | 'column' | 'pier' | 'arch' | 'beam';
+/** A pickable part of the building; `ref` is the plan item's id (wall, room, roof...). */
+export interface PlanElement { id: string; kind: PlanElementKind; ref: string; ev?: Ev; note?: string; conjecture?: boolean }
+export interface PlanBuild {
+  geometry: THREE.BufferGeometry; tris: number; footprints: PlanFootprint[];
+  elements: PlanElement[];
+  /** Run-length [first triangle, element index] pairs in triangle order (-1 = untagged). */
+  elementRanges: Int32Array;
+}
+
+/** The plan element a triangle (a raycast hit's faceIndex) belongs to. */
+export function elementAtFace(build: PlanBuild, face: number): PlanElement | undefined {
+  const r = build.elementRanges;
+  let lo = 0, hi = r.length / 2 - 1;
+  if (hi < 0 || face < r[0]) return undefined;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (r[m * 2] <= face) lo = m; else hi = m - 1; }
+  return build.elements[r[lo * 2 + 1]];
+}
+
+/** Triangle ranges [first, end) of one element (for highlighting). */
+export function elementTriangles(build: PlanBuild, id: string): Array<[number, number]> {
+  const idx = build.elements.findIndex((e) => e.id === id), r = build.elementRanges, out: Array<[number, number]> = [];
+  for (let i = 0; i < r.length; i += 2) if (r[i + 1] === idx) out.push([r[i], i + 2 < r.length ? r[i + 2] : build.tris]);
+  return out;
+}
 
 const EV_RGB: Record<Ev | 'N' | 'gS' | 'gC' | 'gX', [number, number, number]> = {
   S: [0.33, 0.66, 0.36], C: [0.92, 0.64, 0.2], X: [0.85, 0.33, 0.3], N: [0.8, 0.78, 0.74],
@@ -45,6 +74,10 @@ class Acc {
   pos: number[] = []; nor: number[] = []; uv: number[] = []; cell: number[] = []; col: number[] = [];
   /** Set while emitting open surfaces (roofs, floors, glass...); dropped when solidOnly. */
   surface = false;
+  /** Element being emitted (index into the build's elements), -1 untagged. */
+  tag = -1;
+  /** Run-length [first triangle, element] pairs. */
+  ranges: number[] = [];
   constructor(readonly evidence: boolean, readonly solidOnly = false) {}
   /** Emit open surfaces (not closed solids) inside fn. */
   surf(fn: () => void): void { const was = this.surface; this.surface = true; fn(); this.surface = was; }
@@ -77,6 +110,7 @@ class Acc {
       this.cell.push(...c4);
       if (this.evidence) this.col.push(...rgb);
     };
+    if (!this.ranges.length || this.ranges[this.ranges.length - 1] !== this.tag) this.ranges.push(this.pos.length / 9, this.tag);
     for (let i = 1; i < p.length - 1; i++) { push(p[0]); push(p[i]); push(p[i + 1]); }
   }
 
@@ -151,6 +185,13 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   const drop = opts.footingDrop ?? 0;
   const acc = new Acc(!!opts.evidenceColors, !!opts.solidOnly);
   const footprints: PlanFootprint[] = [];
+  const elements: PlanElement[] = [], elementIndex = new Map<string, number>();
+  /** Tag what is emitted next as this element. */
+  const tag = (e: PlanElement): void => {
+    let i = elementIndex.get(e.id);
+    if (i === undefined) { i = elements.push(e) - 1; elementIndex.set(e.id, i); }
+    acc.tag = i;
+  };
   const pitch = Math.tan(((plan.pitchDeg ?? 22) * Math.PI) / 180);
   const interiorRooms = plan.rooms.filter((r) => r.finish !== 'exterior');
 
@@ -202,6 +243,8 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   const wallById = new Map(plan.walls.map((w) => [w.id, w]));
   for (const w of plan.walls) {
     const ev = w.ev ?? 'C';
+    const wallEl: PlanElement = { id: w.id, kind: w.kind === 'stylobate' ? 'stylobate' : 'wall', ref: w.id, ev, note: w.note };
+    tag(wallEl);
     const [au, av] = w.a, [bu, bv] = w.b;
     const L = Math.hypot(bu - au, bv - av);
     if (L < 1e-6) continue;
@@ -231,11 +274,13 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     }
 
     // Holes along the wall: doors 0..oh, windows sill..head (none at lod 2).
-    type Hole = { s0: number; s1: number; y0: number; y1: number; glass: boolean; ev: Ev };
+    type Hole = { s0: number; s1: number; y0: number; y1: number; glass: boolean; ev: Ev; el: PlanElement };
     const holes: Hole[] = [];
     if (lod < 2) {
-      for (const o of w.openings ?? []) holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: 0, y1: Math.min(o.oh, w.h), glass: false, ev });
-      for (const o of w.windows ?? []) holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: o.sill, y1: o.head, glass: true, ev: o.ev ?? 'C' });
+      (w.openings ?? []).forEach((o, i) => holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: 0, y1: Math.min(o.oh, w.h), glass: false, ev,
+        el: { id: `${w.id}/door${i}`, kind: 'door', ref: w.id, ev, note: o.note, conjecture: o.conjecture } }));
+      (w.windows ?? []).forEach((o, i) => holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: o.sill, y1: o.head, glass: true, ev: o.ev ?? 'C',
+        el: { id: `${w.id}/window${i}`, kind: 'window', ref: w.id, ev: o.ev ?? 'C', note: o.note } }));
     }
     const S0 = -half, S1 = L + half; // extend to close corners
     const holeEdges = new Set(holes.flatMap((h) => [h.s0, h.s1]));
@@ -247,6 +292,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       const sm = Math.min(L - 0.05, Math.max(0.05, mid)); // sample inside the wall's own length
       const inL = sideIn(sm, 1), inR = sideIn(sm, -1);
       const here = holes.filter((h) => mid > h.s0 && mid < h.s1);
+      tag(here[0]?.el ?? wallEl); // sill and lintel pieces belong to their window or door
       // solid y-ranges = [0,h] minus the holes covering this interval
       let solids: Array<[number, number]> = [[-drop, w.h]];
       for (const h of here) {
@@ -281,6 +327,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
         for (const h of here.filter((x) => x.glass)) {
           const pts = [P(s0, 0, h.y0), P(s1, 0, h.y0), P(s1, 0, h.y1), P(s0, 0, h.y1)];
           const g = `g${h.ev}` as Tint;
+          tag(h.el);
           acc.surf(() => {
             if (inL < h.y1 || lod === 0) acc.poly(pts, 'window', g, sideL, true);
             if (inR < h.y1 || lod === 0) acc.poly(pts, 'window', g, sideR, true);
@@ -294,6 +341,8 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   for (const ap of plan.apses ?? []) {
     acc.surface = false;
     const ev = ap.ev ?? 'C';
+    const apseEl: PlanElement = { id: ap.id, kind: 'apse', ref: ap.id, ev, note: ap.note };
+    tag(apseEl);
     const ri = ap.r - ap.t / 2, ro = ap.r + ap.t / 2;
     const a0 = (ap.start * Math.PI) / 180, a1 = (ap.end * Math.PI) / 180;
     const n = lod === 2 ? 4 : 10;
@@ -317,10 +366,12 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       }
       if (win) {
         const pane = [at(ap.r, t0, win.sill), at(ap.r, t1, win.sill), at(ap.r, t1, win.head), at(ap.r, t0, win.head)];
+        tag({ id: `${ap.id}/window`, kind: 'window', ref: ap.id, ev, note: win.note });
         acc.surf(() => {
           acc.poly(pane, 'window', `g${ev}` as Tint, out, true);
           if (lod === 0) acc.poly(pane, 'window', `g${ev}` as Tint, out.clone().negate(), true); // seen from inside
         });
+        tag(apseEl);
       }
       footprints.push({ kind: 'box', a: [ap.c[0] + ap.r * Math.cos(t0), ap.c[1] + ap.r * Math.sin(t0)], b: [ap.c[0] + ap.r * Math.cos(t1), ap.c[1] + ap.r * Math.sin(t1)], t: ap.t, h: ap.h });
     }
@@ -362,6 +413,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       }
     }
     if (ap.roof !== 'none') {
+      tag({ id: `${ap.id}/roof`, kind: 'roof', ref: ap.id, ev });
       const rr = ro + 0.3, apex = ap.h + rr * pitch * 0.8, eave = ap.h - 0.3 * pitch;
       for (let i = 0; i < n; i++) {
         const t0 = a0 + ((a1 - a0) * i) / n, t1 = a0 + ((a1 - a0) * (i + 1)) / n, tm = (t0 + t1) / 2;
@@ -382,6 +434,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   if (lod === 0) {
     for (const r of plan.rooms) {
       const cell = FLOOR_CELL[r.floor ?? 'gravel'] ?? 'signinum';
+      tag({ id: `${r.id}/floor`, kind: 'floor', ref: r.id, note: r.note });
       const B = bounds(r.poly);
       const rects: Array<[number, number, number, number]> = [];
       if (r.pool) {
@@ -395,6 +448,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       if (r.pool) {
         // Raised basin: rim walls round a sunken-looking water surface (ground can't be cut).
         const p = bounds(r.pool.poly), rt = r.pool.rimT, rimH = 0.55;
+        tag({ id: `${r.id}/pool`, kind: 'pool', ref: r.id, ev: 'C' });
         acc.box(p.u0, p.v0, p.u1, p.v0 + rt, 0, rimH, 'stone', 'C');
         acc.box(p.u0, p.v1 - rt, p.u1, p.v1, 0, rimH, 'stone', 'C');
         acc.box(p.u0, p.v0 + rt, p.u0 + rt, p.v1 - rt, 0, rimH, 'stone', 'C');
@@ -404,6 +458,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       }
       if (r.labrum) {
         const [cu, cv] = r.labrum.c;
+        tag({ id: `${r.id}/labrum`, kind: 'labrum', ref: r.id, ev: 'S' });
         acc.cylinder(cu, cv, 0.22, 0.18, 0, 0.8, 8, 'stone', 'S', false);
         acc.cylinder(cu, cv, 0.35, r.labrum.r, 0.8, 1.0, 12, 'stone', 'S', false);
         acc.cylinder(cu, cv, r.labrum.r - 0.05, r.labrum.r - 0.05, 0.96, 0.96, 12, 'water', 'N', true);
@@ -411,6 +466,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       }
       if (r.base) {
         const b = bounds(r.base.poly);
+        tag({ id: `${r.id}/base`, kind: 'base', ref: r.id, ev: 'S', note: r.base.note });
         acc.box(b.u0, b.v0, b.u1, b.v1, 0, r.base.h, 'masonry', 'S');
         footprints.push({ kind: 'box', a: [b.u0, (b.v0 + b.v1) / 2], b: [b.u1, (b.v0 + b.v1) / 2], t: b.v1 - b.v0, h: r.base.h });
       }
@@ -423,6 +479,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     (plan.roofs ?? []).find((rf) => rf.poly && inPoly(u, v, rf.poly));
   for (const rf of plan.roofs ?? []) {
     const ev = rf.ev ?? 'C';
+    tag({ id: `roof:${rf.id}`, kind: 'roof', ref: rf.id, ev });
     if (rf.type === 'gable' && rf.poly) {
       const B = bounds(rf.poly);
       // Work in (a = along ridge, b = across) then map back to (u, v).
@@ -482,6 +539,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   if (lod === 0) {
     for (const r of plan.rooms.filter((x) => x.vault)) {
       const B = bounds(r.poly), inset = 0.4;
+      tag({ id: `${r.id}/vault`, kind: 'vault', ref: r.id, ev: 'S' });
       const cu = (B.u0 + B.u1) / 2, cv = (B.v0 + B.v1) / 2;
       const eaves = roofOver(cu, cv)?.eaves ?? 6;
       const lenU = B.u1 - B.u0, lenV = B.v1 - B.v0;
@@ -506,6 +564,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   if (lod < 2) {
     for (const cg of plan.columns ?? []) {
       const ev = cg.ev ?? 'C', y0 = cg.y0 ?? 0;
+      tag({ id: cg.id, kind: cg.kind === 'pier' ? 'pier' : 'column', ref: cg.id, ev, note: cg.note });
       let pts: UV[] = [...(cg.at ?? [])];
       if (cg.on && cg.spacing) {
         const seen = new Set<string>();
@@ -533,6 +592,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
           const uA = p0[0] + cg.d / 2, uB = p1[0] - cg.d / 2, vC = p0[1], hd = cg.d / 2;
           const rad = (uB - uA) / 2, cu = (uA + uB) / 2, ySpring = y0 + cg.h, yTop = ySpring + rad + 0.55;
           const n = 8;
+          tag({ id: `${cg.id}/arch`, kind: 'arch', ref: cg.id, ev, conjecture: true });
           acc.surface = true; // arch skin is not a closed solid
           for (let i = 0; i < n; i++) {
             const t0 = Math.PI - (i / n) * Math.PI, t1 = Math.PI - ((i + 1) / n) * Math.PI;
@@ -561,6 +621,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       }
       // timber beams over the columns
       const beamY = y0 + cg.h, bw = 0.22;
+      tag({ id: `${cg.id}/beam`, kind: 'beam', ref: cg.id, ev });
       const beam = (a: UV, b: UV): void => {
         const L = Math.hypot(b[0] - a[0], b[1] - a[1]), du = (b[0] - a[0]) / L, dv = (b[1] - a[1]) / L, nu = -dv * bw / 2, nv = du * bw / 2;
         const ext = bw / 2;
@@ -581,6 +642,6 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   }
 
   const geometry = acc.build();
-  return { geometry, tris: acc.pos.length / 9, footprints };
+  return { geometry, tris: acc.pos.length / 9, footprints, elements, elementRanges: Int32Array.from(acc.ranges) };
 }
 

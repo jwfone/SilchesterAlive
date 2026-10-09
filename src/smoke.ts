@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import { parseAutoTierCache, parseBuildingLook, stepDownTier, tierForLook, tierFromBench } from './domain/displaySettings.js';
 import { KEY_PLANS } from './domain/keyPlans.generated.js';
 import { planToWorld } from './domain/keyPlan.js';
+import { buildFromPlan, elementAtFace, elementTriangles } from './presentation/kit/planBuilding.js';
 
 function makeCtx(): unknown {
   const grad = { addColorStop(): void { /* no-op */ } };
@@ -421,6 +422,17 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
   if (alt !== 2 * world.planBuildings.length) throw new Error(`expected ${2 * world.planBuildings.length} LOD alternates, got ${alt}`);
   world.setKeyBuildingDisplay('evidence');
   world.setKeyBuildingDisplay('hybrid');
+  // Viewer picking: every triangle belongs to a plan element; the cold-bath window resolves.
+  const proximity = baths.distanceTo(160, 104);
+  if (!(proximity > 0 && proximity < 15)) throw new Error(`dev spawn 160,104 should be just outside the baths (got ${proximity.toFixed(1)} m)`);
+  for (const lod of [0, 1, 2] as const) {
+    const b = buildFromPlan(KEY_PLANS.baths, { lod });
+    for (let i = 1; i < b.elementRanges.length; i += 2) if (b.elementRanges[i] < 0) throw new Error(`baths lod ${lod}: untagged triangles at ${b.elementRanges[i - 1]}`);
+    const win = elementTriangles(b, 'west-frig/window0');
+    if (lod < 2 && (!win.length || elementAtFace(b, win[0][0])?.note?.includes('1903') !== true)) throw new Error(`baths lod ${lod}: cold-bath window not pickable`);
+    if (elementAtFace(b, b.tris - 1) === undefined) throw new Error(`baths lod ${lod}: last triangle has no element`);
+    b.geometry.dispose();
+  }
   console.log(`plan buildings ${world.planBuildings.map((b) => `${b.id} lod ${b.trisByLod[0]}/${b.trisByLod[1]}/${b.trisByLod[2]} tris, ${b.polys.length} walls`).join('; ')}`);
 }
 // Reconstructed-buildings display setting: parsing and tier logic.

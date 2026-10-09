@@ -4,7 +4,8 @@
 
 const esc = (s: string): string => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-function inline(s: string): string {
+/** One line: escaped, with **bold**, *italic* and http(s) links. */
+export function miniInline(s: string): string {
   return esc(s)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
@@ -15,9 +16,9 @@ export function miniMarkdown(md: string): string {
   const out: string[] = [];
   let para: string[] = [];
   let list: { tag: 'ul' | 'ol'; items: string[] } | null = null;
-  const flushPara = (): void => { if (para.length) { out.push(`<p>${inline(para.join(' '))}</p>`); para = []; } };
+  const flushPara = (): void => { if (para.length) { out.push(`<p>${miniInline(para.join(' '))}</p>`); para = []; } };
   const flushList = (): void => {
-    if (list) { out.push(`<${list.tag}>${list.items.map((i) => `<li>${inline(i)}</li>`).join('')}</${list.tag}>`); list = null; }
+    if (list) { out.push(`<${list.tag}>${list.items.map((i) => `<li>${miniInline(i)}</li>`).join('')}</${list.tag}>`); list = null; }
   };
   for (const raw of md.split(/\r?\n/)) {
     const line = raw.trimEnd();
@@ -25,7 +26,7 @@ export function miniMarkdown(md: string): string {
     const ul = /^\s*-\s+(.*)$/.exec(line);
     const ol = /^\s*\d+\.\s+(.*)$/.exec(line);
     if (!line.trim()) { flushPara(); flushList(); continue; }
-    if (h) { flushPara(); flushList(); out.push(`<h${h[1].length + 1}>${inline(h[2])}</h${h[1].length + 1}>`); continue; }
+    if (h) { flushPara(); flushList(); out.push(`<h${h[1].length + 1}>${miniInline(h[2])}</h${h[1].length + 1}>`); continue; }
     if (ul || ol) {
       flushPara();
       const tag = ul ? 'ul' : 'ol';

@@ -1,5 +1,7 @@
 {
  "id": "baths",
+ "name": "Public baths",
+ "dateShown": "c. AD 270–280",
  "period": "late 3rd century AD (c. 270-280): 1905 phases 1-5, phase 6 omitted; latrine trapezoidal; west tepidarium original",
  "brief": "docs/key-buildings/baths.md",
  "frame": {
@@ -654,7 +656,7 @@
      "sill": 3,
      "head": 5.2,
      "ev": "S",
-     "note": "window glass found west of the cold bath (1905)"
+     "note": "glass from large window panes was found just outside, west of the cold bath, in 1903–4"
     }
    ]
   },
@@ -702,7 +704,8 @@
     {
      "at": 12.65,
      "w": 3.2,
-     "oh": 3.6
+     "oh": 3.6,
+     "note": "the main entrance from the street, between the two brick piers"
     }
    ],
    "ev": "X"
@@ -2099,5 +2102,25 @@
   "C": "comparison (standing Roman buildings, Vitruvius)",
   "X": "conjecture"
  },
- "pitchDeg": 22
+ "pitchDeg": 22,
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "**Street front**: north elevation, seen from the street (east is on the left)."
+  },
+  {
+   "from": "s",
+   "cut": 20,
+   "caption": "**Section through the hot rooms**: cut across the caldarium looking north; tepidaria, cold room and changing hall rise behind."
+  },
+  {
+   "from": "e",
+   "cut": 12.45,
+   "caption": "**Long section on the central axis** looking west: street portico and entrance (right), palaestra, apodyterium, frigidarium with labrum, tepidarium, caldarium and second caldarium (left)."
+  },
+  {
+   "from": "w",
+   "caption": "**West elevation**: long side seen from the west (north on the left). The window over the cold bath is where the 1903–4 excavators found window glass."
+  }
+ ]
 }
