@@ -74,6 +74,14 @@ choosing. The current roof uses the old painted `tile` atlas cell, which repeats
 by default). Evidence and choice: `baths.md` "Roof tiles". Roof slopes take their UV origin from the eaves
 line. Lab: `tools/materials.html?id=baths&set=roof`.
 
+## Next: the other key buildings
+
+One session per building, in any order. The repeatable procedure is [`playbook.md`](playbook.md) (steps,
+deliverables, the code touch-points for replacing an old kit, pitfalls, a kickoff prompt); what is known about each
+building, open questions for the user and research leads are in [`other-buildings.md`](other-buildings.md). Suggested
+order there: forum-basilica, temples, amphitheatre, mansio, church. The church is blocked on a user decision (the
+pin is probably on the medieval St Mary's; the Roman church may postdate the c. 270–280 snapshot).
+
 ## Done: in-game reconstruction viewer (was Next 2)
 
 Built 2026-10-09; see "As built" in `inspector-plan.md`. Open it at the baths with `I` / the prompt, from
