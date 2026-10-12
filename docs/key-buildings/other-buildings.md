@@ -16,7 +16,7 @@ Treat ◐ and ✎ as leads. Re-verify before they go into a brief, and correct t
 
 | Building | In game today | Pinned anchor | Evidence outlook | Main generator work |
 |---|---|---|---|---|
-| **Forum-basilica** | Hand kit `kit/forum.ts`, ~76 × 74 m, yawed 90° | Full outline, 97 × 82 m | Best: 1977–86 excavation monograph, Victorian plan, 47 Great Plan rings | Basilica nave, aisles, clerestory, big roof; courtyard ranges |
+| **Forum-basilica** | **Done 2026-10-11**: plan-built (`forum-basilica.plan.json`), flint walls | Full outline, 97 × 82 m | Best: 1977–86 excavation monograph, Victorian plan, 47 Great Plan rings | Basilica nave, aisles, clerestory, big roof; courtyard ranges |
 | **Temples** (Insula XXX) | Solid boxes + classical column rows | Centres only, sizes are placeholders | Good: 2017 Reading excavation, GPR, Victorian plan | Cella with ambulatory (two-tier roof), temenos wall |
 | **Church** | Solid box | On the **medieval** St Mary's (probably), no Roman walls | Contested identity and date | Small apsidal hall (if built) |
 | **Mansio** | Hand kit `kit/mansio.ts`, an invented courtyard inn | Courtyard only, 46 × 34 m | **Thin**: 4 rings; identification seen only in a secondary source | Courtyard ranges; maybe timber walls |
@@ -42,7 +42,7 @@ supplied covered about 40% of the building, so check each of these (playbook ste
 
 | Anchor | Rings | By shade 1 / 2 / 3 | Reading |
 |---|---|---|---|
-| forum-basilica | 47 | 16 / 12 / 19 | Rings span 73 m of the anchor's 98 m east–west (5 m in from the west edge, ~20 m short of the east edge) and 85 m north–south; they reach 2.8 m past the south edge. The pin looks about right, generous on the east. |
+| forum-basilica | 47 | 16 / 12 / 19 | ~~Rings span 73 m … ~20 m short of the east edge~~: **wrong**, that count left out rings over 1500 m². ✔ (forum session) The main ring r1657 (1878 m², 23 holes) spans E 463881.3–463980.5, the anchor's full width. Min-area rectangle of the outline: 95.6 × 85.9 m turned 2.5° (the pin is 97.3 × 81.6 m at 0.7°), so the outline pokes ~3 m past the pin at the NE and SW corners. |
 | mansio-courtyard | 4 | 2 / 2 / 0 | Little surveyed; the rings that touch it belong to larger buildings (union 117 × 66 m). |
 | temple-1 | 10 | 5 / 5 / 0 | Long north–south runs (union 104 m long): the temenos wall. |
 | temple-2 | 5 | 3 / 2 / 0 | Same. |
@@ -52,7 +52,9 @@ supplied covered about 40% of the building, so check each of these (playbook ste
 
 ## Forum-basilica
 
-**In game.** `plan.buildings` entries `forum` and `basilica` (hand placeholders) plus the kit
+**Status (2026-10-11): done, plan-built and in the game.** Brief `forum-basilica.md`, plan `assets/key-plans/forum-basilica.plan.json` (flint facing), notes `forum-basilica.about.md`. The old kit `kit/forum.ts` is deleted. The section below is the pre-session record, kept for its corrections.
+
+**In game (before).** `plan.buildings` entries `forum` and `basilica` (hand placeholders) plus the kit
 `src/presentation/kit/forum.ts` ✔ (read in the pilot): a basilica hall 72 × 18 m (north wall solid, south wall with
 three doors, east wall solid, west wall split for an apse of radius 7), 2 × 8 nave columns 8 m apart, one gable roof;
 a forum courtyard slab 56 × 38 m with column porticos on three sides and lean-to strips, open to the south. Authored
@@ -67,16 +69,34 @@ north–south, then yawed 90° about (8, −8) so the basilica is west and the f
   basilica, robbing, Victorian excavations, ploughsoil. (<https://www.stellabooks.com/index.php/books/michael-fulford/late-iron-age-and-roman-silchester-excavations-on-the-site-of-the-forum-basilica-1977-1980-86>;
   interim report in *Antiquaries Journal*: <https://resolve.cambridge.org/core/journals/antiquaries-journal/article/abs/excavations-on-the-sites-of-the-amphitheatre-and-forumbasilica-at-silchester-hampshire-an-interim-report/A3710B0ACD88B2B617FA6699B05C2B50>).
 - ◐ The Society of Antiquaries excavated the forum-basilica in 1893 (<https://www.cambridge.org/core/journals/antiquaries-journal/article/victorian-excavation-methodology-the-society-of-antiquaries-at-silchester-in-1893/371CB04847168E2EAE317D423467052E>).
-  The report is probably *Archaeologia* 54 (1894) ✎: find it; it is the "historic plan" to georeference.
+  ~~The report is probably *Archaeologia* 54 (1894)~~ ✔ corrected: Joyce opened the whole forum-basilica from 1866
+  (Joyce 1881b); the Antiquaries re-planned it in 1892 and published it as **Fox & St John Hope 1893a, "Excavations on
+  the site of the Roman city at Silchester, Hants, in 1892", *Archaeologia* 53, 539–73** (forum pp. 540–59, pl. XXXIX)
+  (C&F 2016, pp. 104–8 and bibliography). Filled in 1908.
+- ✔ **Verified in Creighton & Fry 2016, pp. 104–8** (forum session, 2026-10-10): Period 5 Flavian timber basilica
+  (built c. AD 80–90); **Period 6 masonry forum-basilica, Hadrianic with revisions to the early Antonine period (c. AD 150)**;
+  columns **about 9 m high with Corinthian capitals**; **raised apses at either end** of the hall; an apsidal room in the
+  middle of the west range ("curia", perhaps a shrine: too small for an ordo of 100); the forum **approximately square with
+  internal and external porticoes**; the **east entrance had a major arch**, about 1.5 m south of the centre line to meet
+  the street. Period 7: late Roman occupation of the basilica, pits with **metalworking** traces, perhaps into the
+  5th century. Fulford & Timby read the lack of later 2nd–3rd-c. features as a solid floor (Purbeck marble?) robbed later.
+  Forum square: 0.6 m of gravel on a mortar base, a drain 0.38–0.44 m wide and 1.04 m deep out through the east entrance.
+  Fig. 5.31 (Fulford's Period 6 plan) shows **one** colonnade foundation in the hall, about 4 m inside the east wall.
+- ✔ **Fulford 2002**, *A Guide to Silchester* (passage supplied by the user): about 0.8 ha; porticos, shops and offices on
+  three sides of the square; an elaborate main entrance with an inscription in letters 28 cm high; hall **about 82 × 17.5 m**
+  on **one row of Corinthian columns about 8.6 m high**; raised end rooms, **originally apsidal**; west suite of offices round
+  an apsidal marble-lined council chamber or shrine; built towards the middle of the 2nd century over a late-1st-century timber
+  forum-basilica of similar size and plan; **no traces of flooring, so perhaps never finished**; **iron-smithing (and some
+  bronze-working) in the basilica from the mid-3rd century to the end of the Roman period**.
 - ◐ **Existing reconstruction art** the user may not know: Historic England's archive holds Ivan Lapper paintings of
   Silchester (volume IC090), including the forum "as it may have appeared in the third or fourth century AD" and an aerial
   view (<https://historicengland.org.uk/images-books/photos/volume/IC090>). Reference for what specialists imagined;
   it is copyright artwork, so look and cite, do not reproduce.
-- ✎ A masonry forum with ranges of rooms on three sides of the courtyard, the main entrance on the east and the
-  basilica on the west with an apse. (From memory at the start of the pilot; the Great Plan rings and the monograph
-  will settle it.) ✎ The basilica saw industrial reuse in the late Roman period (check the monograph; it decides
-  what the basilica looks like in c. 270–280).
-- Dates of the masonry forum-basilica: not known to me. Find in the monograph.
+- ✔ (was ✎) A masonry forum with ranges of rooms on three sides of the courtyard, the main entrance on the east and the
+  basilica on the west, with apses at both ends (not one): C&F 2016, Fulford 2002, and the Great Plan rings.
+  ✔ (was ✎) Industrial reuse of the basilica from the mid-3rd century (Fulford 2002; C&F 2016 Period 7).
+- ✔ Dates of the masonry forum-basilica: Hadrianic to early Antonine, c. AD 150 (C&F 2016); "towards the middle of
+  the 2nd century" (Fulford 2002).
 
 **Open questions.** What state to show in c. 270–280 (masonry forum-basilica with which late alterations; is the
 basilica still a civic hall)? Whether the east side of the anchor (≈20 m without rings) is an open street/portico.
@@ -228,8 +248,11 @@ collider), `plan.amphitheatre`.
 - **Creighton & Fry (2016)**, *Silchester: Changing Visions of a Roman Town*, is available as a free PDF
   (<https://reading-clone.eprints-hosting.org/62521/1/Creighton%20with%20Fry%20-%20Silchester%20Changing%20Visions%20of%20a%20Roman%20Town%202016.pdf>,
   record <https://centaur.reading.ac.uk/62521/>) ◐. Likely the best single source for a building-by-building summary
-  (forum, temples, church, mansio), and possibly for what the Great Plan "shade" layers mean (still unknown; they are
-  not phases).
+  (forum, temples, church, mansio). ✔ Read (forum session): the PDF downloads from
+  <https://centaur.reading.ac.uk/62521/1/Creighton%20with%20Fry%20-%20Silchester%20Changing%20Visions%20of%20a%20Roman%20Town%202016.pdf>
+  (the reading-clone host failed). On the **Great Plan shades**: the published plans' greys come from colour washes with
+  "no great consistency"; sometimes phase, sometimes robbed vs unrobbed walls; "no consistent interpretation can be
+  drawn" (C&F 2016, pp. 38, 49). So read phase from the text and modern plans, never from the shade.
 - ADS archive and its intro PDF: <https://archaeologydataservice.ac.uk/archives/view/silchester_ba_2016/downloads.cfm>.
 - The Reading Silchester project pages: <https://research.reading.ac.uk/silchester/>.
 - Insula numbers and the Antiquaries' 1908 town plan: figure 1 of the 2018 baths report.

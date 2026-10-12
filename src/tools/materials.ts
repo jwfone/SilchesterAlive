@@ -2,6 +2,7 @@
 // surface styles side by side, for choosing how plan-built buildings look.
 //   http://localhost:5173/tools/materials.html?id=baths            walls
 //   http://localhost:5173/tools/materials.html?id=baths&set=roof   roofs
+//   http://localhost:5173/tools/materials.html?id=forum-basilica&set=flint   flint facing
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildFromPlan, type BuildingPlan } from '../presentation/kit/planBuilding.js';
@@ -15,8 +16,8 @@ const plan = (await (await fetch(`/assets/key-plans/${id}.plan.json`)).json()) a
 // ?set=roof shows the roof panes (keys roofOld, roof, roofTrim, roofLite; roofOldLite on request).
 const params = new URLSearchParams(location.search);
 const only = params.get('only')?.split(',');
-const roofSet = params.get('set') === 'roof';
-interface Pane { key: string; style: SurfaceStyle; title: string; note: string; trim?: false; roof?: boolean; benchOnly?: boolean }
+const set = params.get('set') ?? 'wall';
+interface Pane { key: string; style: SurfaceStyle; title: string; note: string; trim?: false; set?: 'roof' | 'flint'; benchOnly?: boolean; facing?: 'greensand' | 'flint'; flintTiles?: number }
 const allPanes: Pane[] = [
   { key: 'texture', style: 'texture', title: 'A · Painted texture (current)', note: 'one 2 × 1.6 m tile, repeated' },
   { key: 'procedural', style: 'procedural', title: 'B · Generated stonework', note: 'every block and brick its own size and tone' },
@@ -24,13 +25,17 @@ const allPanes: Pane[] = [
   { key: 'plain', style: 'plain', title: 'D · Plain', note: 'flat colour per material' },
   { key: 'baked', style: 'baked', title: 'E · Baked C', note: 'C rendered once at load into 16 m seamless tiles' },
   { key: 'hybrid', style: 'hybrid', title: 'F · Hybrid C', note: 'live block layout + small baked grain tile' },
-  { key: 'roofOld', style: 'paintedRoof', roof: true, trim: false, title: 'R0 · Painted roof (before)', note: 'one 3.2 × 4 m tile, repeated' },
-  { key: 'roof', style: 'hybrid', roof: true, trim: false, title: 'R1 · Generated tiles, no trim', note: 'every tegula and imbrex its own tone; relief in the lighting' },
-  { key: 'roofTrim', style: 'hybrid', roof: true, title: 'R2 · High (in the game)', note: 'R1 + ridge / hip cap rows and the tile edge at eaves and verges' },
-  { key: 'roofOldLite', style: 'paintedRoofLite', roof: true, trim: false, benchOnly: true, title: 'R0s · Painted roof, Standard walls', note: 'baseline for R3 (?only=roofOldLite,roofLite)' },
-  { key: 'roofLite', style: 'hybridLite', roof: true, title: 'R3 · Standard (in the game)', note: 'R2 without fine grain, lichen or repair patches (1 texture read)' },
+  { key: 'roofOld', style: 'paintedRoof', set: 'roof', trim: false, title: 'R0 · Painted roof (before)', note: 'one 3.2 × 4 m tile, repeated' },
+  { key: 'roof', style: 'hybrid', set: 'roof', trim: false, title: 'R1 · Generated tiles, no trim', note: 'every tegula and imbrex its own tone; relief in the lighting' },
+  { key: 'roofTrim', style: 'hybrid', set: 'roof', title: 'R2 · High (in the game)', note: 'R1 + ridge / hip cap rows and the tile edge at eaves and verges' },
+  { key: 'roofOldLite', style: 'paintedRoofLite', set: 'roof', trim: false, benchOnly: true, title: 'R0s · Painted roof, Standard walls', note: 'baseline for R3 (?only=roofOldLite,roofLite)' },
+  { key: 'roofLite', style: 'hybridLite', set: 'roof', title: 'R3 · Standard (in the game)', note: 'R2 without fine grain, lichen or repair patches (1 texture read)' },
+  { key: 'greensand', style: 'hybrid', set: 'flint', facing: 'greensand', title: 'G · Greensand F (the baths)', note: 'baseline: the baths facing on this building' },
+  { key: 'flint2', style: 'hybrid', set: 'flint', flintTiles: 2, title: 'K2 · Flint, 2 tile courses', note: '5 flint courses (~0.12 m) then a double tile course, like the double bonding course of the town wall' },
+  { key: 'flint3', style: 'hybrid', set: 'flint', flintTiles: 3, title: 'K3 · Flint, 3 tile courses', note: 'as K2 with 3 tile courses, like the brick bands at the baths' },
+  { key: 'flintLite', style: 'hybridLite', set: 'flint', flintTiles: 2, title: 'K2s · Flint, Standard tier', note: 'K2 without fine grain or lumpy outlines (1 texture read)' },
 ];
-const panes = only ? allPanes.filter((p) => only.includes(p.key)) : allPanes.filter((p) => !!p.roof === roofSet && !p.benchOnly);
+const panes = only ? allPanes.filter((p) => only.includes(p.key)) : allPanes.filter((p) => (p.set ?? 'wall') === set && !p.benchOnly);
 
 const stage = document.getElementById('stage')!;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -59,10 +64,11 @@ scene.add(new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2)
 // Two copies of the model: as in the game (with roof trim: ridge caps, tile edges) and without.
 const geoGame = buildFromPlan(plan, { lod: 0 }).geometry;
 const geoNoTrim = buildFromPlan(plan, { lod: 0, roofTrim: false }).geometry;
+const geoGreensand = set === 'flint' ? buildFromPlan(plan, { lod: 0, facing: 'greensand' }).geometry : geoGame;
 const mesh = new THREE.Mesh(geoGame);
 scene.add(mesh);
-const mats = panes.map((p) => createTiledAtlasMaterial({}, p.style));
-const usePane = (i: number): void => { mesh.material = mats[i]; mesh.geometry = panes[i].trim === false ? geoNoTrim : geoGame; };
+const mats = panes.map((p) => { const m = createTiledAtlasMaterial({}, p.style); if (p.flintTiles) m.userData.flintTiles = p.flintTiles; return m; });
+const usePane = (i: number): void => { mesh.material = mats[i]; mesh.geometry = panes[i].facing === 'greensand' ? geoGreensand : panes[i].trim === false ? geoNoTrim : geoGame; };
 
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -80,6 +86,12 @@ const presets: Record<string, [THREE.Vector3, THREE.Vector3]> = {
   roofClose: [new THREE.Vector3(3.5, 9.2, -48.5), new THREE.Vector3(9, 7.2, -41.5)],
   roofCourt: [new THREE.Vector3(16, 1.7, -55), new THREE.Vector3(11, 5.6, -44)],
   roofAerial: [new THREE.Vector3(42, 30, -78), new THREE.Vector3(13, 5, -33)],
+  // forum-basilica (?id=forum-basilica&set=flint): the basilica east wall from the court, the west front, the air
+  flintDetail: [new THREE.Vector3(38.4, 1.6, -30.4), new THREE.Vector3(35.9, 1.4, -31.4)],
+  flintClose: [new THREE.Vector3(43, 1.8, -25), new THREE.Vector3(35.8, 3.2, -35)],
+  flintCourt: [new THREE.Vector3(62, 1.7, -28), new THREE.Vector3(36, 4.5, -50)],
+  flintStreet: [new THREE.Vector3(-12, 1.8, -24), new THREE.Vector3(6.2, 4, -46)],
+  flintAerial: [new THREE.Vector3(140, 55, 30), new THREE.Vector3(48, 3, -43)],
 };
 const setCam = (k: string): void => {
   const [eye, target] = presets[k];
@@ -162,4 +174,4 @@ function snap(view: string, pw = 1200, ph = 675): string {
 (window as unknown as { snap: typeof snap }).snap = snap;
 controls.addEventListener('change', draw);
 addEventListener('resize', draw);
-setCam(params.get('cam') ?? (roofSet ? 'roofClose' : 'close'));
+setCam(params.get('cam') ?? (set === 'roof' ? 'roofClose' : set === 'flint' ? 'flintClose' : 'close'));

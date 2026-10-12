@@ -420,42 +420,59 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     throw new Error('single reply has no alternative to avoid');
   }
 }
-// Plan-built key buildings (baths): built from the plan, placed on its surveyed
-// footprint, with three LOD levels, colliders, and only one level counted as a draw.
+// Plan-built key buildings: built from the plan, placed on its surveyed footprint, with three
+// LOD levels (triangles decreasing, LOD0 under the building's cap), colliders, a walkable
+// entrance, a solid wall, element picking on every triangle, and a dev spawn just outside.
 {
-  const baths = world.planBuildings.find((b) => b.id === 'baths');
-  if (!baths) throw new Error('plan-built baths missing from the world');
-  if (!KEY_PLANS.baths) throw new Error('KEY_PLANS.baths missing (npm run import:keyplans)');
-  if (baths.object.levels.length !== 3) throw new Error(`baths LOD levels ${baths.object.levels.length} != 3`);
-  const t = baths.trisByLod;
-  if (!(t[0] > t[1] && t[1] > t[2] && t[2] > 0)) throw new Error(`baths LOD tris not decreasing: ${t[0]}/${t[1]}/${t[2]}`);
-  if (t[0] > 12000) throw new Error(`baths LOD0 ${t[0]} tris over 12k budget`);
-  if (baths.polys.length < 20) throw new Error(`baths has only ${baths.polys.length} wall colliders`);
-  // Centre sits on the pinned key anchor (GENERATED_KEYS baths, ~66 x 30 m around 163.9, 144).
-  if (Math.hypot(baths.centre.x - 163.9, baths.centre.z - 144) > 3) {
-    throw new Error(`baths centre off its footprint: ${baths.centre.x.toFixed(1)}, ${baths.centre.z.toFixed(1)}`);
+  interface PlanCheck {
+    id: string; cap: number; centre: [number, number]; minWalls: number;
+    door: [number, number]; wall: [number, number]; spawn: [number, number];
+    pick: { element: string; note: string };
   }
-  // The entrance gap in the facade must be walkable; the solid west wall must block.
-  const door = planToWorld(KEY_PLANS.baths, 13.1, 61.1);
-  if (world.polys.some((p) => hitsPoly(door.x, door.z, 0.3, p))) throw new Error('baths entrance is blocked by a collider');
-  const wall = planToWorld(KEY_PLANS.baths, 0.45, 50);
-  if (!world.polys.some((p) => hitsPoly(wall.x, wall.z, 0.3, p))) throw new Error('baths west wall has no collider');
+  const checks: PlanCheck[] = [
+    // baths: ~66 x 30 m anchor around 163.9, 144; facade entrance; west wall; cold-bath window (1903-4 glass)
+    { id: 'baths', cap: 12000, centre: [163.9, 144], minWalls: 20, door: [13.1, 61.1], wall: [0.45, 50], spawn: [160, 104],
+      pick: { element: 'west-frig/window0', note: '1903' } },
+    // forum-basilica: 95.8 x 86 m anchor around -89.1, 45.4; the outer gateway arch; the basilica east wall;
+    // the curia opening (1893). LOD0 cap 20k agreed for this building (docs/key-buildings/forum-basilica.md).
+    { id: 'forum-basilica', cap: 20000, centre: [-89.1, 45.4], minWalls: 50, door: [95.12, 41.7], wall: [35.7, 30], spawn: [-38, 47],
+      pick: { element: 'bas-w/door0', note: '1893' } },
+  ];
+  for (const c of checks) {
+    const kp = KEY_PLANS[c.id];
+    if (!kp) throw new Error(`KEY_PLANS['${c.id}'] missing (npm run import:keyplans)`);
+    const pb = world.planBuildings.find((b) => b.id === c.id);
+    if (!pb) throw new Error(`plan-built ${c.id} missing from the world`);
+    if (pb.object.levels.length !== 3) throw new Error(`${c.id} LOD levels ${pb.object.levels.length} != 3`);
+    const t = pb.trisByLod;
+    if (!(t[0] > t[1] && t[1] > t[2] && t[2] > 0)) throw new Error(`${c.id} LOD tris not decreasing: ${t[0]}/${t[1]}/${t[2]}`);
+    if (t[0] > c.cap) throw new Error(`${c.id} LOD0 ${t[0]} tris over its ${c.cap} budget`);
+    if (pb.polys.length < c.minWalls) throw new Error(`${c.id} has only ${pb.polys.length} wall colliders`);
+    if (Math.hypot(pb.centre.x - c.centre[0], pb.centre.z - c.centre[1]) > 3) {
+      throw new Error(`${c.id} centre off its footprint: ${pb.centre.x.toFixed(1)}, ${pb.centre.z.toFixed(1)}`);
+    }
+    const door = planToWorld(kp, c.door[0], c.door[1]);
+    if (world.polys.some((p) => hitsPoly(door.x, door.z, 0.3, p))) throw new Error(`${c.id} entrance is blocked by a collider`);
+    const wall = planToWorld(kp, c.wall[0], c.wall[1]);
+    if (!world.polys.some((p) => hitsPoly(wall.x, wall.z, 0.3, p))) throw new Error(`${c.id} solid wall has no collider`);
+    const proximity = pb.distanceTo(c.spawn[0], c.spawn[1]);
+    if (!(proximity > 0 && proximity < 15)) throw new Error(`dev spawn ${c.spawn.join(',')} should be just outside ${c.id} (got ${proximity.toFixed(1)} m)`);
+    for (const lod of [0, 1, 2] as const) {
+      const b = buildFromPlan(kp, { lod });
+      for (let i = 1; i < b.elementRanges.length; i += 2) if (b.elementRanges[i] < 0) throw new Error(`${c.id} lod ${lod}: untagged triangles at ${b.elementRanges[i - 1]}`);
+      const el = elementTriangles(b, c.pick.element);
+      if (lod < 2 && (!el.length || elementAtFace(b, el[0][0])?.note?.includes(c.pick.note) !== true)) throw new Error(`${c.id} lod ${lod}: ${c.pick.element} not pickable`);
+      if (elementAtFace(b, b.tris - 1) === undefined) throw new Error(`${c.id} lod ${lod}: last triangle has no element`);
+      b.geometry.dispose();
+    }
+  }
+  // The forum-basilica is built in flint; the baths keep the default Greensand facing.
+  if (KEY_PLANS['forum-basilica'].facing !== 'flint' || KEY_PLANS.baths.facing) throw new Error('wall facings: forum flint, baths default');
   let alt = 0;
   world.group.traverse((o) => { if (o.userData.lodAlternate) alt++; });
   if (alt !== 2 * world.planBuildings.length) throw new Error(`expected ${2 * world.planBuildings.length} LOD alternates, got ${alt}`);
   world.setKeyBuildingDisplay('evidence');
   world.setKeyBuildingDisplay('hybrid');
-  // Viewer picking: every triangle belongs to a plan element; the cold-bath window resolves.
-  const proximity = baths.distanceTo(160, 104);
-  if (!(proximity > 0 && proximity < 15)) throw new Error(`dev spawn 160,104 should be just outside the baths (got ${proximity.toFixed(1)} m)`);
-  for (const lod of [0, 1, 2] as const) {
-    const b = buildFromPlan(KEY_PLANS.baths, { lod });
-    for (let i = 1; i < b.elementRanges.length; i += 2) if (b.elementRanges[i] < 0) throw new Error(`baths lod ${lod}: untagged triangles at ${b.elementRanges[i - 1]}`);
-    const win = elementTriangles(b, 'west-frig/window0');
-    if (lod < 2 && (!win.length || elementAtFace(b, win[0][0])?.note?.includes('1903') !== true)) throw new Error(`baths lod ${lod}: cold-bath window not pickable`);
-    if (elementAtFace(b, b.tris - 1) === undefined) throw new Error(`baths lod ${lod}: last triangle has no element`);
-    b.geometry.dispose();
-  }
   console.log(`plan buildings ${world.planBuildings.map((b) => `${b.id} lod ${b.trisByLod[0]}/${b.trisByLod[1]}/${b.trisByLod[2]} tris, ${b.polys.length} walls`).join('; ')}`);
 }
 // Reconstructed-buildings display setting: parsing and tier logic.

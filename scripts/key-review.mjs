@@ -34,6 +34,14 @@ const KIT = {
       [121, 145, 127, 155, 'furnace'], [161, 139, 173, 161, 'frigidarium court'],
     ].map(([x0, z0, x1, z1, l]) => [x0 + dx, z0 + dz, x1 + dx, z1 + dz, l]);
   })(),
+  // the old kit/forum.ts (deleted 2026-10-11) after its 90° yaw, moved so
+  // the pair's design centre (8, -8) sits on the anchor centre (-89.2, 45).
+  'forum-basilica': (() => {
+    const dx = -89.2 - 8, dz = 45 - -8;
+    return [
+      [-21, -44, -3, 28, 'basilica hall'], [-19, 27.5, -5, 34.5, 'apse'], [9, -36, 47, 20, 'forum court'],
+    ].map(([x0, z0, x1, z1, l]) => [x0 + dx, z0 + dz, x1 + dx, z1 + dz, l]);
+  })(),
 };
 
 const keys = JSON.parse(readFileSync(join(ROOT, 'assets', 'key-buildings.geojson'), 'utf8'));

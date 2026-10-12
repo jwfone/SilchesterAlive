@@ -29,6 +29,8 @@ export interface PlanBuildOptions {
   /** Roof trim (default on; lod 0/1): ridge and hip cap rows, and the tile edge along
    * eaves and verges. A few hundred triangles. Off only for the materials-lab baseline. */
   roofTrim?: boolean;
+  /** Override the plan's wall facing (materials lab comparisons). */
+  facing?: 'greensand' | 'flint';
 }
 /** Collision footprint in plan coordinates: box along a->b of thickness t, or a circle. */
 export type PlanFootprint =
@@ -189,6 +191,8 @@ const FLOOR_CELL: Record<string, AtlasCell> = {
 
 export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanBuild {
   const { lod } = opts;
+  /** Exterior wall facing cell for this building. */
+  const mas: AtlasCell = (opts.facing ?? plan.facing) === 'flint' ? 'flint' : 'masonry';
   const drop = opts.footingDrop ?? 0;
   const acc = new Acc(!!opts.evidenceColors, !!opts.solidOnly);
   const footprints: PlanFootprint[] = [];
@@ -282,7 +286,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     // How high is each side indoors at distance s along the wall? (sampled just beyond each face)
     const sideIn = (s: number, side: number): number =>
       interiorHeight(au + du * s + side * nu * (half + 0.3), av + dv * s + side * nv * (half + 0.3));
-    const extCell: AtlasCell = w.material ?? 'masonry';
+    const extCell: AtlasCell = w.material ?? mas;
     // Split where the room or roof on either side changes (e.g. a wall that is partly an annex wall).
     const key = (s: number): string => {
       const at = (side: number): string => sideKeyAt(au + du * s + side * nu * (half + 0.3), av + dv * s + side * nv * (half + 0.3));
@@ -299,16 +303,27 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     }
 
     // Holes along the wall: doors 0..oh, windows sill..head (none at lod 2).
-    type Hole = { s0: number; s1: number; y0: number; y1: number; glass: boolean; ev: Ev; el: PlanElement };
+    // `arch`: a slice of an arched head, its soffit running from ya (at s0) to yb (at s1); `inner`
+    // marks slice boundaries inside one opening (no reveal faces there).
+    type Hole = { s0: number; s1: number; y0: number; y1: number; glass: boolean; ev: Ev; el: PlanElement; arch?: [number, number]; inner?: [boolean, boolean] };
     const holes: Hole[] = [];
     if (lod < 2) {
-      (w.openings ?? []).forEach((o, i) => holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: 0, y1: Math.min(o.oh, w.h), glass: false, ev,
-        el: { id: `${w.id}/door${i}`, kind: 'door', ref: w.id, ev, note: o.note, conjecture: o.conjecture } }));
+      (w.openings ?? []).forEach((o, i) => {
+        const el: PlanElement = { id: `${w.id}/door${i}`, kind: 'door', ref: w.id, ev, note: o.note, conjecture: o.conjecture };
+        if (!o.arch) { holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: 0, y1: Math.min(o.oh, w.h), glass: false, ev, el }); return; }
+        // arched head: slices whose soffit follows chords of the semicircle above the springing
+        const n = lod === 0 ? 8 : 4, r = o.w / 2;
+        const yAt = (s: number): number => Math.min(o.oh + Math.sqrt(Math.max(0, r * r - (s - o.at) ** 2)), w.h);
+        for (let k = 0; k < n; k++) {
+          const s0 = o.at - r + (k * o.w) / n, s1 = s0 + o.w / n;
+          holes.push({ s0, s1, y0: 0, y1: Math.max(yAt(s0), yAt(s1)), glass: false, ev, el, arch: [yAt(s0), yAt(s1)], inner: [k > 0, k < n - 1] });
+        }
+      });
       (w.windows ?? []).forEach((o, i) => holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: o.sill, y1: o.head, glass: true, ev: o.ev ?? 'C',
         el: { id: `${w.id}/window${i}`, kind: 'window', ref: w.id, ev: o.ev ?? 'C', note: o.note } }));
     }
     const S0 = -half, S1 = L + half; // extend to close corners
-    const holeEdges = new Set(holes.flatMap((h) => [h.s0, h.s1]));
+    const holeEdges = new Set(holes.flatMap((h) => [...(h.inner?.[0] ? [] : [h.s0]), ...(h.inner?.[1] ? [] : [h.s1])]));
     const cuts = [...new Set([S0, S1, ...sideCuts, ...holes.flatMap((h) => [h.s0, h.s1])])].filter((s) => s >= S0 && s <= S1).sort((a, b) => a - b);
     for (let i = 0; i < cuts.length - 1; i++) {
       const s0 = cuts[i], s1 = cuts[i + 1];
@@ -318,6 +333,19 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       const inL = sideIn(sm, 1), inR = sideIn(sm, -1);
       const here = holes.filter((h) => mid > h.s0 && mid < h.s1);
       tag(here[0]?.el ?? wallEl); // sill and lintel pieces belong to their window or door
+      const archSlice = here.find((h) => h.arch);
+      if (archSlice?.arch) {
+        // masonry above an arched head: faces with a sloping lower edge, soffit, top
+        const [ya, yb] = archSlice.arch;
+        if (w.h > Math.min(ya, yb) + 1e-3) {
+          for (const side of [1, -1]) {
+            acc.poly([P(s0, side * half, ya), P(s1, side * half, yb), P(s1, side * half, w.h), P(s0, side * half, w.h)], extCell, ev, side === 1 ? sideL : sideR);
+          }
+          acc.poly([P(s0, -half, w.h), P(s1, -half, w.h), P(s1, half, w.h), P(s0, half, w.h)], 'stone', 'N', UP);
+          acc.poly([P(s0, -half, ya), P(s1, -half, yb), P(s1, half, yb), P(s0, half, ya)], 'brick', ev, DOWN);
+        }
+        continue;
+      }
       // solid y-ranges = [0,h] minus the holes covering this interval
       let solids: Array<[number, number]> = [[-drop, w.h]];
       for (const h of here) {
@@ -378,7 +406,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       const solids: Array<[number, number]> = win ? [[-drop, win.sill], [win.head, ap.h]] : [[-drop, ap.h]];
       const out = at(1, tm, 0).sub(at(0, tm, 0));
       for (const [y0, y1] of solids) {
-        acc.poly([at(ro, t0, y0), at(ro, t1, y0), at(ro, t1, y1), at(ro, t0, y1)], 'masonry', ev, out);
+        acc.poly([at(ro, t0, y0), at(ro, t1, y0), at(ro, t1, y1), at(ro, t0, y1)], mas, ev, out);
         if (lod === 0) interiorFace((y) => [at(ri, t0, y), at(ri, t1, y)], y0, y1, out.clone().negate(), ev);
         acc.poly([at(ri, t0, y1), at(ri, t1, y1), at(ro, t1, y1), at(ro, t0, y1)], 'stone', 'N', UP);
         if (y0 > 0) acc.poly([at(ri, t0, y0), at(ri, t1, y0), at(ro, t1, y0), at(ro, t0, y0)], 'brick', ev, DOWN);
@@ -410,13 +438,15 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     const N = (s: number, c: number, y: number): V3 => v3(ap.c[0] + nU * s + cU * c, y, ap.c[1] + nV * s + cV * c);
     if (lod === 0) {
       const spring = ap.h - ri - 0.3, rows = 4;
-      // floor: half disc + neck
+      // floor: half disc + neck (raised for a tribunal, with a riser across its front)
+      const fy = Math.max(0.03, ap.floorH ?? 0);
       for (let i = 0; i < n; i++) {
         const t0 = a0 + ((a1 - a0) * i) / n, t1 = a0 + ((a1 - a0) * (i + 1)) / n;
-        acc.poly([v3(ap.c[0], 0.03, ap.c[1]), at(ri, t0, 0.03), at(ri, t1, 0.03)], 'signinum', 'N', UP);
+        acc.poly([v3(ap.c[0], fy, ap.c[1]), at(ri, t0, fy), at(ri, t1, fy)], 'signinum', 'N', UP);
       }
+      if (fy > 0.05) acc.poly([N(neck, -ri, 0), N(neck, ri, 0), N(neck, ri, fy), N(neck, -ri, fy)], 'stone', ev, N(1, 0, 0).sub(N(0, 0, 0)));
       if (neck > 0) {
-        acc.poly([N(0, -ri, 0.03), N(neck, -ri, 0.03), N(neck, ri, 0.03), N(0, ri, 0.03)], 'signinum', 'N', UP);
+        acc.poly([N(0, -ri, fy), N(neck, -ri, fy), N(neck, ri, fy), N(0, ri, fy)], 'signinum', 'N', UP);
         // ceiling: the dome's half-circle profile carried back to the wall line
         for (let k = 0; k < 8; k++) {
           const p0 = (k / 8) * Math.PI, p1 = ((k + 1) / 8) * Math.PI;
@@ -494,7 +524,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       if (r.base) {
         const b = bounds(r.base.poly);
         tag({ id: `${r.id}/base`, kind: 'base', ref: r.id, ev: 'S', note: r.base.note });
-        acc.box(b.u0, b.v0, b.u1, b.v1, 0, r.base.h, 'masonry', 'S');
+        acc.box(b.u0, b.v0, b.u1, b.v1, 0, r.base.h, mas, 'S');
         footprints.push({ kind: 'box', a: [b.u0, (b.v0 + b.v1) / 2], b: [b.u1, (b.v0 + b.v1) / 2], t: b.v1 - b.v0, h: r.base.h });
       }
     }
@@ -528,8 +558,8 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       for (const a of [a0, a1]) {
         const tri = [P(a, e, b0), P(a, e, b1), P(a, ridgeY, bm)];
         const outward = alongU ? v3(a === a0 ? -1 : 1, 0, 0) : v3(0, 0, a === a0 ? -1 : 1);
-        acc.poly(tri, 'masonry', ev, outward);
-        if (lod === 0) acc.poly(tri, 'masonry', ev, outward.clone().negate());
+        acc.poly(tri, mas, ev, outward);
+        if (lod === 0) acc.poly(tri, mas, ev, outward.clone().negate());
       }
     } else if (rf.type === 'lean-to' && rf.poly) {
       const B = bounds(rf.poly), hi = rf.highY ?? 4, lo = rf.lowY ?? 3;
@@ -554,7 +584,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       if (rf.closeEnds) {
         for (const t of [0, 1]) {
           // vertical gable-end triangle between the wall tops (at lowY) and the slope
-          acc.poly([corner(0, t, hi), corner(1, t, lo), corner(0, t, lo)], 'masonry', ev, corner(0.5, t, 0).sub(corner(0.5, 0.5, 0)));
+          acc.poly([corner(0, t, hi), corner(1, t, lo), corner(0, t, lo)], mas, ev, corner(0.5, t, 0).sub(corner(0.5, 0.5, 0)));
         }
       }
     } else if (rf.type === 'peristyle' && rf.outer && rf.inner) {

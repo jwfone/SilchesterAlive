@@ -7,7 +7,10 @@ export type AtlasCell =
   | 'stone' | 'plaster' | 'timber' | 'tile'
   | 'street' | 'grass' | 'wood' | 'arena' | 'water'
   // Plan-built key buildings (atlasTiled.ts samples these with per-pixel tiling).
-  | 'masonry' | 'plasterPink' | 'dado' | 'signinum' | 'mosaic' | 'window' | 'brick';
+  | 'masonry' | 'plasterPink' | 'dado' | 'signinum' | 'mosaic' | 'window' | 'brick'
+  // Flint facing (forum-basilica): shares the masonry painting; its rect is nudged so the
+  // tiled shader can tell the two apart (atlasTiled.ts isCell).
+  | 'flint';
 
 export interface AtlasRect { u0: number; v0: number; u1: number; v1: number }
 
@@ -16,6 +19,7 @@ const CELLS: Record<AtlasCell, [number, number]> = {
   street: [0, 1], grass: [1, 1], wood: [2, 1], arena: [3, 1],
   water: [0, 2], masonry: [1, 2], plasterPink: [2, 2], dado: [3, 2],
   signinum: [0, 3], mosaic: [1, 3], window: [2, 3], brick: [3, 3],
+  flint: [1, 2],
 };
 
 export function cellRect(cell: AtlasCell): AtlasRect {
@@ -25,8 +29,8 @@ export function cellRect(cell: AtlasCell): AtlasRect {
   const u0 = cx * s, u1 = (cx + 1) * s;
   const v1 = 1 - cy * s, v0 = 1 - (cy + 1) * s;
   // inset slightly to avoid bleeding
-  const pad = 0.004;
-  return { u0: u0 + pad, v0: v0 + pad, u1: u1 - pad, v1: v1 - pad };
+  const pad = 0.004, nudge = cell === 'flint' ? 0.002 : 0;
+  return { u0: u0 + pad + nudge, v0: v0 + pad, u1: u1 - pad + nudge, v1: v1 - pad };
 }
 
 /** Remap a geometry's 0..1 UVs into an atlas cell, with optional repeat. */

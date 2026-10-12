@@ -37,7 +37,7 @@ export const CELL_TILE_M: Record<AtlasCell, [number, number]> = {
   stone: [2, 2], plaster: [2, 2], timber: [2, 2], tile: [3.2, 4],
   street: [4, 4], grass: [4, 4], wood: [2, 2], arena: [4, 4], water: [4, 4],
   masonry: [2, 1.6], plasterPink: [2, 2], dado: [2, 1], signinum: [2, 2],
-  mosaic: [1, 1], window: [1, 1], brick: [1, 0.56],
+  mosaic: [1, 1], window: [1, 1], brick: [1, 0.56], flint: [2, 1.6],
 };
 
 /** cellRect packed as the shader attribute (u0, v0, du, dv). */
@@ -45,6 +45,9 @@ export function cellVec(cell: AtlasCell): [number, number, number, number] {
   const r = cellRect(cell);
   return [r.u0, r.v0, r.u1 - r.u0, r.v1 - r.v0];
 }
+
+/** Tile courses in each bonding band of a flint wall (chosen in the materials lab; see the forum brief). */
+export const FLINT_TILE_COURSES = 2;
 
 let cached: THREE.MeshLambertMaterial | null = null;
 
@@ -65,6 +68,8 @@ const GLSL_HELPERS = /* glsl */ `
 uniform int uStyle;
 uniform vec2 uMasonryCell;
 uniform vec2 uBrickCell;
+uniform vec2 uFlintCell;
+uniform float uFlintTiles;
 uniform vec2 uTileCell;
 uniform sampler2D uBakedMasonry;
 uniform sampler2D uBakedBrick;
@@ -193,6 +198,59 @@ vec3 masonryF(vec2 m) {
   vec3 mortar = vec3(0.79, 0.76, 0.69) * (0.9 + 0.1 * (far < 1.0 ? mix(texture(uGrain, m * 0.8).g, 0.5, far) : 0.5));
   return mix(mortar, col, inside);
 }
+// Flint facing with tile bonding courses (forum-basilica; evidence in docs/key-buildings/forum-basilica.md
+// "Wall facing"): 0.6 m of flint nodules in 5 rough courses (~0.12 m, as the town wall's 4-5 flint courses),
+// then uFlintTiles courses of brick/tile (~0.067 m each), repeated. Nodules ~0.12-0.22 m long, rounded,
+// set in plenty of lime mortar; most show pale grey cortex, some a broken dark face, a few iron-stained.
+vec3 flintF(vec2 m) {
+  float tileH = 0.2 / 3.0, nt = uFlintTiles, bandH = 0.6 + nt * tileH;
+  float band = floor(m.y / bandH), yb = m.y - band * bandH;
+  if (m.y < 0.0) yb = mod(m.y, 0.6); // footings: flint only
+  float px = fwidth(m.x) + fwidth(m.y);
+  float far = wallStyle() == 6 ? 1.0 : smoothstep(0.015, 0.09, px);
+  vec3 mortar = vec3(0.79, 0.76, 0.69) * (0.9 + 0.1 * (far < 1.0 ? mix(texture(uGrain, m * 0.8).g, 0.5, far) : 0.5));
+  if (yb >= 0.6) {
+    float course = floor((yb - 0.6) / tileH), fy = yb - 0.6 - course * tileH;
+    float cid = band * 10.0 + 5.0 + course;
+    vec3 blk = brickBlock(m.x, course, cid * 7.0 + 3.0);
+    float inside = joint(blk.y, blk.z, 0.008, px) * joint(fy, tileH, 0.011, px);
+    float r = ih(blk.x, cid), r2 = ih(cid, blk.x + 9.0);
+    vec3 col = mix(vec3(0.52, 0.22, 0.13), vec3(0.74, 0.38, 0.23), r);
+    col = mix(col, vec3(0.45, 0.3, 0.24), step(0.9, r2) * 0.6);
+    col *= 0.9 + 0.2 * (far < 1.0 ? mix(texture(uGrain, m * vec2(1.0, 2.0)).g, 0.5, far) : 0.5);
+    col *= 1.0 + (r2 - 0.5) * 0.22 * far;
+    return mix(mortar, col, inside);
+  }
+  // flint courses: bed lines jittered +/-1.5 cm around k * 0.12 (as masonryF)
+  float k = min(floor(yb / 0.12), 4.0);
+  float b0 = k * 0.12 + (k > 0.0 ? (ih(band, k + 40.0) - 0.5) * 0.03 : 0.0);
+  float b1 = k < 4.0 ? (k + 1.0) * 0.12 + (ih(band, k + 41.0) - 0.5) * 0.03 : 0.6;
+  if (yb < b0) { k -= 1.0; b1 = b0; b0 = k * 0.12 + (k > 0.0 ? (ih(band, k + 40.0) - 0.5) * 0.03 : 0.0); }
+  else if (yb >= b1) { k += 1.0; b0 = b1; b1 = k < 4.0 ? (k + 1.0) * 0.12 + (ih(band, k + 41.0) - 0.5) * 0.03 : 0.6; }
+  float ch = b1 - b0, fy = yb - b0, cid = band * 10.0 + k;
+  vec3 blk = courseBlock(m.x, 0.17, 0.5 * mod(k, 2.0), 0.3, cid * 7.0 + 5.0);
+  float r = ih(blk.x, cid), r2 = ih(cid, blk.x + 9.0), r3 = ih(blk.x + 3.0, cid + 17.0);
+  // rounded nodule inside its cell; lumpy outline; mortar shows round it
+  vec2 q = vec2(blk.y / blk.z, fy / ch) * 2.0 - 1.0;
+  q += vec2(r2 - 0.5, r3 - 0.5) * vec2(0.12, 0.22);                 // set a little off-centre: rough courses
+  vec2 sc = vec2(0.9 + 0.1 * r, 0.88 + 0.16 * r3);                   // packed tight: thin mortar between
+  float ex = mix(1.7, 2.6, r);                                       // knobbly to rounded
+  // lumpy, angular outline: two grain scales, strongest near
+  float lump = far < 1.0 ? (texture(uGrain, m * 2.6 + vec2(r, r3)).r - 0.47) * 0.4 * (1.0 - far) : 0.0;
+  float d = pow(pow(abs(q.x / sc.x), ex) + pow(abs(q.y / sc.y), ex), 1.0 / ex) + lump;
+  float wq = px * 2.0 / min(blk.z, ch) + 0.04;                      // soft edge: weathered arrises
+  float inside = 1.0 - smoothstep(1.0 - wq, 1.0 + wq, d);
+  vec3 col;
+  if (r2 < 0.12) col = mix(vec3(0.24, 0.25, 0.28), vec3(0.4, 0.41, 0.44), r);          // broken face: dark blue-grey
+  else if (r2 > 0.9) col = mix(vec3(0.6, 0.52, 0.4), vec3(0.7, 0.62, 0.5), r);         // iron-stained cortex
+  else col = mix(vec3(0.6, 0.6, 0.57), vec3(0.84, 0.83, 0.78), r);                    // grey to white cortex
+  col *= mix(0.84 + 0.2 * (1.0 - d * d), 1.0, far);                                    // rounded: a little darker at the edge
+  col *= 0.86 + 0.28 * (far < 1.0 ? mix(texture(uGrain, m * 1.3 + vec2(r, r2)).r, 0.47, far) : 0.47);
+  col *= 1.0 + (r - 0.5) * 0.2 * far;                                                  // nodule-to-nodule tone
+  col *= 1.0 + (texture(uGrain, m / 1.7 + 0.41).r - 0.47) * 0.45 * far;               // mid-scale mottling
+  // at distance the mortar/flint mix reads as one speckled surface: keep it pale and even
+  return mix(mortar, col, inside);
+}
 vec3 brickF(vec2 m) {
   // All-brick surfaces (piers, quoins): same bricks and joints as the bonding courses.
   float ch = 0.2 / 3.0, course = floor(m.y / ch);
@@ -299,6 +357,8 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
       uStyle: { value: STYLE_ID[mat.userData.surfaceStyle as SurfaceStyle] },
       uMasonryCell: { value: new THREE.Vector2(...cellVec('masonry').slice(0, 2)) },
       uBrickCell: { value: new THREE.Vector2(...cellVec('brick').slice(0, 2)) },
+      uFlintCell: { value: new THREE.Vector2(...cellVec('flint').slice(0, 2)) },
+      uFlintTiles: { value: (mat.userData.flintTiles as number | undefined) ?? FLINT_TILE_COURSES },
       uTileCell: { value: new THREE.Vector2(...cellVec('tile').slice(0, 2)) },
     };
     Object.assign(shader.uniforms, uniforms, wallUniforms);
@@ -319,8 +379,11 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     // stone and brick read better as clean buff / red than as their texture's average
     if (isCell(uMasonryCell)) sampledDiffuseColor = vec4(0.68, 0.64, 0.54, 1.0);
     if (isCell(uBrickCell)) sampledDiffuseColor = vec4(0.66, 0.33, 0.21, 1.0);
+    if (isCell(uFlintCell)) sampledDiffuseColor = vec4(0.72, 0.71, 0.66, 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uMasonryCell)) {
     sampledDiffuseColor = vec4(masonryF(tUv * vec2(2.0, 1.6)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uFlintCell)) {
+    sampledDiffuseColor = vec4(flintF(tUv * vec2(2.0, 1.6)), 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uBrickCell)) {
     sampledDiffuseColor = vec4(brickF(tUv * vec2(1.0, 0.56)), 1.0);
   } else if ((uStyle == 5 || uStyle == 6) && isCell(uTileCell)) {
@@ -337,8 +400,8 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     vec2 aUv = vCellRect.xy + fract(tUv) * vCellRect.zw;
     sampledDiffuseColor = textureGrad(map, aUv, dFdx(tUv) * vCellRect.zw, dFdy(tUv) * vCellRect.zw);
   }
-  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell))) {
-    vec2 m = tUv * (isCell(uMasonryCell) ? vec2(2.0, 1.6) : vec2(1.0, 0.56));
+  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell) || isCell(uFlintCell))) {
+    vec2 m = tUv * (isCell(uBrickCell) ? vec2(1.0, 0.56) : vec2(2.0, 1.6));
     // colour drift from two unrelated scales of the grain tile: no visible period
     float drift = texture(uGrain, m / 11.0).b * 0.6 + texture(uGrain, m / 29.3 + 0.37).b * 0.4;
     drift = 0.47 + (drift - 0.47) * 1.6; // blending two noises flattens contrast: restore it to match C
@@ -385,6 +448,6 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
   }`,
       );
   };
-  mat.customProgramCacheKey = () => 'atlas-tiled-v7';
+  mat.customProgramCacheKey = () => 'atlas-tiled-v8';
   return mat;
 }

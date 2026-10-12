@@ -51,7 +51,7 @@ The user commits via GitHub Desktop; never commit.
   words. The interactive ring-review page confused the user.
 - **Performance:** record `npm run smoke` draws/tris before and after. On 2026-10-10 the whole town is 34 draws and
   ~184k tris (it was ~148k before the baths pilot; the new ground surface added some too), with the baths at
-  LOD0 4.8k / LOD1 1.9k / LOD2 0.56k tris. Draw calls must not grow; the smoke test caps LOD0 at 12k.
+  LOD0 4.8k / LOD1 1.9k / LOD2 0.56k tris. Draw calls must not grow; the smoke test caps LOD0 per building (`checks` in `src/smoke.ts`: baths 12k, forum-basilica 20k), agreed with the user before building.
 
 ## Before you start: confirm with the user
 
@@ -205,6 +205,30 @@ Tell the user what is uncommitted. If a decision changed or a generic lesson eme
   and `javascript_tool` has a ~45 s limit (start long work, then poll a `window.__x` flag).
 - **Worktrees start empty of gitignored data** (see "Before you start" 4). A scratch venv can lose its
   `python.exe`: recreate it with `python -m venv` (installed packages survive).
+
+## Lessons from the forum-basilica
+
+- **The GIS rings are the truth for geometry** (user rule). Plans, texts and paintings decide which rings belong, what the
+  openings are and what stood above; they never move a wall. A photographed book plan fits only to ~0.5–1 m: fine as a
+  reading aid, never as geometry.
+- **Large ring networks defeat `key-walls.mjs`** (one ring with 23 holes gave 61 broken runs). Rasterise the "in" rings in
+  the building frame at 0.1 m and extract straight bands instead (`tmp/key-plans/forum-scripts/rasterwalls.py`); collinear
+  runs merge across gaps, and gaps that line up with a perpendicular wall are junctions, not doors. Worth porting to
+  `scripts/` if the next building is large. `key-plan-sheet.mjs` has the baths' size hard-coded (32 × 69 m).
+- **Gaps in the survey can be foundations.** The forum's gateways show as gaps in the colonnade lines that match the
+  recorded foundation lengths exactly. Read the gaps against the excavators' text.
+- **Size conjecture from the evidence, not for prominence.** A first gateway was made taller to "read" as monumental;
+  the user caught it. Scale unknown heights from the nearest real fragment (a column base) and say so.
+- **Wall facing is per building** (`facing` in the plan). A new facing is a new pseudo-cell (`flint` shares the masonry
+  slot, nudged so the shader can tell them apart) plus a style function with a distance fade and a Standard variant.
+- **Joint plans need a lookup.** A plan whose id has no `buildings` entry (forum-basilica) uses its anchor for
+  `reachesPlanBuilt`; give the old entries the plan's frame so map labels land on the right parts.
+- **Flat GIS overlays show through open floors.** Rings wholly inside a plan-built building are now skipped in the 3D
+  flat overlay (`WorldBuilder`), so left-out rings do not appear on its floor.
+- **Tooling:** the scratch venv lost `python.exe` three times in one session (recreate with `python -m venv`, packages
+  survive); heredocs with apostrophes in Python strings break in Git Bash (write scripts with the Write tool); the
+  drawings and lab canvases follow the layout width, so emulate a wide viewport and post `toDataURL()` to a local
+  receiver to save full-size PNGs; long `bench` loops stall when started in the background (run one view per call).
 
 ## Kickoff prompt (paste into a new session)
 

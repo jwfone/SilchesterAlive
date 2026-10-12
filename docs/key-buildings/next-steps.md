@@ -74,12 +74,22 @@ choosing. The current roof uses the old painted `tile` atlas cell, which repeats
 by default). Evidence and choice: `baths.md` "Roof tiles". Roof slopes take their UV origin from the eaves
 line. Lab: `tools/materials.html?id=baths&set=roof`.
 
+## Done: forum-basilica (2026-10-11)
+
+Plan-built from the Great Plan rings, in flint with tile bonding courses (new style `flintF`, `facing: 'flint'` in the
+plan; Greensand stays the default). Brief, decisions and evidence: [`forum-basilica.md`](forum-basilica.md). The old kit
+`kit/forum.ts` is gone; the smoke test now checks every plan building from one table (`checks` in `src/smoke.ts`, per-building
+LOD0 caps: baths 12k, forum 20k). New generator features: arched openings (`arch` on a wall opening) and raised apse floors
+(`floorH`). Lab: `tools/materials.html?id=forum-basilica&set=flint`. Scratch scripts that drafted the plan (raster wall
+extraction, apse fits, the plan writer and the review pictures; Python, scratch venv) are kept in gitignored
+`tmp/key-plans/forum-scripts/`.
+
 ## Next: the other key buildings
 
 One session per building, in any order. The repeatable procedure is [`playbook.md`](playbook.md) (steps,
 deliverables, the code touch-points for replacing an old kit, pitfalls, a kickoff prompt); what is known about each
 building, open questions for the user and research leads are in [`other-buildings.md`](other-buildings.md). Suggested
-order there: forum-basilica, temples, amphitheatre, mansio, church. The church is blocked on a user decision (the
+order there: temples, amphitheatre, mansio, church (forum-basilica done). The church is blocked on a user decision (the
 pin is probably on the medieval St Mary's; the Roman church may postdate the c. 270–280 snapshot).
 
 ## Done: in-game reconstruction viewer (was Next 2)

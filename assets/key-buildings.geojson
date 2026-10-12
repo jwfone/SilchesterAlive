@@ -11,32 +11,32 @@
    "type": "Feature",
    "properties": {
     "id": "forum-basilica",
-    "status": "user-pinned",
-    "source": "user lat/lon NW 51.357496,-1.083949 SE 51.356762,-1.082551"
+    "status": "user-approved-outline",
+    "source": "min-area rectangle (95.6 x 85.9 m, 2.5 deg) around Great Plan rings classified in assets/key-plans/forum-basilica.review.json (Antiquaries plan, Fox & St John Hope 1893); refitted from the user-pinned rectangle (NW 51.357496,-1.083949 SE 51.356762,-1.082551) 2026-10-11"
    },
    "geometry": {
     "type": "Polygon",
     "coordinates": [
      [
       [
-       463881.6,
-       162445.2
+       463881.2,
+       162445.4
       ],
       [
-       463978.9,
-       162446.4
+       463976.8,
+       162449.6
       ],
       [
-       463979.9,
-       162364.8
+       463980.5,
+       162363.8
       ],
       [
-       463882.6,
-       162363.6
+       463885,
+       162359.6
       ],
       [
-       463881.6,
-       162445.2
+       463881.2,
+       162445.4
       ]
      ]
     ]

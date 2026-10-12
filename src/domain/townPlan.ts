@@ -21,6 +21,7 @@ import {
   GENERATED_WATER,
 } from './townPlan.generated.js';
 import { KEY_PLANS } from './keyPlans.generated.js';
+import { planToWorld, planRotationY } from './keyPlan.js';
 
 /** User-pinned anchor (assets/key-buildings.geojson via GENERATED_KEYS), if present. */
 export function keyAnchor(id: string): { x: number; z: number; w: number; d: number; rotY: number } | undefined {
@@ -199,11 +200,6 @@ function anchorReserve(id: string, kitW: number, kitD: number, fbX: number, fbZ:
   const half = Math.max(kitW, kitD, a?.w ?? 0, a?.d ?? 0) / 2 + 8;
   return { x: cx, z: cz, hw: half, hd: half };
 }
-const FORUM_COMPLEX_DESIGN = { x: 8, z: -8 }; // centre of forum+basilica kit pair
-function forumComplexCentre(): { x: number; z: number } {
-  const a = keyAnchor('forum-basilica');
-  return a ? { x: a.x, z: a.z } : { ...FORUM_COMPLEX_DESIGN };
-}
 const RESERVES = [
   { ...anchorReserve('forum-basilica', 68, 72, 8, -8), }, // forum E + basilica W
   { ...anchorReserve('baths', 44, 30, 150, 150), },       // baths
@@ -275,12 +271,19 @@ export function buildTownPlan(seed = 1234): TownPlan {
   // size and rotation too; the building itself is generated from its plan
   // (assets/key-plans/baths.plan.json).
   {
-    const fb = keyAnchor('forum-basilica');
-    if (fb) {
-      const dx = fb.x - FORUM_COMPLEX_DESIGN.x, dz = fb.z - FORUM_COMPLEX_DESIGN.z;
-      for (const b of buildings) {
-        if (b.id === 'forum' || b.id === 'basilica') { b.x += dx; b.z += dz; }
-      }
+    // The forum-basilica is generated from its plan (assets/key-plans/forum-basilica.plan.json):
+    // the two entries (map labels, reserves) sit on the basilica hall and on the forum court and
+    // ranges, in the plan's frame (plan u, v metres; see the plan's frame note).
+    const fp = KEY_PLANS['forum-basilica'];
+    if (fp) {
+      const place = (id: string, u: number, v: number, w: number, d: number): void => {
+        const b = buildings.find((x) => x.id === id);
+        if (!b) return;
+        const c = planToWorld(fp, u, v);
+        b.x = c.x; b.z = c.z; b.w = w; b.d = d; b.rotY = planRotationY(fp);
+      };
+      place('basilica', 26.0, 43.3, 19.2, 73.0);
+      place('forum', 60.8, 43.0, 59.0, 85.0);
     }
     const mc = keyAnchor('mansio-courtyard');
     if (mc) {
@@ -306,11 +309,11 @@ export function buildTownPlan(seed = 1234): TownPlan {
   // Kit footprints (post-snap): GIS rings whose centroid sits on a key plot
   // stay in the plan as footprint-only (2D map + 3D overlay). They must not
   // be dropped — that blanked the surveyed forum/baths/mansio/temple traces.
-  const forumC = forumComplexCentre();
+  const forumA = keyAnchor('forum-basilica');
   const bathsB = buildings.find((b) => b.id === 'baths')!;
   const mansioB = buildings.find((b) => b.id === 'mansio')!;
   const keyFootprints = [
-    { cx: forumC.x, cz: forumC.z, w: 80, d: 84, rotY: 0 }, // forum+basilica envelope (basilica W, forum E)
+    forumA ? { cx: forumA.x, cz: forumA.z, w: forumA.w, d: forumA.d, rotY: forumA.rotY } : { cx: 8, cz: -8, w: 80, d: 84, rotY: 0 }, // forum-basilica outline
     { cx: bathsB.x, cz: bathsB.z, w: bathsB.w, d: bathsB.d, rotY: bathsB.rotY },
     { cx: mansioB.x, cz: mansioB.z, w: mansioB.w, d: mansioB.d, rotY: mansioB.rotY },
   ];
@@ -324,10 +327,15 @@ export function buildTownPlan(seed = 1234): TownPlan {
   // surveyed outline, so any GIS ring reaching into it (not just one centred on it)
   // becomes overlay-only; otherwise e.g. a long street-side ring would be extruded
   // straight through the baths' frontage.
+  // A plan whose id has no building entry (the joint forum-basilica) uses its anchor, the surveyed outline.
   const planBuiltFootprints = Object.keys(KEY_PLANS)
-    .map((id) => buildings.find((b) => b.id === id))
-    .filter((b): b is BuildingSpec => !!b)
-    .map((b) => ({ cx: b.x, cz: b.z, w: b.w, d: b.d, rotY: b.rotY }));
+    .map((id) => {
+      const b = buildings.find((x) => x.id === id);
+      if (b) return { cx: b.x, cz: b.z, w: b.w, d: b.d, rotY: b.rotY };
+      const a = keyAnchor(id);
+      return a ? { cx: a.x, cz: a.z, w: a.w, d: a.d, rotY: a.rotY } : undefined;
+    })
+    .filter((f): f is { cx: number; cz: number; w: number; d: number; rotY: number } => !!f);
   const reachesPlanBuilt = (outline: Array<{ x: number; z: number }> | undefined): boolean =>
     !!outline && outline.some((p) => planBuiltFootprints.some((f) => insideKeyFootprint(p.x, p.z, f.cx, f.cz, f.w, f.d, f.rotY, 0.5)));
 

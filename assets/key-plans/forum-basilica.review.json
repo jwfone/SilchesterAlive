@@ -1,0 +1,292 @@
+{
+ "id": "forum-basilica",
+ "note": "First-pass reading of Great Plan rings (tmp/audit-buildings/raw.geojson refs) for user review. cls: in | maybe | out. 'why' is Claude's reading, not established fact.",
+ "envelope_osgb": {
+  "e0": 463881.3,
+  "e1": 463980.5,
+  "n0": 162359.6,
+  "n1": 162449
+ },
+ "underlays": [
+  {
+   "file": "fulford2002-plan.jpg",
+   "label": "Fulford 2002, A Guide to Silchester: plan of the forum-basilica (photo supplied by the user)",
+   "source": "M. Fulford 2002, A Guide to Silchester (user copy)",
+   "width": 1525,
+   "height": 1273,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N]: image pixel -> OSGB, matched to Great Plan ring vertices",
+   "points": [
+    [
+     89.3,
+     41.7,
+     463881.3,
+     162445.4
+    ],
+    [
+     1464,
+     50,
+     463976.8,
+     162449
+    ],
+    [
+     1431.7,
+     1229,
+     463980.5,
+     162364.1
+    ],
+    [
+     71,
+     1220,
+     463885.4,
+     162359.6
+    ],
+    [
+     1192,
+     308.7,
+     463958.3,
+     162429.3
+    ],
+    [
+     1180,
+     966.7,
+     463960.2,
+     162382.8
+    ]
+   ]
+  }
+ ],
+ "rings": {
+  "r1657": {
+   "cls": "in",
+   "why": "main wall network: outer wall of the whole complex, the three forum ranges (rooms = holes), basilica walls"
+  },
+  "r732": {
+   "cls": "in",
+   "why": "west range behind the basilica: offices and the apsidal central chamber (shade 1)"
+  },
+  "r1855": {
+   "cls": "out",
+   "why": "second sleeper wall ~3 m inside the hall west wall: not in Fulford 2002 plan or Fulford 1980-86 Period 6 plan (one row of columns). Removed (user, 2026-10-11)"
+  },
+  "r1858": {
+   "cls": "in",
+   "why": "basilica colonnade foundation, ~4 m inside the east wall: the single row found by Fulford 1980-86 (C&F 2016 fig. 5.31)"
+  },
+  "r1302": {
+   "cls": "in",
+   "why": "basilica east wall, middle section along the forum court (Fulford 1980-86 plan: thick east wall)"
+  },
+  "r742": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r743": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r744": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r745": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r746": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1304": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1305": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1307": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1843": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1845": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1846": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r1848": {
+   "cls": "in",
+   "why": "north courtyard portico: stylobate / column-base fragments"
+  },
+  "r733": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r734": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r735": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r736": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1222": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1223": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1224": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1225": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1226": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1793": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1794": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1795": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1796": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1797": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1798": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r1792": {
+   "cls": "in",
+   "why": "south courtyard portico: stylobate / column-base fragments"
+  },
+  "r737": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r738": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r739": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r740": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r741": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1233": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1242": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1830": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1833": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1834": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1836": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r1837": {
+   "cls": "in",
+   "why": "east courtyard portico: stylobate / column-base fragments"
+  },
+  "r2049": {
+   "cls": "in",
+   "why": "U-shaped feature in front of the north apse chord (tribunal front / later feature?). Omit: end rooms open"
+  },
+  "r2050": {
+   "cls": "in",
+   "why": "shade-3 lining of the north apse plus a strip across its chord: closes the apse off from the hall. Omit: end rooms shown open (user, 2026-10-11, Fulford 2002 plan)"
+  },
+  "r338": {
+   "cls": "in",
+   "why": "basilica north wall east of the north apse"
+  },
+  "r1856": {
+   "cls": "in",
+   "why": "slivers on the north apse chord. Omit: end rooms open"
+  },
+  "r1857": {
+   "cls": "in",
+   "why": "slivers on the north apse chord. Omit: end rooms open"
+  },
+  "r1860": {
+   "cls": "in",
+   "why": "shade-3 strip on the east side of the north apse (apse wall itself is r1657). Omit: end rooms open"
+  },
+  "r1291": {
+   "cls": "in",
+   "why": "cross wall in the west range"
+  },
+  "r1172": {
+   "cls": "in",
+   "why": "fragment of the south tribunal apse, which projects beyond the south wall"
+  },
+  "r321": {
+   "cls": "in",
+   "why": "sliver (0 m2): digitising noise in the west range"
+  }
+ },
+ "min_area_rect": {
+  "w": 95.6,
+  "d": 85.9,
+  "angleDeg": 2.5,
+  "area_m2": 8216,
+  "note": "r1657 + r732 outer points; anchor today 97.3 x 81.6 at 0.7 deg"
+ },
+ "omit": [
+  "r2049",
+  "r2050",
+  "r1856",
+  "r1857",
+  "r1860"
+ ],
+ "omit_note": "end rooms (tribunals) shown open to the hall, as in Fulford 2002 plan: chord strips and the feature in front of the north apse left out (user, 2026-10-11)"
+}

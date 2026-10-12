@@ -7,11 +7,11 @@ import { buildWallSegmentGeometry, buildGateGeometry } from './kit/walls.js';
 import { buildGableRoofGeometry } from './kit/roofs.js';
 import { buildHouseWithOpeningsGeometry } from './kit/houses.js';
 import { buildColumnGeometry } from './kit/columns.js';
-import { buildForumComplex } from './kit/forum.js';
 import { buildMansio } from './kit/mansio.js';
 import { buildTerrainSurface, type Platform } from '../domain/terrainSurface.js';
 import { placePlanBuilding, planFootprintBounds, setPlanBuildingDisplay, type KeyBuildingDisplay, type PlacedPlanBuilding } from './kit/planWorld.js';
 import { KEY_PLANS } from '../domain/keyPlans.generated.js';
+import { worldToPlan } from '../domain/keyPlan.js';
 import { buildAmphitheatre, type EllipseBand } from './kit/amphitheatre.js';
 import { buildContactShadows, type ShadowSpot } from './kit/ao.js';
 import type { CircleCollider, PolyCollider } from './PlayerControls.js';
@@ -184,11 +184,6 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   // Key buildings stand on levelled platforms (the terrain is flattened under each, with a short
   // ramp back to the contours), so floors, walls and the ground agree. Their kits do not depend on
   // the ground, so they are built first to learn their footprints.
-  const fB = plan.buildings.find((b) => b.id === 'forum');
-  const bB = plan.buildings.find((b) => b.id === 'basilica');
-  const forumCx = fB && bB ? (fB.x + bB.x) / 2 : 8, forumCz = fB && bB ? (fB.z + bB.z) / 2 : -8;
-  const forumDx = forumCx - 8, forumDz = forumCz - -8;
-  const forum = buildForumComplex(kitMat);
   const pM = plan.buildings.find((b) => b.id === 'mansio');
   const mansioX = pM?.x ?? 40, mansioZ = pM?.z ?? 245;
   const mansioDx = mansioX - 40, mansioDz = mansioZ - 245;
@@ -214,7 +209,6 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       const b = g.boundingBox!;
       addPlatform(b.min.x + dx, b.max.x + dx, b.min.z + dz, b.max.z + dz);
     };
-    for (const m of forum.meshes) kitBounds(m, forumDx, forumDz);
     kitBounds(mansio.mesh, mansioDx, mansioDz);
     const a = plan.amphitheatre;
     addPlatform(a.x - a.rx - 1.5, a.x + a.rx + 1.5, a.z - a.rz - 1.5, a.z + a.rz + 1.5);
@@ -600,8 +594,16 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     // above and the 2D map, draped just above ground (depth-biased below roads/AO/slabs so a
     // coincident slab or road always wins — no z-fighting either way). Single
     // merged mesh = +1 draw. No colliders, no AO spots.
+    // Rings lying wholly inside a plan-built building are represented by its model (walls, or
+    // left out on purpose, like the forum's second colonnade line): no flat copy on its floors.
+    const insidePlanBuilt = Object.values(KEY_PLANS).map((kp) => {
+      const us = kp.walls.flatMap((w) => [w.a[0], w.b[0]]), vs = kp.walls.flatMap((w) => [w.a[1], w.b[1]]);
+      const u0 = Math.min(...us) - 0.8, u1 = Math.max(...us) + 0.8, v0 = Math.min(...vs) - 0.8, v1 = Math.max(...vs) + 0.8;
+      return (x: number, z: number): boolean => { const [u, v] = worldToPlan(kp, x, z); return u >= u0 && u <= u1 && v >= v0 && v <= v1; };
+    });
     const footprintParts: THREE.BufferGeometry[] = [];
     for (const b of gisFootprints) {
+      if (b.outline!.every((p) => insidePlanBuilt.some((f) => f(p.x, p.z)))) continue;
       try {
         const g = new THREE.ShapeGeometry(toShape(b.outline!, b.holes));
         if (!g.attributes.position || g.attributes.position.count < 3) { g.dispose(); continue; }
@@ -686,33 +688,8 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       countTris(g, ruins.length);
     }
   }
-  // Forum-basilica key complex (walkable interior).
-  // The kit is authored around (8,-8) then yawed 90° (basilica west, forum east);
-  // the whole complex is shifted so its centre lands on the plan centre
-  // (user-pinned GIS insula when present). Built above, so its platform exists.
-  const forumColSpots: Array<{ x: number; z: number; h: number }> = [];
-  {
-    const dx = forumDx, dz = forumDz, ccx = forumCx, ccz = forumCz;
-    const fy = gy(ccx, ccz);
-    for (const m of forum.meshes) { m.position.x += dx; m.position.z += dz; m.position.y += fy; layerGroups.key.add(m); }
-    for (const c of forum.boxColliders) { c.minX += dx; c.maxX += dx; c.minZ += dz; c.maxZ += dz; colliders.push(c); collidersByLayer.key.push(c); }
-    for (const c of forum.circleColliders) { c.x += dx; c.z += dz; circles.push(c); circlesByLayer.key.push(c); }
-    for (const s of forum.columnSpots) forumColSpots.push({ x: s.x + dx, z: s.z + dz, h: s.h });
-    tris += forum.tris;
-    shadowsByLayer.key.push({ x: ccx - 20, z: ccz, w: 24, d: 78 });
-    shadowsByLayer.key.push({ x: ccx + 20, z: ccz, w: 42, d: 60 });
-    // The basilica floor and forum pavement are raised slabs: walking on them means standing on their tops.
-    // Kit slabs (centre, size) before the 90° yaw about (8,-8), as authored in forum.ts.
-    for (const [kx, kz, w, d] of [[8, -28, 72, 18], [8, 12, 56, 38]]) {
-      const yawX = (x: number, z: number): number => 8 + (z + 8), yawZ = (x: number): number => -8 - (x - 8);
-      const xs = [yawX(kx - w / 2, kz - d / 2), yawX(kx + w / 2, kz + d / 2)], zs = [yawZ(kx - w / 2), yawZ(kx + w / 2)];
-      const r = { minX: Math.min(...xs) + dx, maxX: Math.max(...xs) + dx, minZ: Math.min(...zs) + dz, maxZ: Math.max(...zs) + dz };
-      planFloors.push((x, z) => (x >= r.minX && x <= r.maxX && z >= r.minZ && z <= r.maxZ ? fy + 0.245 : undefined));
-    }
-  }
-
   // Plan-built key buildings (assets/key-plans/*.plan.json via keyPlans.generated.ts):
-  // the baths, generated from the surveyed wall plan with three levels of detail.
+  // the baths and the forum-basilica, generated from their surveyed wall plans with three levels of detail.
   const planBuildings: PlacedPlanBuilding[] = [];
   for (const kp of Object.values(KEY_PLANS)) {
     const placed = placePlanBuilding(kp, gy);
@@ -846,11 +823,10 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     }
   }
 
-  // Portico columns: forum/nave spots + temple rows, one InstancedMesh
-  // (baths/mansio carry their own timber porticos inside their merged complexes)
-  // Columns belong to the key-buildings layer (forum + temples).
+  // Portico columns: temple rows, one InstancedMesh (plan-built buildings and the mansio
+  // carry their own columns inside their merged meshes). Key-buildings layer.
   {
-    const spots: Array<{ x: number; z: number; h: number }> = [...forumColSpots];
+    const spots: Array<{ x: number; z: number; h: number }> = [];
     const row = (cx: number, cz: number, n: number, spacing: number, rotY: number, h: number): void => {
       for (let i = 0; i < n; i++) {
         const off = (i - (n - 1) / 2) * spacing;

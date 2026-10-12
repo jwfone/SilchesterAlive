@@ -9,7 +9,9 @@ export const FORUM_ORIGIN_EN: [number, number] = [464020, 162450];
 export type Ev = 'S' | 'C' | 'X';
 export type UV = [number, number];
 
-export interface PlanOpening { at: number; w: number; oh: number; conjecture?: boolean; note?: string }
+/** A doorway or passage: `oh` is its height, or with `arch` the springing height of a
+ * semicircular head rising a further w/2 (gateways, tribunal arches). */
+export interface PlanOpening { at: number; w: number; oh: number; arch?: boolean; conjecture?: boolean; note?: string }
 export interface PlanWindow { at: number; w: number; sill: number; head: number; ev?: Ev; note?: string }
 export interface PlanWall {
   id: string; a: UV; b: UV; t: number; h: number; ev?: Ev;
@@ -33,6 +35,8 @@ export interface PlanApse {
   /** Distance from the apse centre (its chord) back to the room's wall line, when the
    * surveyed apse is a shallow segment: the gap gets a ceiling, roof and floor. */
   neck?: number;
+  /** Raised floor (m above the room floor), e.g. a tribunal; a riser closes its front. */
+  floorH?: number;
 }
 export interface PlanColumns {
   id: string; kind?: 'pier'; d: number; h: number; y0?: number; ev?: Ev;
@@ -50,6 +54,8 @@ export interface PlanRoof {
 export interface PlanDrawing { from: 'n' | 's' | 'e' | 'w'; cut?: number; caption: string }
 export interface BuildingPlan {
   id: string; pitchDeg?: number;
+  /** Wall facing: Greensand with brick bands (default, the baths) or flint with tile bonding courses. */
+  facing?: 'greensand' | 'flint';
   /** Display name (viewer title, HUD list). */
   name?: string;
   /** Short date shown, e.g. "c. AD 270–280". */
