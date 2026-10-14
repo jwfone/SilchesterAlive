@@ -22,6 +22,8 @@ import * as THREE from 'three';
 import { parseAutoTierCache, parseBuildingLook, stepDownTier, tierForLook, tierFromBench } from './domain/displaySettings.js';
 import { KEY_PLANS } from './domain/keyPlans.generated.js';
 import { planToWorld } from './domain/keyPlan.js';
+import { DITCH, FACE, RAMPART, WALL, earthworkOffset, wallDeckAt } from './domain/townWall.js';
+import { arenaHoleWorld, arenaProfile, polarDeg, profileY, ringPoint, ringRadius } from './domain/arenaPlan.js';
 import { buildFromPlan, elementAtFace, elementTriangles } from './presentation/kit/planBuilding.js';
 
 function makeCtx(): unknown {
@@ -236,9 +238,12 @@ world.layerGroups.walls.visible = true;
     const a = gi.getX(t * 3), b = gi.getX(t * 3 + 1), c = gi.getX(t * 3 + 2);
     const x = (gp.getX(a) + gp.getX(b) + gp.getX(c)) / 3, z = (gp.getZ(a) + gp.getZ(b) + gp.getZ(c)) / 3;
     const y = (gp.getY(a) + gp.getY(b) + gp.getY(c)) / 3;
+    if (earthworkOffset(world.townWall, x, z) < 0) continue; // over the ditch the ground is hidden and the earthworks mesh draws it
+    if (world.planBuildings.some((pb) => pb.id.endsWith('-gate') && pb.distanceTo(x, z) < 6)) continue; // levelled at the gates by the same mesh
     if (Math.abs(y - world.terrainY(x, z)) > 1e-3) throw new Error(`ground mesh differs from terrainY at (${x.toFixed(0)},${z.toFixed(0)}): ${y} vs ${world.terrainY(x, z)}`);
   }
   for (const pb of world.planBuildings) {
+    if (pb.id.endsWith('-gate')) continue; // the town gates stand on the wall line, which follows the ground (checked below)
     let lo = Infinity, hi = -Infinity;
     for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) {
       const y = world.terrainY(pb.centre.x + (i * pb.radius) / 6, pb.centre.z + (j * pb.radius) / 6);
@@ -246,7 +251,8 @@ world.layerGroups.walls.visible = true;
     }
     if (hi - lo > 0.05) throw new Error(`${pb.id} is not on a levelled platform: ground varies ${(hi - lo).toFixed(2)} m under it`);
     const floor = pb.floorAt(pb.centre.x, pb.centre.z);
-    if (floor !== undefined && (floor < lo || floor > hi + 0.1)) throw new Error(`${pb.id} floor ${floor} is off the ground ${lo}..${hi}`);
+    const sunk = KEY_PLANS[pb.id]?.arena?.ground ?? 0; // a sunken arena's floor lies that far below its platform
+    if (floor !== undefined && (floor < lo - sunk || floor > hi + 0.1 - sunk)) throw new Error(`${pb.id} floor ${floor} is off the ground ${lo}..${hi} (sunk ${sunk})`);
   }
 }
 if (houses > PERF_BUDGET.maxHouses) throw new Error(`house budget exceeded: ${houses}`);
@@ -437,6 +443,14 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     // the curia opening (1893). LOD0 cap 20k agreed for this building (docs/key-buildings/forum-basilica.md).
     { id: 'forum-basilica', cap: 20000, centre: [-89.1, 45.4], minWalls: 50, door: [95.12, 41.7], wall: [35.7, 30], spawn: [-38, 47],
       pick: { element: 'bas-w/door0', note: '1893' } },
+    // mansio: 130 x 65.1 m anchor around 24.7, 313.8; the gate in the north outer wall; the long south wall; the door from the
+    // outer court's gateway from the street (conjectural). LOD0 cap 16k agreed for this building (docs/key-buildings/mansio.md).
+    { id: 'mansio', cap: 16000, centre: [24.7, 313.8], minWalls: 100, door: [44.3, 61.4], wall: [40, 0.24], spawn: [1.7, 281.8],
+      pick: { element: 'd172/door0', note: 'street' } },
+    // amphitheatre: 74.8 x 81.1 m anchor around 452.2, -156.3; the north passage's outer end; the arena wall (NE);
+    // the arena wall's note (Fulford 2002). LOD0 cap 12k agreed for this building (docs/key-buildings/amphitheatre.md).
+    { id: 'amphitheatre', cap: 12000, centre: [452.2, -156.3], minWalls: 60, door: [37.1, 72], wall: ringPoint(KEY_PLANS.amphitheatre.arena!, 45),
+      spawn: [467, -197.4], pick: { element: 'arena/wall', note: 'ironstone' } },
   ];
   for (const c of checks) {
     const kp = KEY_PLANS[c.id];
@@ -466,14 +480,183 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
       b.geometry.dispose();
     }
   }
-  // The forum-basilica is built in flint; the baths keep the default Greensand facing.
-  if (KEY_PLANS['forum-basilica'].facing !== 'flint' || KEY_PLANS.baths.facing) throw new Error('wall facings: forum flint, baths default');
+  // The amphitheatre: the arena 2 m below the ground round it, seats and banks walkable at their heights, the
+  // passages rising to the old ground, and the drawn ground open over the bowl (its surfaces fill the hole).
+  {
+    const kp = KEY_PLANS.amphitheatre, ar = kp.arena!, pb = world.planBuildings.find((b) => b.id === 'amphitheatre')!;
+    const W = (u: number, v: number): { x: number; z: number } => planToWorld(kp, u, v);
+    const plat = world.terrainY(pb.centre.x, pb.centre.z);
+    const at = (u: number, v: number): number => { const p = W(u, v); return world.groundY(p.x, p.z) - plat; };
+    const near = (got: number, want: number, what: string): void => { if (Math.abs(got - want) > 0.06) throw new Error(`amphitheatre ${what}: ${got.toFixed(2)} m, want ${want.toFixed(2)}`); };
+    near(at(ar.c[0], ar.c[1]), -ar.ground + 0.03, 'arena floor below the ground');
+    const P = arenaProfile(ar), row = 5, d = ar.t / 2 + (row + 0.5) * ar.seating.tread;
+    const sp = ringPoint(ar, 135, d);
+    near(at(sp[0], sp[1]), -ar.ground + ar.h + row * ar.seating.rise, `seat row ${row + 1}`);
+    const cr = ringPoint(ar, 135, P.rowsEnd + ar.bank.crest / 2);
+    near(at(cr[0], cr[1]), -ar.ground + P.crestY, 'crest walk');
+    const ap = ringPoint(ar, 135, ar.bank.toe + 1);
+    near(at(ap[0], ap[1]), 0.02, 'ground beyond the toe');
+    const ps = ar.passages[0].walls, mu = (ps[0].a[0] + ps[1].a[0]) / 2;
+    const mid = at(mu, (ps[0].a[1] + ps[0].b[1]) / 2), end = at(mu, (ps[0].b[1] + ps[1].b[1]) / 2 - 0.2);
+    if (!(mid > -ar.ground + 0.3 && mid < -0.3 && end > -0.2)) throw new Error(`amphitheatre passage should rise to the old ground: mid ${mid.toFixed(2)}, end ${end.toFixed(2)}`);
+    const hole = arenaHoleWorld(kp)!;
+    const ground = world.group.children.find((o) => o.name === 'ground') as THREE.Mesh;
+    const gp = ground.geometry.attributes.position, gi = ground.geometry.index!;
+    for (let t = 0; t < gi.count / 3; t++) {
+      const x = (gp.getX(gi.getX(t * 3)) + gp.getX(gi.getX(t * 3 + 1)) + gp.getX(gi.getX(t * 3 + 2))) / 3;
+      const z = (gp.getZ(gi.getX(t * 3)) + gp.getZ(gi.getX(t * 3 + 1)) + gp.getZ(gi.getX(t * 3 + 2))) / 3;
+      if (x > hole.minX && x < hole.maxX && z > hole.minZ && z < hole.maxZ) throw new Error(`ground triangle drawn over the arena at ${x.toFixed(0)},${z.toFixed(0)}`);
+    }
+    // every enclosed space can be entered: the recesses open off the arena (mouth and middle free of colliders)
+    for (const rc of ar.recesses) {
+      const ou = rc.c[0] - ar.c[0], ov = rc.c[1] - ar.c[1], od = Math.hypot(ou, ov);
+      for (const s of [-2.2, -1.2, 0]) {
+        const p = W(rc.c[0] + (ou / od) * s, rc.c[1] + (ov / od) * s);
+        if (world.polys.some((q) => hitsPoly(p.x, p.z, 0.3, q))) throw new Error(`amphitheatre ${rc.id} is blocked ${-s} m in front of its centre`);
+        if (Math.abs(world.groundY(p.x, p.z) - plat + ar.ground - 0.03) > 0.06) throw new Error(`amphitheatre ${rc.id} floor is not at the arena's level`);
+      }
+    }
+    // nothing shows through the seating: each recess vault's crown stays under the seats above it, and the arena
+    // wall's top is the first row's tread
+    for (const rc of ar.recesses) {
+      const op = ar.openings.find((o) => o.id === rc.id), crown = (op?.oh ?? 1.7) + (rc.r - rc.t / 2);
+      const od = Math.hypot(rc.c[0] - ar.c[0], rc.c[1] - ar.c[1]), R = ringRadius(ar, polarDeg(ar, rc.c[0], rc.c[1]));
+      for (let d = 0; d <= od + rc.r + rc.t / 2 - R; d += 0.25) if (profileY(ar, d) < crown + 0.05) throw new Error(`amphitheatre ${rc.id} vault (crown ${crown.toFixed(2)} m) shows through the seating ${d} m out`);
+    }
+    if (Math.abs(profileY(ar, 0) - ar.h) > 1e-6 || Math.abs(profileY(ar, ar.t / 2 + 0.01) - ar.h) > 1e-6) throw new Error('amphitheatre: the first row must sit on the arena wall top');
+    if (world.bands.length) throw new Error('the old amphitheatre seating band is still in use');
+  }
+  // The forum-basilica and the mansio are built in flint, the amphitheatre in flint with ironstone courses; the baths keep
+  // the default Greensand facing.
+  if (KEY_PLANS['forum-basilica'].facing !== 'flint' || KEY_PLANS.mansio.facing !== 'flint' || KEY_PLANS.amphitheatre.facing !== 'flint-ironstone' || KEY_PLANS.baths.facing) {
+    throw new Error('wall facings: forum and mansio flint, amphitheatre flint-ironstone, baths default');
+  }
   let alt = 0;
   world.group.traverse((o) => { if (o.userData.lodAlternate) alt++; });
   if (alt !== 2 * world.planBuildings.length) throw new Error(`expected ${2 * world.planBuildings.length} LOD alternates, got ${alt}`);
   world.setKeyBuildingDisplay('evidence');
   world.setKeyBuildingDisplay('hybrid');
   console.log(`plan buildings ${world.planBuildings.map((b) => `${b.id} lod ${b.trisByLod[0]}/${b.trisByLod[1]}/${b.trisByLod[2]} tris, ${b.polys.length} walls`).join('; ')}`);
+}
+// The town wall (stone phase): its section along the GIS line between seven plan-built gates, the rampart and the
+// ditch in the ground, the wall-walk and gate platforms walkable, every gate passage, chamber and tower room open.
+// Evidence and budgets: docs/key-buildings/town-walls.md.
+{
+  const tw = world.townWall;
+  const blockedAt = (x: number, z: number, feet: number): boolean => world.polys.some((p) => (p.top === undefined || feet < p.top - 0.35) && hitsPoly(x, z, 0.3, p));
+  const near = (got: number, want: number, tol: number, what: string): void => { if (Math.abs(got - want) > tol) throw new Error(`town wall ${what}: ${got.toFixed(2)}, want ${want.toFixed(2)}`); };
+  if (world.townWallTris.wall > 24000) throw new Error(`town wall section ${world.townWallTris.wall} tris over its 24k budget`);
+  if (world.group.getObjectByName('town-wall') === undefined) throw new Error('town wall mesh missing');
+  // seven gates, plan-built, where the GIS draws them (the north gate is ~120 m west of the old one)
+  const gateIds = ['north-gate', 'south-gate', 'east-gate', 'west-gate', 'lesser-west-gate', 'amphitheatre-gate', 'se-gate'];
+  for (const id of gateIds) {
+    const pb = world.planBuildings.find((b) => b.id === id);
+    if (!pb) throw new Error(`gate ${id} missing`);
+    const t = pb.trisByLod, cap = id.includes('-west-') || id.startsWith('amph') || id.startsWith('se') ? 3000 : 6000;
+    if (!(t[0] > t[1] && t[1] > t[2] && t[2] > 0)) throw new Error(`${id} LOD tris not decreasing: ${t[0]}/${t[1]}/${t[2]}`);
+    if (t[0] > cap) throw new Error(`${id} LOD0 ${t[0]} over its ${cap} budget`);
+    if (!tw.gates.some((g) => g.id === id)) throw new Error(`${id} has no curtain ends`);
+  }
+  const ng = tw.gates.find((g) => g.id === 'north-gate')!;
+  if (Math.hypot(ng.centre.x + 170, ng.centre.z + 349) > 4) throw new Error(`north gate at ${ng.centre.x.toFixed(0)},${ng.centre.z.toFixed(0)}, not on the GIS gate`);
+  if (plan.gates.length !== 7) throw new Error(`plan.gates should list the seven gates, got ${plan.gates.length}`);
+  // the section, the walk, the rampart and the ditch at the middle of the longest run
+  const runSegs = tw.segs.filter((g) => g.kind === 'run');
+  const sg = runSegs.reduce((a, b) => (b.len > a.len ? b : a));
+  const at = (d: number): { x: number; z: number } => ({ x: (sg.ax + sg.bx) / 2 + sg.nx * d, z: (sg.az + sg.bz) / 2 + sg.nz * d });
+  const c = at(0), foot = world.terrainY(c.x, c.z);
+  if (!blockedAt(c.x, c.z, foot)) throw new Error('town wall: no collider on the wall at ground level');
+  if (blockedAt(c.x, c.z, foot + WALL.walk)) throw new Error('town wall: the walk is blocked');
+  near(world.groundY(c.x, c.z, foot + WALL.walk) - foot, WALL.walk, 0.05, 'walk height');
+  const pp = at((FACE.outer + FACE.parapetIn) / 2);
+  if (!blockedAt(pp.x, pp.z, foot + WALL.walk)) throw new Error('town wall: the parapet does not stop you on the walk');
+  const crest = at(FACE.innerLower + RAMPART.crestW / 2);
+  near(world.groundY(crest.x, crest.z) - world.terrainY(crest.x, crest.z), RAMPART.crest, 0.05, 'rampart crest');
+  const ditch = at(FACE.outer - DITCH.from - DITCH.width / 2);
+  near(earthworkOffset(tw, ditch.x, ditch.z), -DITCH.depth, 0.05, 'ditch depth');
+  near(world.groundY(ditch.x, ditch.z) - world.terrainY(ditch.x, ditch.z), 0, 0.01, 'walking in the ditch');
+  // counterforts' steps lead from the rampart's crest up to the walk
+  const cf = tw.counterforts[0];
+  const st = { x: cf.at[0] + cf.n[0] * (FACE.innerLower + 0.2), z: cf.at[1] + cf.n[1] * (FACE.innerLower + 0.2) };
+  const dk = wallDeckAt(tw, st.x, st.z);
+  if (!dk || dk.y < RAMPART.crest + 0.6) throw new Error('town wall: no steps up a counterfort');
+  // the gates: passages open at ground level, chambers and tower rooms entered, platforms walkable
+  const P = (id: string, u: number, v: number): { x: number; z: number } => planToWorld(KEY_PLANS[id], u, v);
+  const open = (id: string, u: number, v: number, what: string): void => {
+    const p = P(id, u, v);
+    if (blockedAt(p.x, p.z, world.terrainY(p.x, p.z))) throw new Error(`${id} ${what} is blocked`);
+  };
+  open('north-gate', 18.1, 3, 'passage'); open('north-gate', 18.1, 5.45, 'outer arch'); open('north-gate', 18.1, 0.9, 'inner arch');
+  open('south-gate', 15.6, 3, 'passage'); open('south-gate', 15.6, 5.35, 'outer arch');
+  for (const id of ['west-gate', 'east-gate']) {
+    const kp = KEY_PLANS[id], pb = world.planBuildings.find((b) => b.id === id)!;
+    for (const r of kp.rooms) { const [u, v] = r.poly.reduce((m, q) => [m[0] + q[0] / r.poly.length, m[1] + q[1] / r.poly.length], [0, 0]); open(id, u, v, r.name); }
+    const base = pb.floorAt(pb.centre.x, pb.centre.z)! - 0.03;
+    for (const w of kp.walls) for (const o of w.openings ?? []) {
+      const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]), u = w.a[0] + ((w.b[0] - w.a[0]) * o.at) / L, v = w.a[1] + ((w.b[1] - w.a[1]) * o.at) / L;
+      const p = P(id, u, v);
+      if (blockedAt(p.x, p.z, base + (o.y0 ?? 0))) throw new Error(`${id} ${w.id} opening is blocked`);
+    }
+    // the platform over the passages: walkable from above, a ceiling over the passage below
+    const pf = kp.platforms!.find((q) => q.id === 'platform')!, pr = kp.rooms.find((r) => r.id === 'passage-n')!;
+    const [pu, pv] = pr.poly.reduce((m, q) => [m[0] + q[0] / pr.poly.length, m[1] + q[1] / pr.poly.length], [0, 0]);
+    const p = P(id, pu, pv);
+    near(world.groundY(p.x, p.z, base + pf.y) - base, pf.y, 0.05, `${id} platform`);
+    near(world.groundY(p.x, p.z, base) - base, 0.03, 0.05, `${id} passage under the platform`);
+    // the tower rooms have floors at the walk's level and a door off the platform
+    for (const side of ['n', 's']) {
+      const fl = kp.platforms!.find((q) => q.id === `gh${side}-floor`)!;
+      const [fu, fv] = fl.poly.reduce((m, q) => [m[0] + q[0] / fl.poly.length, m[1] + q[1] / fl.poly.length], [0, 0]);
+      const fp = P(id, fu, fv);
+      near(world.groundY(fp.x, fp.z, base + fl.y) - base, fl.y, 0.05, `${id} tower room ${side} floor`);
+      if (blockedAt(fp.x, fp.z, base + fl.y)) throw new Error(`${id} tower room ${side} is blocked`);
+    }
+  }
+  open('lesser-west-gate', 6.7, 2, 'gateway'); open('amphitheatre-gate', 7.8, 2.2, 'gateway'); open('se-gate', 4.4, 3, 'footway'); open('se-gate', 4.4, 6.9, 'footway arch');
+  // the south gate's steps reach its platform
+  {
+    const s0 = P('south-gate', 12.15, 0.8), s1 = P('south-gate', 12.15, 4.3), g0 = world.terrainY(s0.x, s0.z);
+    if (world.groundY(s1.x, s1.z, g0 + 4) - g0 < 3.8) throw new Error('south gate: the steps do not reach the platform');
+  }
+  // bridges where the ditch runs on (west, Lesser West, amphitheatre); causeways elsewhere
+  for (const g of tw.gates) {
+    const s = -FACE.outer + DITCH.from + DITCH.width / 2, p = { x: g.centre.x + g.out.x * s, z: g.centre.z + g.out.z * s };
+    const ground = world.terrainY(p.x, p.z), off = earthworkOffset(tw, p.x, p.z);
+    if (g.crossing === 'bridge') {
+      if (off > -1) throw new Error(`${g.id}: no ditch under its bridge`);
+      if (world.groundY(p.x, p.z, ground + DITCH.depth + 0.3) - ground < DITCH.depth) throw new Error(`${g.id}: the bridge deck is not walkable`);
+    } else if (off < -0.05) throw new Error(`${g.id}: the ditch cuts its causeway (${off.toFixed(2)})`);
+  }
+  // the gates stand on the ground the wall follows: no more than 0.6 m across each footprint
+  for (const id of gateIds) {
+    const pb = world.planBuildings.find((b) => b.id === id)!;
+    let lo = Infinity, hi = -Infinity;
+    for (let i = -3; i <= 3; i++) for (let j = -3; j <= 3; j++) {
+      const x = pb.centre.x + (i * pb.radius) / 6, z = pb.centre.z + (j * pb.radius) / 6;
+      if (earthworkOffset(tw, x, z) < 0) continue;
+      const y = world.terrainY(x, z); lo = Math.min(lo, y); hi = Math.max(hi, y);
+    }
+    if (hi - lo > 0.6) throw new Error(`${id}: the ground varies ${(hi - lo).toFixed(2)} m under it`);
+  }
+  // the gates: built in the town wall's facing, every triangle tagged for the viewer, the walk and parapet pickable
+  for (const id of gateIds) {
+    if (KEY_PLANS[id].facing !== 'flint-limestone') throw new Error(`${id} should be faced like the town wall (flint-limestone)`);
+    for (const lod of [0, 1, 2] as const) {
+      const b = buildFromPlan(KEY_PLANS[id], { lod });
+      for (let i = 1; i < b.elementRanges.length; i += 2) if (b.elementRanges[i] < 0) throw new Error(`${id} lod ${lod}: untagged triangles`);
+      if (elementAtFace(b, b.tris - 1) === undefined) throw new Error(`${id} lod ${lod}: last triangle has no element`);
+      b.geometry.dispose();
+    }
+  }
+  {
+    const b = buildFromPlan(KEY_PLANS['north-gate'], { lod: 0 });
+    if (elementTriangles(b, 'flank-w-1/parapet').length === 0) throw new Error('north gate: the flank parapet is not pickable');
+    if (!elementTriangles(b, 'platform').length || elementAtFace(b, elementTriangles(b, 'platform')[0][0])?.note?.includes('platform') !== true) throw new Error('north gate: the platform is not pickable');
+    b.geometry.dispose();
+  }
+  // the old instanced gate kit is gone
+  world.layerGroups.walls.traverse((o) => { if ((o as THREE.InstancedMesh).isInstancedMesh) throw new Error('old gate kit still in the walls layer'); });
+  console.log(`town wall: section ${world.townWallTris.wall} tris, earthworks ${world.townWallTris.earth}, ${tw.counterforts.length} counterforts; gates ${gateIds.map((id) => world.planBuildings.find((b) => b.id === id)!.trisByLod[0]).join('/')}`);
 }
 // Reconstructed-buildings display setting: parsing and tier logic.
 {

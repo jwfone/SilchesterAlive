@@ -188,7 +188,7 @@ export class BuildingInspector {
       scene.add(grid);
       // Ground line: a thin strip ~2 px tall (scaled to the canvas in draw()).
       groundLine = new THREE.Mesh(new THREE.PlaneGeometry(o.width, 1), new THREE.MeshBasicMaterial({ color: 0x5b5246 }));
-      groundLine.position.copy(o.target).addScaledVector(o.dir, 60);
+      groundLine.position.copy(o.target).addScaledVector(o.dir, 60).setY(this.plan.arena?.ground ?? 0); // an arena's floor is below the ground
       groundLine.lookAt(groundLine.position.clone().sub(o.dir));
       scene.add(groundLine);
     } else {

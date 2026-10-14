@@ -1,0 +1,428 @@
+{
+ "id": "north-gate",
+ "name": "North gate",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint-limestone",
+ "period": "late 3rd century AD (c. 270–280): the stone wall as newly built, all gates open",
+ "brief": "docs/key-buildings/town-walls.md",
+ "frame": {
+  "originEN": [
+   463832.58,
+   162787.44
+  ],
+  "angleDeg": 0.492
+ },
+ "conventions": "u along the town wall, v out to the field (so the \"n\" drawing is the field front); metres; origin the anchor corner",
+ "rooms": [
+  {
+   "id": "passage",
+   "name": "Gate passage",
+   "poly": [
+    [
+     16.2,
+     0.5
+    ],
+    [
+     19.95,
+     0.5
+    ],
+    [
+     19.95,
+     5.8
+    ],
+    [
+     16.2,
+     5.8
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "\"covered passage (originally)\" (1890, Pl. XXXI); roadway of flints 12 in thick, gravelled (1890)"
+  },
+  {
+   "id": "approach",
+   "name": "Approach between the flanks",
+   "poly": [
+    [
+     16.2,
+     5.8
+    ],
+    [
+     19.4,
+     6.0
+    ],
+    [
+     20.65,
+     6.0
+    ],
+    [
+     20.65,
+     10.0
+    ],
+    [
+     21.2,
+     11.6
+    ],
+    [
+     22.4,
+     13.3
+    ],
+    [
+     10.4,
+     13.3
+    ],
+    [
+     12.6,
+     12.2
+    ],
+    [
+     14.0,
+     10.4
+    ],
+    [
+     14.6,
+     8.0
+    ],
+    [
+     14.95,
+     5.8
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "narrowing from 36 ft to 22 ft and then 10 ft before the gate (1890)"
+  }
+ ],
+ "walls": [
+  {
+   "id": "flank-w-1",
+   "a": [
+    9.5,
+    12.1
+   ],
+   "b": [
+    11.3,
+    11.6
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "western flank: the curtain turned inward, \"an inward sweep of the curtain wall\" (Fox & St John Hope 1890); it meets the gate at an angle, perhaps a change of plan (1890)"
+  },
+  {
+   "id": "flank-w-2",
+   "a": [
+    11.3,
+    11.6
+   ],
+   "b": [
+    12.6,
+    10.6
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "western flank: the curtain turned inward, \"an inward sweep of the curtain wall\" (Fox & St John Hope 1890); it meets the gate at an angle, perhaps a change of plan (1890)"
+  },
+  {
+   "id": "flank-w-3",
+   "a": [
+    12.6,
+    10.6
+   ],
+   "b": [
+    13.3,
+    9.3
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "western flank: the curtain turned inward, \"an inward sweep of the curtain wall\" (Fox & St John Hope 1890); it meets the gate at an angle, perhaps a change of plan (1890)"
+  },
+  {
+   "id": "flank-w-4",
+   "a": [
+    13.3,
+    9.3
+   ],
+   "b": [
+    13.75,
+    6.0
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "western flank: the curtain turned inward, \"an inward sweep of the curtain wall\" (Fox & St John Hope 1890); it meets the gate at an angle, perhaps a change of plan (1890)"
+  },
+  {
+   "id": "flank-w-5",
+   "a": [
+    13.75,
+    6.0
+   ],
+   "b": [
+    14.05,
+    3.7
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "western flank: the curtain turned inward, \"an inward sweep of the curtain wall\" (Fox & St John Hope 1890); it meets the gate at an angle, perhaps a change of plan (1890)"
+  },
+  {
+   "id": "flank-e-1",
+   "a": [
+    21.75,
+    4.3
+   ],
+   "b": [
+    21.75,
+    10.0
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "eastern flank: parallel with the gate axis, rounded outside, a right angle within (1890)"
+  },
+  {
+   "id": "flank-e-2",
+   "a": [
+    21.75,
+    10.0
+   ],
+   "b": [
+    22.2,
+    11.3
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "eastern flank: parallel with the gate axis, rounded outside, a right angle within (1890)"
+  },
+  {
+   "id": "flank-e-3",
+   "a": [
+    22.2,
+    11.3
+   ],
+   "b": [
+    23.0,
+    11.95
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "eastern flank: parallel with the gate axis, rounded outside, a right angle within (1890)"
+  },
+  {
+   "id": "flank-e-4",
+   "a": [
+    23.0,
+    11.95
+   ],
+   "b": [
+    24.0,
+    12.1
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "eastern flank: parallel with the gate axis, rounded outside, a right angle within (1890)"
+  },
+  {
+   "id": "pw-w",
+   "a": [
+    15.6,
+    0.5
+   ],
+   "b": [
+    15.6,
+    5.8
+   ],
+   "t": 1.2,
+   "h": 4.2,
+   "ev": "S",
+   "note": "passage wall, about 18 ft long and 4 ft thick (1890)"
+  },
+  {
+   "id": "pw-e",
+   "a": [
+    20.55,
+    0.7
+   ],
+   "b": [
+    20.55,
+    6.0
+   ],
+   "t": 1.2,
+   "h": 4.2,
+   "ev": "S",
+   "note": "passage wall, about 18 ft long and 4 ft thick (1890)"
+  },
+  {
+   "id": "arch-out",
+   "a": [
+    15.6,
+    5.45
+   ],
+   "b": [
+    20.55,
+    5.45
+   ],
+   "t": 0.76,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.48,
+     "w": 3.2,
+     "oh": 2.2,
+     "arch": true,
+     "note": "outer arch, about 11 ft wide and 2½ ft deep; the double doors hung immediately behind it on pivots in a timber sill (1890). outer arch carried up as a crenellated parapet on the platform's field side (the parapet: comparison)"
+    }
+   ],
+   "crenel": true
+  },
+  {
+   "id": "arch-in",
+   "a": [
+    15.6,
+    0.9
+   ],
+   "b": [
+    20.55,
+    0.9
+   ],
+   "t": 0.76,
+   "h": 4.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.48,
+     "w": 3.35,
+     "oh": 2.2,
+     "arch": true,
+     "note": "inner arch, about 11 ft wide and 2½ ft deep (1890)"
+    }
+   ]
+  }
+ ],
+ "platforms": [
+  {
+   "id": "platform",
+   "poly": [
+    [
+     15.0,
+     0.12
+    ],
+    [
+     21.15,
+     0.12
+    ],
+    [
+     21.15,
+     5.07
+    ],
+    [
+     15.0,
+     5.07
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "\"the large platform over the gate itself would enable the defenders to pass from one side to the other\" (Fox & St John Hope 1890); at the walk's level, on timber over the passage (the report leaves timber or vault open)"
+  }
+ ],
+ "stairs": [],
+ "curtainEnds": [
+  [
+   9.5,
+   12.1
+  ],
+  [
+   24.0,
+   12.1
+  ]
+ ],
+ "mound": [
+  [
+   [
+    0,
+    10.9
+   ],
+   [
+    10.6,
+    10.9
+   ],
+   [
+    12.2,
+    9.9
+   ],
+   [
+    12.75,
+    8.0
+   ],
+   [
+    13.0,
+    3.7
+   ],
+   [
+    0,
+    3.7
+   ]
+  ],
+  [
+   [
+    22.8,
+    4.3
+   ],
+   [
+    22.8,
+    10.9
+   ],
+   [
+    35.0,
+    10.9
+   ],
+   [
+    35.0,
+    4.3
+   ]
+  ]
+ ],
+ "crossing": "causeway",
+ "crossingEv": "X",
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "Field front: the gate set back between the flanking walls, the outer arch and the platform's parapet"
+  },
+  {
+   "from": "e",
+   "cut": 18.1,
+   "caption": "Section along the passage, looking west: the passage under the platform, the two arches, the flank behind"
+  },
+  {
+   "from": "s",
+   "caption": "Town side: the inner arch under the platform, the flanks and the rampart behind them"
+  }
+ ]
+}

@@ -51,7 +51,7 @@ The user commits via GitHub Desktop; never commit.
   words. The interactive ring-review page confused the user.
 - **Performance:** record `npm run smoke` draws/tris before and after. On 2026-10-10 the whole town is 34 draws and
   ~184k tris (it was ~148k before the baths pilot; the new ground surface added some too), with the baths at
-  LOD0 4.8k / LOD1 1.9k / LOD2 0.56k tris. Draw calls must not grow; the smoke test caps LOD0 per building (`checks` in `src/smoke.ts`: baths 12k, forum-basilica 20k), agreed with the user before building.
+  LOD0 4.8k / LOD1 1.9k / LOD2 0.56k tris. Draw calls must not grow; the smoke test caps LOD0 per building (`checks` in `src/smoke.ts`: baths 12k, forum-basilica 20k, mansio 16k, amphitheatre 12k, main gates 6k, minor gates 3k; the town wall's section 24k for the whole circuit), agreed with the user before building.
 
 ## Before you start: confirm with the user
 
@@ -230,10 +230,99 @@ Tell the user what is uncommitted. If a decision changed or a generic lesson eme
   drawings and lab canvases follow the layout width, so emulate a wide viewport and post `toDataURL()` to a local
   receiver to save full-size PNGs; long `bench` loops stall when started in the background (run one view per call).
 
+## Lessons from the mansio
+
+- **Look for the Victorian reports on the Internet Archive first.** *Archaeologia* volumes are scanned with OCR text
+  (`https://archive.org/advancedsearch.php?q=title:(archaeologia) AND year:1894&fl[]=identifier&output=json`, then
+  `/metadata/<id>` for the `_djvu.txt` and PDF). Fold-out plates are scanned in overlapping pieces on consecutive pages.
+- **Fit plates by chamfer matching, not by hand.** Threshold the plate's dark wall pixels, rasterise the in-rings at 0.1 m, and
+  refine an affine so the pixels fall on the walls (truncated distance, shrinking cap). Report the share of wall pixels within
+  0.3 m of a ring wall (mansio: 87–88%). Two hand points start it; a second piece of the same plate can reuse the first piece's
+  scale. Script: `tmp/key-plans/mansio-scripts/chamfit.py`.
+- **Few rings does not mean little surveyed.** The mansio's "4 rings" were whole wall networks. Count holes and area, and plot them.
+- **Rooms do not come from ring holes.** Most rooms are open to a corridor somewhere, so they are not closed holes; define rooms by
+  hand from the wall grid.
+- **Walls must not show through roofs.** Derive each wall's height from the roofs beside it (gable eaves; a wall under corridor
+  lean-tos only stops at the slope's low point; `closeEnds` fills the triangle), and **split walls where the roofs beside them
+  change height** (a long south wall ran along a 3.2 m corridor and 6 m bath rooms). Check every wall top against the roof surface
+  (`roofcheck.py`), ignoring the last 0.5 m at each end. The user spotted this in the 3D view.
+- **A gap between two surveyed walls goes up to the eaves.** Where it is a doorway, add a short wall across it with an opening, so
+  there is a lintel and wall above.
+- **Write down why each conjectured height is what it is** (the user asked): storeys from the evidence for stairs, heights from
+  what has to fit (door, corridor roof at 22°, clerestory) and checked against a rule (Vitruvius VI.3.8: oblong rooms half the sum
+  of length and width).
+- **Rename the anchor to the plan id** when widening it (`mansio-courtyard` → `mansio`): `reachesPlanBuilt` and `townPlan` then need
+  no special lookup.
+- **Smoke picks must be exterior.** LOD1 is a shell, so an interior door is not pickable there.
+- **Tooling:** the drawings page's canvases are 300 × 150 until the page paints; take a screenshot first, then post `toDataURL()`
+  to a local receiver. `cat > file` with no heredoc waits on stdin and hangs the shell.
+
+## Lessons from the amphitheatre
+
+- **The Great Plan is not the only geometry.** Where the Antiquaries never dug (outside the walls), look through the other GIS layers'
+  metadata: layer 04 is "the stone phase of the Amphitheatre". A building may have **no Victorian report** at all; say so early.
+- **A building that is not a wall plan gets its own plan element**, with its geometry in one pure module (`domain/arenaPlan.ts`) that
+  the mesh, walking (`floorAt`), the ground hole and the smoke test all read, so they cannot disagree.
+- **Things below the ground** need a hole in the ground mesh (`GroundHole`: grid lines on its edges, cells skipped) filled by the
+  building out to an apron, a floor that **overrides** the terrain (`floorOverrides`), and no contact-shadow decal (it would float).
+- **Measure reconstruction drawings against their scale bar** (a phone photo is fine for heights): Fulford's section gave the wall,
+  row count, rise and crest height.
+- **Section caps need closed solids**: a buried face left out of the mesh must still be emitted when `solidOnly`, or the drawings fill
+  it dark. Outside elevations of a sunken building show what is below ground (no earth in front): use sections instead.
+- **Old kits can cost many draw calls**: the amphitheatre kit was 13 meshes; the plan building is one.
+- **Ask for site photographs of what survives.** The user's photos of the recess walls replaced a borrowed facing (tile courses) with
+  the real one (single ironstone courses at uneven heights). Where the evidence shows irregular spacing, the style follows it.
+- **GLSL needs functions declared before use**: a shared helper called from an earlier function needs a forward declaration, or every
+  building's shader fails to compile (the materials lab shows only sky and ground; read the console).
+- **Bot-protected journal sites** (Anubis): `WebFetch` is refused, but the browser pane passes the check by itself; read the PDF in
+  the page with pdf.js from cdnjs (`getTextContent`). Don't copy its cookies to other tools.
+- **Tooling:** check views in the browser by importing the generator through Vite in the page (`import('/src/...ts?t=' + Date.now())`)
+  and rendering fixed cameras to an overlay canvas; post `toDataURL()` to the local receiver for full-size pictures.
+
+## Lessons from the town wall and gates
+
+- **Not every "building" is one plan.** A 2.4 km circuit got its own generator on a line, with the gates as ordinary plan buildings
+  whose `curtainEnds` say where the generator stops. Share the section (`kit/curtain.ts`) so the two cannot differ.
+- **The GIS can be wrong about what the game drew.** The old north gate sat 120 m from the one in the GIS: always plot the model's
+  positions against the GIS before trusting either.
+- **Check what the GIS drew against the report's numbers.** The gate plans matched the 1890 dimensions to centimetres, but the wall strip
+  is the upper wall (2.4 m), not the base (2.97 m): it took the 1890 text and a counterfort in the GIS to read that.
+- **A platform per building adds terrain grid lines across the whole map** and cuts every draped decal along them (+40k triangles for
+  seven gates). For small buildings level the ground locally in a mesh of their own instead.
+- **Two levels need feet.** A wall-walk over a passage cannot be a single floor height: pass the walker's foot height and let decks count
+  only within a step of it; give colliders a top.
+- **Masks must not shrink inside the drawn area**: a mask shrunk per quad left the ground poking up between neighbouring quads (a
+  checkerboard). Mask whole quads aligned to the mask's pixels, and lift the replacement's edges a little so no crack opens.
+- **Python on Windows writes files in cp1252 by default**: pass `encoding='utf-8'` or en dashes and ½ turn into "�" in the viewer.
+- **Tooling:** the materials lab needs every new cell's uniform declared in the GLSL header as well as passed (only sky and ground show
+  otherwise); `shots.ts` builds the world through Vite and renders fixed cameras to the receiver, the quickest way to see a whole circuit.
+
 ## Kickoff prompt (paste into a new session)
 
-> Rebuild the **<building>** as a plan-built key building. Follow `docs/key-buildings/playbook.md` step by step,
-> using `docs/key-buildings/other-buildings.md` for this building's facts and open questions and the baths
-> (`baths.md`, `assets/key-plans/baths.*`) as the worked example. Do not re-open the decisions listed in the
-> playbook. Start by confirming the "Before you start" items with me, then audit the footprint. Show me plain
-> pictures to approve at steps 2, 5, 6 and 9. Run the checks in step 13 before finishing; do not commit.
+Replace `<BUILDING>` with the building's name as its heading in `other-buildings.md` (e.g. Temples, Church).
+
+```
+Rebuild the <BUILDING> as a plan-built key building, like the baths, forum-basilica, mansio and amphitheatre.
+
+Read these first, in order:
+1. docs/key-buildings/playbook.md: the method, the decisions not to reopen, and the "Lessons" sections (baths, forum-basilica, mansio, amphitheatre).
+2. docs/key-buildings/next-steps.md: current state, key files, gotchas.
+3. docs/key-buildings/other-buildings.md, the "<BUILDING>" section (what is known, open questions, code touchpoints) and "Cross-cutting leads".
+4. The worked examples: docs/key-buildings/mansio.md (the most recent: sources, materials table, the reasoning for every height) and
+   assets/key-plans/mansio.*; then baths.md and forum-basilica.md for anything the building shares with them.
+5. The scratch scripts in tmp/key-plans/mansio-scripts/ to adapt (raster walls, plate fit, plan writer, roof check, review pictures;
+   they have the mansio's ids and coordinates written in).
+
+Rules for this session:
+- Read every source at the document itself, not just search summaries. Tag every claim in the brief as read (✔), search summary (◐)
+  or recollection (✎), and correct other-buildings.md as you verify things. Start with the Creighton & Fry 2016 PDF linked there,
+  then the Victorian Archaeologia reports on the Internet Archive.
+- Start by confirming the "Before you start" items with me, then audit the footprint. Show me plain pictures to approve at steps 2, 5,
+  6 and 9.
+- Tell me early what LOD0 triangle cap you expect to need (baths 12k, mansio 16k, forum-basilica 20k), or whether the detailed level
+  should be built only on approach, and agree the approach with me.
+- In the brief, write down why each conjectured height, storey and opening is what it is, and give materials their own table
+  (what is shown, the source, the evidence level), including any defaults the generator supplies.
+- Make sure every enclosed space can be entered, and that no wall shows through a roof (check every wall top against the roofs).
+- Run the checks in playbook step 13 before finishing. Do not commit; I will commit in GitHub Desktop.
+```

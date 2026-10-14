@@ -1509,9 +1509,9 @@ export class Game {
       if (z < minZ) minZ = z; if (z > maxZ) maxZ = z;
     };
     for (const w of this.plan.walls) add(w.x, w.z);
-    const a = this.plan.amphitheatre;
-    add(a.x - a.rx, a.z - a.rz);
-    add(a.x + a.rx, a.z + a.rz);
+    const a = this.plan.amphitheatre, ar = Math.max(a.rx, a.rz) + (a.toe ?? 0);
+    add(a.x - ar, a.z - ar);
+    add(a.x + ar, a.z + ar);
     if (!Number.isFinite(minX)) return { cx: 15, cz: 15, scale: Math.min(W, H) / 1050 };
     const margin = 70;
     const xSpan = Math.max(1, maxX - minX + margin * 2);
@@ -2253,9 +2253,17 @@ export class Game {
       const a = this.plan.amphitheatre;
       const [ax, az] = toMap(a.x, a.z);
       ctx.strokeStyle = '#9c8a6a'; ctx.lineWidth = 2;
+      // arena wall, and the banks' outer edge (lighter)
       ctx.beginPath();
-      ctx.ellipse(ax, az, a.rx * v.scale, a.rz * v.scale, 0, 0, Math.PI * 2);
+      ctx.ellipse(ax, az, a.rx * v.scale, a.rz * v.scale, a.rot ?? 0, 0, Math.PI * 2);
       ctx.stroke();
+      if (a.toe) {
+        ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.ellipse(ax, az, (a.rx + a.toe) * v.scale, (a.rz + a.toe) * v.scale, a.rot ?? 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
     }
 
     // Labels for key buildings + gates (with halo so they read over relief).
@@ -2537,7 +2545,8 @@ export class Game {
       const [ax, az] = toMap(a.x, a.z);
       ctx.strokeStyle = '#9c8a6a'; ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.ellipse(ax, az, (a.rx / 700) * (W / 2), (a.rz / 700) * (H / 2), 0, 0, Math.PI * 2);
+      const t = a.toe ?? 0;
+      ctx.ellipse(ax, az, ((a.rx + t) / 700) * (W / 2), ((a.rz + t) / 700) * (H / 2), a.rot ?? 0, 0, Math.PI * 2);
       ctx.stroke();
     }
     // forum marker (part of key buildings)

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
-import { planRotationY, planToWorld, worldToPlan, type BuildingPlan } from '../../domain/keyPlan.js';
+import { planRotationY, planToWorld, worldToPlan, type BuildingPlan, type UV } from '../../domain/keyPlan.js';
+import { arenaHeightAt, arenaHoleWorld, planExtentUV } from '../../domain/arenaPlan.js';
 import { buildFromPlan, type Lod, type PlanFootprint } from './planBuilding.js';
+import { FACE, WALL } from '../../domain/townWall.js';
 import { getTiledAtlasMaterial, setSurfaceStyle, type SurfaceStyle } from './atlasTiled.js';
 import type { Collider } from '../WorldBuilder.js';
 import type { CircleCollider, PolyCollider } from '../PlayerControls.js';
@@ -32,7 +34,10 @@ export interface PlacedPlanBuilding {
   /** World-space centre and radius (for proximity checks). */
   centre: { x: number; z: number }; radius: number;
   /** Walkable floor height inside the building's rooms, else undefined (open ground). */
-  floorAt: (x: number, z: number) => number | undefined;
+  /** With `feet`, raised decks (platforms, stairs, wall-walks) a step or less above the feet count too. */
+  floorAt: (x: number, z: number, feet?: number) => number | undefined;
+  /** The floor replaces the ground rather than standing on it (a sunken arena: below the terrain). */
+  floorOverrides: boolean;
   /** Metres from a world point to the building's plan rectangle (0 inside). */
   distanceTo: (x: number, z: number) => number;
 }
@@ -71,8 +76,7 @@ function inApse(u: number, v: number, ap: NonNullable<BuildingPlan['apses']>[num
 
 /** World-space axis-aligned bounds of a plan's wall extent (the ground it must stand on). */
 export function planFootprintBounds(plan: BuildingPlan): { minX: number; maxX: number; minZ: number; maxZ: number } {
-  let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
-  for (const w of plan.walls) for (const [u, v] of [w.a, w.b]) { u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+  const { u0, u1, v0, v1 } = planExtentUV(plan);
   const b = { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity };
   for (const [u, v] of [[u0, v0], [u1, v0], [u1, v1], [u0, v1]]) {
     const p = planToWorld(plan, u, v);
@@ -82,9 +86,8 @@ export function planFootprintBounds(plan: BuildingPlan): { minX: number; maxX: n
 }
 
 export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: number) => number): PlacedPlanBuilding {
-  // Plan extent from its walls (u, v), and its centre in plan and world space.
-  let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
-  for (const w of plan.walls) for (const [u, v] of [w.a, w.b]) { u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+  // Plan extent from its walls (u, v) (an arena's banks to their toe), and its centre in plan and world space.
+  const { u0, u1, v0, v1 } = planExtentUV(plan);
   const uc = (u0 + u1) / 2, vc = (v0 + v1) / 2;
   const centre = planToWorld(plan, uc, vc);
   const rotY = planRotationY(plan);
@@ -97,8 +100,14 @@ export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: nu
       samples.push(groundY(p.x, p.z));
     }
   }
-  const baseY = Math.max(...samples) + 0.02;
-  const footingDrop = baseY - Math.min(...samples) + 0.15;
+  // A sunken arena's floor lies `ground` metres below the levelled platform round it.
+  const sunk = plan.arena?.ground ?? 0;
+  const baseY = Math.max(...samples) + 0.02 - sunk;
+  const footingDrop = baseY + sunk - Math.min(...samples) + 0.15;
+  // The ground hole under an arena, as plan-space corners for the apron that fills it.
+  const hole = arenaHoleWorld(plan);
+  const apron: UV[] | undefined = hole && [[hole.minX, hole.minZ], [hole.maxX, hole.minZ], [hole.maxX, hole.maxZ], [hole.minX, hole.maxZ]]
+    .map(([x, z]) => worldToPlan(plan, x, z));
 
   const lod = new THREE.LOD();
   lod.name = `plan-${plan.id}`;
@@ -108,7 +117,7 @@ export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: nu
   const trisByLod = { 0: 0, 1: 0, 2: 0 } as Record<Lod, number>;
   let footprints: PlanFootprint[] = [];
   for (const level of [0, 1, 2] as Lod[]) {
-    const built = buildFromPlan(plan, { lod: level, evidenceColors: true, footingDrop });
+    const built = buildFromPlan(plan, { lod: level, evidenceColors: true, footingDrop, apron });
     const mesh = new THREE.Mesh(built.geometry, getTiledAtlasMaterial());
     mesh.name = `plan-${plan.id}-lod${level}`;
     mesh.position.set(-uc, 0, vc); // model space x = u, z = -v; centre the LOD on the building
@@ -135,7 +144,7 @@ export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: nu
     const xs = ring.map((p) => p.x), zs = ring.map((p) => p.z);
     const bb = { minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs) };
     if (f.h < LOW_OBSTACLE_H) boxes.push({ ...bb, h: f.h });
-    else polys.push({ outline: ring, ...bb });
+    else polys.push({ outline: ring, ...bb, top: baseY + f.h });
   }
 
   return {
@@ -146,11 +155,66 @@ export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: nu
       const [u, v] = worldToPlan(plan, x, z);
       return Math.hypot(Math.max(u0 - u, 0, u - u1), Math.max(v0 - v, 0, v - v1));
     },
-    floorAt: (x, z) => {
+    floorOverrides: !!plan.arena,
+    floorAt: (x, z, feet) => {
+      const room = roomFloorAt(x, z);
+      if (feet === undefined) return room;
+      // raised decks (a gate's platform, a tower's floors, stairs, a flank's wall-walk): the highest one
+      // at or a step above the feet
       const [u, v] = worldToPlan(plan, x, z);
+      let best = room;
+      for (const y of deckHeights(plan, u, v)) {
+        const wy = baseY + y;
+        if (wy <= feet + DECK_STEP && (best === undefined || wy > best)) best = wy;
+      }
+      return best;
+    },
+  };
+  function roomFloorAt(x: number, z: number): number | undefined {
+    {
+      const [u, v] = worldToPlan(plan, x, z);
+      if (plan.arena) {
+        // the bowl, its banks and passages; level ground out to the hole's edge
+        const y = arenaHeightAt(plan.arena, u, v);
+        if (y !== undefined) return baseY + y;
+        return hole && x >= hole.minX && x <= hole.maxX && z >= hole.minZ && z <= hole.maxZ ? baseY + plan.arena.ground + 0.02 : undefined;
+      }
       if (u < u0 - 1 || u > u1 + 1 || v < v0 - 1 || v > v1 + 1) return undefined;
       const floored = plan.rooms.some((r) => inRect(u, v, r.poly)) || (plan.apses ?? []).some((ap) => inApse(u, v, ap));
       return floored ? baseY + 0.03 : undefined;
-    },
-  };
+    }
+  }
+}
+
+/** How far above your feet a deck may be and still be stepped onto (stairs, a deck's edge). */
+export const DECK_STEP = 0.6;
+
+function inPolygon(u: number, v: number, poly: UV[]): boolean {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [ui, vi] = poly[i], [uj, vj] = poly[j];
+    if ((vi > v) !== (vj > v) && u < ((uj - ui) * (v - vi)) / (vj - vi) + ui) inside = !inside;
+  }
+  return inside;
+}
+
+/** Heights (above the plan's floor) of the raised walkable surfaces over a plan point: platforms, stairs,
+ * and the wall-walks of the plan's stretches of town wall (walls of kind 'curtain'). */
+export function deckHeights(plan: BuildingPlan, u: number, v: number): number[] {
+  const out: number[] = [];
+  for (const p of plan.platforms ?? []) if (inPolygon(u, v, p.poly)) out.push(p.y);
+  for (const st of plan.stairs ?? []) {
+    const L = Math.hypot(st.b[0] - st.a[0], st.b[1] - st.a[1]) || 1, du = (st.b[0] - st.a[0]) / L, dv = (st.b[1] - st.a[1]) / L;
+    const s = (u - st.a[0]) * du + (v - st.a[1]) * dv, l = -(u - st.a[0]) * dv + (v - st.a[1]) * du;
+    if (s >= -0.2 && s <= L + 0.2 && Math.abs(l) <= st.w / 2) out.push(st.y0 + ((st.y1 - st.y0) * Math.max(0, Math.min(L, s))) / L);
+  }
+  for (const w of plan.walls) {
+    if (w.kind !== 'curtain') continue;
+    const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]) || 1, du = (w.b[0] - w.a[0]) / L, dv = (w.b[1] - w.a[1]) / L;
+    const s = (u - w.a[0]) * du + (v - w.a[1]) * dv;
+    // d towards the town: the field side is w.outer ('l' = left of a -> b)
+    const d = (-(u - w.a[0]) * dv + (v - w.a[1]) * du) * (w.outer === 'r' ? 1 : -1);
+    if (s >= -FACE.innerUpper && s <= L + FACE.innerUpper && d >= FACE.parapetIn && d <= FACE.innerUpper) out.push(WALL.walk);
+  }
+  return out;
 }

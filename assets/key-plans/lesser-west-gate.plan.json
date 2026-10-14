@@ -1,0 +1,144 @@
+{
+ "id": "lesser-west-gate",
+ "name": "Lesser West gate",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint-limestone",
+ "period": "late 3rd century AD (c. 270–280): the stone wall as newly built, all gates open",
+ "brief": "docs/key-buildings/town-walls.md",
+ "frame": {
+  "originEN": [
+   463606.87,
+   162291.73
+  ],
+  "angleDeg": 95.075
+ },
+ "conventions": "u along the town wall, v out to the field (so the \"n\" drawing is the field front); metres; origin the anchor corner",
+ "rooms": [
+  {
+   "id": "passage",
+   "name": "Gateway",
+   "poly": [
+    [
+     4.87,
+     0.45
+    ],
+    [
+     8.48,
+     0.45
+    ],
+    [
+     8.48,
+     3.55
+    ],
+    [
+     4.87,
+     3.55
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "later narrowed to 2.13 m and the road raised 1.2–1.5 m (C&F 2016): not shown"
+  }
+ ],
+ "walls": [
+  {
+   "id": "arch-out",
+   "a": [
+    4.0,
+    3.05
+   ],
+   "b": [
+    9.35,
+    3.05
+   ],
+   "t": 0.99,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.67,
+     "w": 3.55,
+     "oh": 2.2,
+     "arch": true,
+     "note": "archway 3.55 m wide and 0.99 m deep in the outer face; an iron shoe for a gate pivot was found (C&F 2016, after St John Hope 1897). outer arch carried up as a crenellated parapet on the platform's field side (the parapet: comparison)"
+    }
+   ],
+   "crenel": true
+  },
+  {
+   "id": "arch-in",
+   "a": [
+    4.0,
+    1.5
+   ],
+   "b": [
+    9.35,
+    1.5
+   ],
+   "t": 2.1,
+   "h": 4.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.67,
+     "w": 3.62,
+     "oh": 2.2,
+     "arch": true,
+     "note": "inner arch 3.62 m wide and 2.10 m deep towards the town (C&F 2016)"
+    }
+   ]
+  }
+ ],
+ "platforms": [
+  {
+   "id": "walk",
+   "poly": [
+    [
+     4.0,
+     0.45
+    ],
+    [
+     9.35,
+     0.45
+    ],
+    [
+     9.35,
+     2.55
+    ],
+    [
+     4.0,
+     2.55
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "the wall-walk carried over the arch"
+  }
+ ],
+ "stairs": [],
+ "curtainEnds": [
+  [
+   4.0,
+   2.07
+  ],
+  [
+   9.35,
+   2.1
+  ]
+ ],
+ "mound": [],
+ "crossing": "bridge",
+ "crossingEv": "S",
+ "note": "wall 2.93 m thick here (C&F 2016); the GIS shows a gap of 5.35 m between the wall ends",
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "Field front: the archway in the wall's outer face"
+  },
+  {
+   "from": "e",
+   "cut": 6.7,
+   "caption": "Section through the gateway: the outer arch and the deeper inner arch"
+  }
+ ]
+}

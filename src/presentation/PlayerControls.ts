@@ -13,6 +13,8 @@ export interface PolyCollider {
   outline: Array<{ x: number; z: number }>;
   holes?: Array<Array<{ x: number; z: number }>>;
   minX: number; maxX: number; minZ: number; maxZ: number;
+  /** World height of its top: walk over it once your feet are up there (a wall-walk over the wall's body). */
+  top?: number;
 }
 export interface EllipseBand {
   x: number; z: number;
@@ -228,7 +230,7 @@ export class PlayerControls {
     this.suppressJump = false;
   }
 
-  update(dt: number, boxes: Collider[], circles: CircleCollider[] = [], bands: EllipseBand[] = [], groundY: (x: number, z: number) => number = () => 0, polys: PolyCollider[] = []): void {
+  update(dt: number, boxes: Collider[], circles: CircleCollider[] = [], bands: EllipseBand[] = [], groundY: (x: number, z: number, feet?: number) => number = () => 0, polys: PolyCollider[] = []): void {
     this.applyKeyLook(dt);
     const run = this.keys.has('ShiftLeft') || this.keys.has('ShiftRight') || this.touchRun;
     const speed = run ? this.runSpeed : this.walkSpeed;
@@ -247,10 +249,13 @@ export class PlayerControls {
     mz = (mz / len) * speed * dt * (f || s ? 1 : 0);
 
     const p = this.camera.position;
-    this.applyJump(dt, groundY(p.x, p.z) + this.eyeHeight);
-    const clearance = p.y - this.eyeHeight - groundY(p.x, p.z);
-    this.tryMoveBox(p, mx, 0, boxes, polys, clearance);
-    this.tryMoveBox(p, 0, mz, boxes, polys, clearance);
+    // the feet height picks which level you stand on (under a gate's platform or on it)
+    const feet = p.y - this.eyeHeight;
+    const floor = groundY(p.x, p.z, feet);
+    this.applyJump(dt, floor + this.eyeHeight);
+    const clearance = p.y - this.eyeHeight - groundY(p.x, p.z, p.y - this.eyeHeight);
+    this.tryMoveBox(p, mx, 0, boxes, polys, clearance, p.y - this.eyeHeight);
+    this.tryMoveBox(p, 0, mz, boxes, polys, clearance, p.y - this.eyeHeight);
     this.resolveCircles(p, circles);
     this.resolveBands(p, bands);
 
@@ -297,7 +302,7 @@ export class PlayerControls {
     this.pitch = Math.max(-1.45, Math.min(1.45, this.pitch));
   }
 
-  private tryMoveBox(p: THREE.Vector3, dx: number, dz: number, boxes: Collider[], polys: PolyCollider[], clearance: number): void {
+  private tryMoveBox(p: THREE.Vector3, dx: number, dz: number, boxes: Collider[], polys: PolyCollider[], clearance: number, feet = -Infinity): void {
     const nx = p.x + dx, nz = p.z + dz;
     const r = this.radius;
     for (const c of boxes) {
@@ -309,6 +314,7 @@ export class PlayerControls {
       }
     }
     for (const poly of polys) {
+      if (poly.top !== undefined && feet >= poly.top - 0.35) continue; // standing on top of it
       if (hitsPoly(nx, nz, r, poly)) return;
     }
     p.x = nx; p.z = nz;

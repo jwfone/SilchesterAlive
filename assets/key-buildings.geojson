@@ -45,33 +45,33 @@
   {
    "type": "Feature",
    "properties": {
-    "id": "mansio-courtyard",
-    "status": "user-pinned",
-    "source": "user lat/lon NW 51.354831,-1.082125 SE 51.354525,-1.081468"
+    "id": "mansio",
+    "status": "user-approved-outline",
+    "source": "min-area rectangle (130.0 x 65.1 m, 3.9 deg) around Great Plan rings classified in assets/key-plans/mansio.review.json (Antiquaries plan, Fox & St John Hope 1894, Pl. XVII; baths Hilton Price 1887); widened 2026-10-12 from the user-pinned courtyard (id mansio-courtyard, NW 51.354831,-1.082125 SE 51.354525,-1.081468)"
    },
    "geometry": {
     "type": "Polygon",
     "coordinates": [
      [
       [
-       464012.3,
-       162150.4
+       463977.6,
+       162164.3
       ],
       [
-       464058,
-       162151
+       464107.3,
+       162173.1
       ],
       [
-       464058.4,
-       162117
+       464111.7,
+       162108.2
       ],
       [
-       464012.7,
-       162116.4
+       463982,
+       162099.4
       ],
       [
-       464012.3,
-       162150.4
+       463977.6,
+       162164.3
       ]
      ]
     ]
@@ -212,6 +212,286 @@
       [
        464329.5,
        162369.1
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "amphitheatre",
+    "status": "user-approved-outline",
+    "source": "min-area rectangle (74.5 x 80.8 m, long axis 20.1 deg east of north) around the stone-phase arena wall, entrance walls and recesses of GIS layer 04_Background_Town_Wall_and_Amphitheatre and the outer toe of the seating banks (Fulford 2002 contour plan and C&F 2016 fig. 6.43 LiDAR, both fitted to that wall); approved 2026-10-13. Replaces the ellipse fitted to the layer-04 strips (GENERATED_AMPHITHEATRE)"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464451.1,
+       162657.1
+      ],
+      [
+       464521.1,
+       162631.5
+      ],
+      [
+       464493.3,
+       162555.6
+      ],
+      [
+       464423.3,
+       162581.2
+      ],
+      [
+       464451.1,
+       162657.1
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "north-gate",
+    "status": "user-approved-outline",
+    "source": "North gate: rectangle (35 x 13.8 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       463867.42,
+       162801.53
+      ],
+      [
+       463832.46,
+       162801.23
+      ],
+      [
+       463832.58,
+       162787.44
+      ],
+      [
+       463867.54,
+       162787.74
+      ],
+      [
+       463867.42,
+       162801.53
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "south-gate",
+    "status": "user-approved-outline",
+    "source": "South gate: rectangle (28.6 x 14.8 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       463891.03,
+       162050.9
+      ],
+      [
+       463919.55,
+       162052.34
+      ],
+      [
+       463918.8,
+       162067.16
+      ],
+      [
+       463890.28,
+       162065.72
+      ],
+      [
+       463891.03,
+       162050.9
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "east-gate",
+    "status": "user-approved-outline",
+    "source": "East gate: rectangle (26.8 x 12.5 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464386.59,
+       162435.75
+      ],
+      [
+       464394.51,
+       162461.39
+      ],
+      [
+       464382.61,
+       162465.07
+      ],
+      [
+       464374.69,
+       162439.43
+      ],
+      [
+       464386.59,
+       162435.75
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "west-gate",
+    "status": "user-approved-outline",
+    "source": "West gate: rectangle (26.2 x 10 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       463590.39,
+       162468.81
+      ],
+      [
+       463591.71,
+       162442.63
+      ],
+      [
+       463601.74,
+       162443.13
+      ],
+      [
+       463600.43,
+       162469.31
+      ],
+      [
+       463590.39,
+       162468.81
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "lesser-west-gate",
+    "status": "user-approved-outline",
+    "source": "Lesser West gate: rectangle (13 x 4.2 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       463601.53,
+       162304.31
+      ],
+      [
+       463602.68,
+       162291.36
+      ],
+      [
+       463606.86,
+       162291.73
+      ],
+      [
+       463605.72,
+       162304.68
+      ],
+      [
+       463601.53,
+       162304.31
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "amphitheatre-gate",
+    "status": "user-approved-outline",
+    "source": "Amphitheatre gate: rectangle (13 x 4.4 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464374.98,
+       162547.29
+      ],
+      [
+       464363.99,
+       162554.24
+      ],
+      [
+       464361.64,
+       162550.52
+      ],
+      [
+       464372.62,
+       162543.56
+      ],
+      [
+       464374.98,
+       162547.29
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "se-gate",
+    "status": "user-approved-outline",
+    "source": "South-east (\"sluice\") gate: rectangle (9.5 x 8.6 m) around the gate parts of GIS layer 04_Background_Town_Wall_and_Amphitheatre (gate plans from Joyce and the Antiquaries, Fox & St John Hope 1890), u along the wall; tmp/key-plans/walls-scripts/anchors.py; approved 2026-10-14"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       464136.6,
+       162106.76
+      ],
+      [
+       464144.16,
+       162112.58
+      ],
+      [
+       464138.92,
+       162119.38
+      ],
+      [
+       464131.37,
+       162113.55
+      ],
+      [
+       464136.6,
+       162106.76
       ]
      ]
     ]

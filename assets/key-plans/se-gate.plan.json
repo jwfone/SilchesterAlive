@@ -1,0 +1,173 @@
+{
+ "id": "se-gate",
+ "name": "South-east gate (\"sluice gate\")",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint-limestone",
+ "period": "late 3rd century AD (c. 270–280): the stone wall as newly built, all gates open",
+ "brief": "docs/key-buildings/town-walls.md",
+ "frame": {
+  "originEN": [
+   464138.92,
+   162119.38
+  ],
+  "angleDeg": -142.409
+ },
+ "conventions": "u along the town wall, v out to the field (so the \"n\" drawing is the field front); metres; origin the anchor corner",
+ "rooms": [
+  {
+   "id": "passage",
+   "name": "Footway",
+   "poly": [
+    [
+     3.65,
+     0.5
+    ],
+    [
+     5.0,
+     0.5
+    ],
+    [
+     5.0,
+     8.15
+    ],
+    [
+     3.65,
+     8.15
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "Fulford's re-excavation (1976) read the \"sluice gate\" as a pedestrian gate with a drain beneath (C&F 2016)"
+  }
+ ],
+ "walls": [
+  {
+   "id": "pw-w",
+   "a": [
+    3.2,
+    0.5
+   ],
+   "b": [
+    3.2,
+    5.75
+   ],
+   "t": 0.9,
+   "h": 2.4,
+   "ev": "S",
+   "note": "masonry passage wall with brick piers (the stepped outline in the GIS) holding back the rampart; the passage began in timber, then timber with masonry infill, then brick piers and masonry (C&F 2016, after Fulford 1984)"
+  },
+  {
+   "id": "pw-e",
+   "a": [
+    5.45,
+    0.5
+   ],
+   "b": [
+    5.45,
+    5.75
+   ],
+   "t": 0.9,
+   "h": 2.4,
+   "ev": "S",
+   "note": "as the west wall"
+  },
+  {
+   "id": "arch-out",
+   "a": [
+    3.75,
+    7.83
+   ],
+   "b": [
+    5.1,
+    7.83
+   ],
+   "t": 0.6,
+   "h": 6.0,
+   "ev": "X",
+   "openings": [
+    {
+     "at": 0.67,
+     "w": 1.2,
+     "oh": 2.1,
+     "arch": true,
+     "note": "the footway's outer ring, carried up as the parapet (conjecture)"
+    }
+   ],
+   "crenel": true
+  },
+  {
+   "id": "arch",
+   "a": [
+    3.75,
+    6.65
+   ],
+   "b": [
+    5.1,
+    6.65
+   ],
+   "t": 1.77,
+   "h": 4.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 0.67,
+     "w": 1.2,
+     "oh": 2.1,
+     "arch": true,
+     "note": "footway about 1.2 m wide through the wall, with a drain beneath (C&F 2016); later blocked (the GIS strip across its inner end): shown open"
+    }
+   ]
+  }
+ ],
+ "platforms": [
+  {
+   "id": "walk",
+   "poly": [
+    [
+     3.75,
+     5.77
+    ],
+    [
+     5.1,
+     5.77
+    ],
+    [
+     5.1,
+     7.53
+    ],
+    [
+     3.75,
+     7.53
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "the wall-walk carried over the footway"
+  }
+ ],
+ "stairs": [],
+ "curtainEnds": [
+  [
+   3.75,
+   6.95
+  ],
+  [
+   5.1,
+   6.95
+  ]
+ ],
+ "mound": [],
+ "crossing": "causeway",
+ "crossingEv": "X",
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "Field front: the footway through the wall"
+  },
+  {
+   "from": "e",
+   "cut": 4.4,
+   "caption": "Section along the footway: the passage walls holding back the rampart, the arch through the wall"
+  }
+ ]
+}

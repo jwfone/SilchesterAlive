@@ -1,0 +1,802 @@
+{
+ "id": "east-gate",
+ "name": "East gate",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint-limestone",
+ "period": "late 3rd century AD (c. 270–280): the stone wall as newly built, all gates open",
+ "brief": "docs/key-buildings/town-walls.md",
+ "frame": {
+  "originEN": [
+   464382.61,
+   162465.07
+  ],
+  "angleDeg": -107.166
+ },
+ "conventions": "u along the town wall, v out to the field (so the \"n\" drawing is the field front); metres; origin the anchor corner",
+ "rooms": [
+  {
+   "id": "ghn-1",
+   "name": "Guard chamber (sentries)",
+   "poly": [
+    [
+     6.33,
+     1.5
+    ],
+    [
+     8.18,
+     1.5
+    ],
+    [
+     8.18,
+     3.33
+    ],
+    [
+     6.33,
+     3.33
+    ]
+   ],
+   "floor": "signinum",
+   "note": "\"the first or outer chamber was only 5 feet wide and 6 feet long\"; for the sentries (1890); plastered and painted with broad pink lines on white (1890, west gate)"
+  },
+  {
+   "id": "ghn-2",
+   "name": "Inner chamber (lock-up?)",
+   "poly": [
+    [
+     6.33,
+     4.13
+    ],
+    [
+     8.18,
+     4.13
+    ],
+    [
+     8.18,
+     7.85
+    ],
+    [
+     6.33,
+     7.85
+    ]
+   ],
+   "floor": "signinum",
+   "note": "\"an inner room also 5 feet wide, but 7½ feet long\", \"probably used as lock-ups for prisoners\" (1890)"
+  },
+  {
+   "id": "ghs-1",
+   "name": "Guard chamber (sentries)",
+   "poly": [
+    [
+     18.85,
+     1.4
+    ],
+    [
+     20.8,
+     1.4
+    ],
+    [
+     20.8,
+     3.23
+    ],
+    [
+     18.85,
+     3.23
+    ]
+   ],
+   "floor": "signinum",
+   "note": "\"the first or outer chamber was only 5 feet wide and 6 feet long\"; for the sentries (1890); plastered and painted with broad pink lines on white (1890, west gate)"
+  },
+  {
+   "id": "ghs-2",
+   "name": "Inner chamber (lock-up?)",
+   "poly": [
+    [
+     18.85,
+     4.03
+    ],
+    [
+     20.8,
+     4.03
+    ],
+    [
+     20.8,
+     7.95
+    ],
+    [
+     18.85,
+     7.95
+    ]
+   ],
+   "floor": "signinum",
+   "note": "\"an inner room also 5 feet wide, but 7½ feet long\", \"probably used as lock-ups for prisoners\" (1890)"
+  },
+  {
+   "id": "passage-n",
+   "name": "North passage",
+   "poly": [
+    [
+     9.15,
+     0.6
+    ],
+    [
+     13.03,
+     0.6
+    ],
+    [
+     13.03,
+     5.35
+    ],
+    [
+     9.15,
+     5.35
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "passages 4.88 m long (C&F 2016)"
+  },
+  {
+   "id": "passage-s",
+   "name": "South passage",
+   "poly": [
+    [
+     13.97,
+     0.6
+    ],
+    [
+     17.85,
+     0.6
+    ],
+    [
+     17.85,
+     5.35
+    ],
+    [
+     13.97,
+     5.35
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior"
+  },
+  {
+   "id": "forecourt",
+   "name": "Forecourt between the guardhouses",
+   "poly": [
+    [
+     9.15,
+     5.35
+    ],
+    [
+     17.85,
+     5.35
+    ],
+    [
+     17.85,
+     7.95
+    ],
+    [
+     9.15,
+     7.9
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior"
+  }
+ ],
+ "walls": [
+  {
+   "id": "ghn-out",
+   "a": [
+    5.7,
+    0.6
+   ],
+   "b": [
+    5.7,
+    10.6
+   ],
+   "t": 1.25,
+   "h": 8.2,
+   "ev": "S",
+   "crenel": true,
+   "note": "guardhouse (GIS: Joyce 1881 and the Antiquaries 1908); \"similar in design to the West Gate, but fractionally more substantial\" (C&F 2016), so its rooms are laid out as the west gate's; rises as a tower one storey above the walk, crenellated (1890: \"projected like two flanking towers, for which purpose, indeed, they were probably used\"; the height: comparison with Chesters and Birdoswald, conjecture)",
+   "openings": [
+    {
+     "at": 9.3,
+     "w": 0.9,
+     "oh": 2.0,
+     "y0": 4.25,
+     "conjecture": true,
+     "note": "door from the wall-walk into the tower room (conjecture)"
+    }
+   ],
+   "windows": [
+    {
+     "at": 7.0,
+     "w": 0.6,
+     "sill": 5.3,
+     "head": 6.4,
+     "ev": "X",
+     "note": "tower window (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "ghn-in",
+   "a": [
+    8.65,
+    0.6
+   ],
+   "b": [
+    8.65,
+    9.15
+   ],
+   "t": 0.95,
+   "h": 8.2,
+   "ev": "S",
+   "crenel": true,
+   "note": "wall next to the gate, 3 ft (1890)",
+   "openings": [
+    {
+     "at": 1.9,
+     "w": 0.9,
+     "oh": 2.0,
+     "y0": 4.25,
+     "conjecture": true,
+     "note": "door from the gate's platform into the tower room (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "ghn-field",
+   "a": [
+    5.7,
+    8.5
+   ],
+   "b": [
+    8.65,
+    8.5
+   ],
+   "t": 1.3,
+   "h": 8.2,
+   "ev": "S",
+   "crenel": true,
+   "openings": [
+    {
+     "at": 1.48,
+     "w": 0.9,
+     "oh": 2.0,
+     "y0": 4.25,
+     "conjecture": true,
+     "note": "door from the landing on the wall-walk into the tower room (conjecture)"
+    }
+   ],
+   "windows": []
+  },
+  {
+   "id": "ghn-town",
+   "a": [
+    6.28,
+    1.05
+   ],
+   "b": [
+    8.23,
+    1.05
+   ],
+   "t": 0.9,
+   "h": 8.2,
+   "ev": "C",
+   "crenel": true,
+   "openings": [
+    {
+     "at": 0.98,
+     "w": 0.9,
+     "oh": 2.0,
+     "note": "doorway 3 ft wide in the east (town) end (1890)"
+    }
+   ]
+  },
+  {
+   "id": "ghn-cross",
+   "a": [
+    6.33,
+    3.73
+   ],
+   "b": [
+    8.18,
+    3.73
+   ],
+   "t": 0.8,
+   "h": 3.95,
+   "ev": "C",
+   "openings": [
+    {
+     "at": 0.93,
+     "w": 0.9,
+     "oh": 2.0,
+     "note": "\"a similar doorway led to an inner room\" (1890)"
+    }
+   ],
+   "note": "cross wall: in the 1890 description, not in the GIS"
+  },
+  {
+   "id": "ghs-out",
+   "a": [
+    21.45,
+    0.5
+   ],
+   "b": [
+    21.45,
+    10.4
+   ],
+   "t": 1.3,
+   "h": 8.2,
+   "ev": "S",
+   "crenel": true,
+   "note": "guardhouse (GIS); rooms as the west gate (C&F 2016); rises as a tower one storey above the walk, crenellated (1890: \"projected like two flanking towers, for which purpose, indeed, they were probably used\"; the height: comparison with Chesters and Birdoswald, conjecture)",
+   "openings": [
+    {
+     "at": 9.35,
+     "w": 0.9,
+     "oh": 2.0,
+     "y0": 4.25,
+     "conjecture": true,
+     "note": "door from the wall-walk into the tower room (conjecture)"
+    }
+   ],
+   "windows": [
+    {
+     "at": 6.93,
+     "w": 0.6,
+     "sill": 5.3,
+     "head": 6.4,
+     "ev": "X",
+     "note": "tower window (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "ghs-in",
+   "a": [
+    18.35,
+    0.5
+   ],
+   "b": [
+    18.35,
+    9.25
+   ],
+   "t": 1.0,
+   "h": 8.2,
+   "ev": "S",
+   "crenel": true,
+   "note": "wall next to the gate, 3 ft (1890)",
+   "openings": [
+    {
+     "at": 2.0,
+     "w": 0.9,
+     "oh": 2.0,
+     "y0": 4.25,
+     "conjecture": true,
+     "note": "door from the gate's platform into the tower room (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "ghs-field",
+   "a": [
+    21.45,
+    8.6
+   ],
+   "b": [
+    18.35,
+    8.6
+   ],
+   "t": 1.3,
+   "h": 8.2,
+   "ev": "S",
+   "crenel": true,
+   "openings": [
+    {
+     "at": 1.55,
+     "w": 0.9,
+     "oh": 2.0,
+     "y0": 4.25,
+     "conjecture": true,
+     "note": "door from the landing on the wall-walk into the tower room (conjecture)"
+    }
+   ],
+   "windows": []
+  },
+  {
+   "id": "ghs-town",
+   "a": [
+    18.8,
+    0.95
+   ],
+   "b": [
+    20.85,
+    0.95
+   ],
+   "t": 0.9,
+   "h": 8.2,
+   "ev": "C",
+   "crenel": true,
+   "openings": [
+    {
+     "at": 1.02,
+     "w": 0.9,
+     "oh": 2.0,
+     "note": "doorway 3 ft wide in the east (town) end (1890)"
+    }
+   ]
+  },
+  {
+   "id": "ghs-cross",
+   "a": [
+    18.85,
+    3.63
+   ],
+   "b": [
+    20.8,
+    3.63
+   ],
+   "t": 0.8,
+   "h": 3.95,
+   "ev": "C",
+   "openings": [
+    {
+     "at": 0.97,
+     "w": 0.9,
+     "oh": 2.0,
+     "note": "\"a similar doorway led to an inner room\" (1890)"
+    }
+   ],
+   "note": "cross wall: in the 1890 description, not in the GIS"
+  },
+  {
+   "id": "pier",
+   "a": [
+    13.5,
+    0.6
+   ],
+   "b": [
+    13.5,
+    5.35
+   ],
+   "t": 0.95,
+   "h": 4.2,
+   "ev": "S",
+   "note": "central wall between the passages (GIS)"
+  },
+  {
+   "id": "arch-out-1",
+   "a": [
+    8.65,
+    5.0
+   ],
+   "b": [
+    13.5,
+    5.0
+   ],
+   "t": 0.65,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.42,
+     "w": 3.66,
+     "oh": 2.0,
+     "arch": true,
+     "note": "arch 3.66 m wide (C&F 2016); impost pilasters in the GIS. outer arch carried up as a crenellated parapet on the platform's field side (the parapet: comparison)"
+    }
+   ],
+   "crenel": true
+  },
+  {
+   "id": "arch-in-1",
+   "a": [
+    8.65,
+    0.95
+   ],
+   "b": [
+    13.5,
+    0.95
+   ],
+   "t": 0.65,
+   "h": 4.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.42,
+     "w": 3.66,
+     "oh": 2.0,
+     "arch": true,
+     "note": "arch 3.66 m wide (C&F 2016)"
+    }
+   ]
+  },
+  {
+   "id": "arch-out-2",
+   "a": [
+    13.5,
+    5.0
+   ],
+   "b": [
+    18.35,
+    5.0
+   ],
+   "t": 0.65,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.43,
+     "w": 3.66,
+     "oh": 2.0,
+     "arch": true,
+     "note": "arch 3.66 m wide (C&F 2016); impost pilasters in the GIS. outer arch carried up as a crenellated parapet on the platform's field side (the parapet: comparison)"
+    }
+   ],
+   "crenel": true
+  },
+  {
+   "id": "arch-in-2",
+   "a": [
+    13.5,
+    0.95
+   ],
+   "b": [
+    18.35,
+    0.95
+   ],
+   "t": 0.65,
+   "h": 4.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.43,
+     "w": 3.66,
+     "oh": 2.0,
+     "arch": true,
+     "note": "arch 3.66 m wide (C&F 2016)"
+    }
+   ]
+  }
+ ],
+ "platforms": [
+  {
+   "id": "ghn-landing",
+   "poly": [
+    [
+     6.33,
+     9.15
+    ],
+    [
+     8.18,
+     9.15
+    ],
+    [
+     8.18,
+     10.6
+    ],
+    [
+     6.33,
+     10.6
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "the wall-walk's landing between the tower and the curtain (conjecture)"
+  },
+  {
+   "id": "ghn-floor",
+   "poly": [
+    [
+     6.31,
+     1.5
+    ],
+    [
+     8.2,
+     1.5
+    ],
+    [
+     8.2,
+     7.85
+    ],
+    [
+     6.31,
+     7.85
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "tower room floor at the walk's level (conjecture)"
+  },
+  {
+   "id": "ghn-roof",
+   "poly": [
+    [
+     6.31,
+     1.5
+    ],
+    [
+     8.2,
+     1.5
+    ],
+    [
+     8.2,
+     7.85
+    ],
+    [
+     6.31,
+     7.85
+    ]
+   ],
+   "y": 7.45,
+   "ev": "X",
+   "note": "tower roof: a flat deck behind the crenellated parapet (conjecture)"
+  },
+  {
+   "id": "ghs-landing",
+   "poly": [
+    [
+     18.85,
+     9.25
+    ],
+    [
+     20.8,
+     9.25
+    ],
+    [
+     20.8,
+     10.4
+    ],
+    [
+     18.85,
+     10.4
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "the wall-walk's landing between the tower and the curtain (conjecture)"
+  },
+  {
+   "id": "ghs-floor",
+   "poly": [
+    [
+     18.83,
+     1.4
+    ],
+    [
+     20.82,
+     1.4
+    ],
+    [
+     20.82,
+     7.95
+    ],
+    [
+     18.83,
+     7.95
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "tower room floor at the walk's level (conjecture)"
+  },
+  {
+   "id": "ghs-roof",
+   "poly": [
+    [
+     18.83,
+     1.4
+    ],
+    [
+     20.82,
+     1.4
+    ],
+    [
+     20.82,
+     7.95
+    ],
+    [
+     18.83,
+     7.95
+    ]
+   ],
+   "y": 7.45,
+   "ev": "X",
+   "note": "tower roof: a flat deck behind the crenellated parapet (conjecture)"
+  },
+  {
+   "id": "platform",
+   "poly": [
+    [
+     9.15,
+     0.15
+    ],
+    [
+     17.85,
+     0.15
+    ],
+    [
+     17.85,
+     5.0
+    ],
+    [
+     9.15,
+     5.0
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "\"the large platform over the gate itself would enable the defenders to pass from one side to the other\" (Fox & St John Hope 1890); at the walk's level, on timber over the passage (the report leaves timber or vault open)"
+  }
+ ],
+ "stairs": [],
+ "curtainEnds": [
+  [
+   5.7,
+   10.6
+  ],
+  [
+   21.45,
+   10.4
+  ]
+ ],
+ "mound": [
+  [
+   [
+    0,
+    9.2
+   ],
+   [
+    5.05,
+    9.2
+   ],
+   [
+    5.05,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  [
+   [
+    22.1,
+    8.9
+   ],
+   [
+    26.84,
+    8.9
+   ],
+   [
+    26.84,
+    0
+   ],
+   [
+    22.1,
+    0
+   ]
+  ]
+ ],
+ "crossing": "causeway",
+ "crossingEv": "X",
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "Field front: the guardhouse towers and the two arches"
+  },
+  {
+   "from": "e",
+   "cut": 11.1,
+   "caption": "Section along the north passage, looking west"
+  },
+  {
+   "from": "s",
+   "caption": "Town side"
+  }
+ ]
+}

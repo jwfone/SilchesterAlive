@@ -1,0 +1,110 @@
+{
+ "id": "amphitheatre",
+ "note": "No Antiquaries' Great Plan rings: the Society never excavated outside the walls here (C&F 2016, 220). Geometry: GIS layer 04_Background_Town_Wall_and_Amphitheatre, records 14 and 15, 'the stone phase of the Amphitheatre' (arena wall, entrance passages, recesses). Banks: the underlays below, fitted to that wall by chamfer matching.",
+ "scope": "User 2026-10-13: stone phase (with Fulford's Stone Phase 2 floor raising); arena, passages, recesses, seating banks out to their toe; sunken arena (floor 2 m below the ground).",
+ "gis": {
+  "layer": "04_Background_Town_Wall_and_Amphitheatre",
+  "records": [
+   14,
+   15
+  ]
+ },
+ "underlays": [
+  {
+   "file": "amphi-fulford2002-plan.jpg",
+   "label": "Fulford 2002, A Guide to Silchester: contour plan of the amphitheatre (photograph supplied by the user)",
+   "source": "Fulford, M. 2002, A Guide to Silchester (user's copy)",
+   "width": 1063,
+   "height": 1104,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N] generated from an affine chamfer fit of the drawn arena wall to the GIS 04 wall (scratch chamfit.py): 58% of dark pixels within 0.3 m of the wall (the rest are contours, hachures and labels), inlier median 0.00 m; 0.072 m/px",
+   "points": [
+    [
+     106.3,
+     110.4,
+     464455.0,
+     162642.6
+    ],
+    [
+     956.7,
+     110.4,
+     464513.1,
+     162622.6
+    ],
+    [
+     956.7,
+     993.6,
+     464492.9,
+     162564.0
+    ],
+    [
+     106.3,
+     993.6,
+     464434.8,
+     162584.0
+    ],
+    [
+     531.5,
+     331.2,
+     464479.0,
+     162618.0
+    ],
+    [
+     318.9,
+     772.8,
+     464454.4,
+     162593.7
+    ]
+   ]
+  },
+  {
+   "file": "amphi-cf2016-fig6-43.jpg",
+   "label": "Creighton with Fry 2016, fig. 6.43: Exterior 14, geophysics interpretation on LiDAR (amphitheatre detail)",
+   "source": "https://centaur.reading.ac.uk/62521/",
+   "width": 1072,
+   "height": 1517,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N] generated from an affine chamfer fit of the drawn arena wall to the GIS 04 wall (scratch chamfit.py): 43% of dark pixels within 0.3 m of the wall (the rest are contours, hachures and labels), inlier median 0.00 m; 0.118 m/px",
+   "points": [
+    [
+     107.2,
+     151.7,
+     464501.7,
+     162642.3
+    ],
+    [
+     964.8,
+     151.7,
+     464501.5,
+     162540.9
+    ],
+    [
+     964.8,
+     1365.3,
+     464359.1,
+     162541.0
+    ],
+    [
+     107.2,
+     1365.3,
+     464359.3,
+     162642.4
+    ],
+    [
+     536.0,
+     455.1,
+     464466.0,
+     162591.6
+    ],
+    [
+     321.6,
+     1061.9,
+     464394.8,
+     162617.0
+    ]
+   ]
+  }
+ ],
+ "omit": [],
+ "rings": {}
+}

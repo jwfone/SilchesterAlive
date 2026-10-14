@@ -1,0 +1,6874 @@
+{
+ "id": "mansio",
+ "name": "Mansio (official inn)",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint",
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "North front: the gate into the north wing, the outer corridor wall, the outer court wall angled to the baths"
+  },
+  {
+   "from": "e",
+   "cut": 55.0,
+   "caption": "Section through the north and south wings, looking west: outer corridor, chamber, inner corridor either side of the courtyard"
+  },
+  {
+   "from": "s",
+   "cut": 25.0,
+   "caption": "Section across the granary, the west range (two storeys), the courtyard, the outer court and the baths, looking north"
+  },
+  {
+   "from": "s",
+   "caption": "South front: the long south wall, with the baths at the east end"
+  },
+  {
+   "from": "e",
+   "caption": "East side: the baths and the outer court wall"
+  }
+ ],
+ "period": "late 3rd century AD (c. 270–280): as excavated (Fox & St John Hope 1894), with the undated west-wing alterations",
+ "brief": "docs/key-buildings/mansio.md",
+ "frame": {
+  "originEN": [
+   463982,
+   162099.4
+  ],
+  "angleDeg": 3.882,
+  "note": "local u (east-ish), v (north-ish) metres from the SW corner of the key anchor; E,N = origin + R(angle)*(u,v). Walls from the Great Plan rings (raster extraction, tmp/key-plans/mansio-scripts)."
+ },
+ "conventions": "walls: centreline a->b, thickness t, height h; openings at metres from a, width w, height oh. conjecture:true marks things not evidenced (heights, roofs, most doors).",
+ "rooms": [
+  {
+   "id": "court",
+   "name": "Courtyard",
+   "poly": [
+    [
+     33.47,
+     14.39
+    ],
+    [
+     70.64,
+     14.39
+    ],
+    [
+     70.64,
+     48.28
+    ],
+    [
+     33.47,
+     48.28
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "labelAt": [
+    56,
+    31
+   ],
+   "note": "courtyard 148 by 115 ft (Fox & St John Hope 1894)"
+  },
+  {
+   "id": "court-s",
+   "name": "Courtyard",
+   "poly": [
+    [
+     33.47,
+     12.8
+    ],
+    [
+     69.9,
+     12.8
+    ],
+    [
+     69.9,
+     14.39
+    ],
+    [
+     33.47,
+     14.39
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "labelSize": 0.01
+  },
+  {
+   "id": "court-e",
+   "name": "Courtyard",
+   "poly": [
+    [
+     70.64,
+     14.39
+    ],
+    [
+     78.36,
+     14.39
+    ],
+    [
+     78.36,
+     47.8
+    ],
+    [
+     70.64,
+     47.8
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "labelSize": 0.01
+  },
+  {
+   "id": "outer-court",
+   "name": "Outer court",
+   "poly": [
+    [
+     78.36,
+     3.0
+    ],
+    [
+     94.02,
+     3.0
+    ],
+    [
+     94.02,
+     52.0
+    ],
+    [
+     78.36,
+     52.0
+    ]
+   ],
+   "labelAt": [
+    87,
+    30
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "the baths court: \"a garden, or open court-yard, as nothing was found there\" (Hilton Price 1887)"
+  },
+  {
+   "id": "outer-court-2",
+   "name": "Outer court",
+   "poly": [
+    [
+     94.02,
+     3.0
+    ],
+    [
+     96.07,
+     3.0
+    ],
+    [
+     96.07,
+     17.0
+    ],
+    [
+     94.02,
+     17.0
+    ]
+   ],
+   "labelSize": 0.01,
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "the baths court: \"a garden, or open court-yard, as nothing was found there\" (Hilton Price 1887)"
+  },
+  {
+   "id": "outer-court-3",
+   "name": "Outer court",
+   "poly": [
+    [
+     94.02,
+     19.42
+    ],
+    [
+     96.74,
+     19.42
+    ],
+    [
+     96.74,
+     27.5
+    ],
+    [
+     94.02,
+     27.5
+    ]
+   ],
+   "labelSize": 0.01,
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "the baths court: \"a garden, or open court-yard, as nothing was found there\" (Hilton Price 1887)"
+  },
+  {
+   "id": "outer-court-4",
+   "name": "Outer court",
+   "poly": [
+    [
+     94.02,
+     27.5
+    ],
+    [
+     101.66,
+     27.5
+    ],
+    [
+     101.66,
+     50.9
+    ],
+    [
+     94.02,
+     50.9
+    ]
+   ],
+   "labelSize": 0.01,
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "the baths court: \"a garden, or open court-yard, as nothing was found there\" (Hilton Price 1887)"
+  },
+  {
+   "id": "granary-yard",
+   "name": "Granary yard",
+   "poly": [
+    [
+     9.58,
+     22.35
+    ],
+    [
+     19.2,
+     22.35
+    ],
+    [
+     19.2,
+     40.62
+    ],
+    [
+     9.58,
+     40.62
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "labelAt": [
+    14,
+    31
+   ]
+  },
+  {
+   "id": "granary-yard-n",
+   "name": "Granary yard",
+   "poly": [
+    [
+     0.89,
+     37.75
+    ],
+    [
+     9.58,
+     37.75
+    ],
+    [
+     9.58,
+     40.62
+    ],
+    [
+     0.89,
+     40.62
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "labelSize": 0.01
+  },
+  {
+   "id": "nw-yard",
+   "name": "Yard",
+   "poly": [
+    [
+     14.08,
+     45.5
+    ],
+    [
+     19.0,
+     45.5
+    ],
+    [
+     19.0,
+     64.5
+    ],
+    [
+     14.08,
+     64.5
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "labelSize": 0.7
+  },
+  {
+   "id": "s-outer",
+   "name": "South outer corridor",
+   "poly": [
+    [
+     14.1,
+     0.2
+    ],
+    [
+     77.93,
+     0.2
+    ],
+    [
+     77.93,
+     3.4
+    ],
+    [
+     14.1,
+     3.4
+    ]
+   ],
+   "floor": "tile",
+   "labelAt": [
+    46,
+    1.8
+   ]
+  },
+  {
+   "id": "baths-corridor",
+   "name": "Corridor to the baths",
+   "poly": [
+    [
+     77.93,
+     0.2
+    ],
+    [
+     96.1,
+     0.2
+    ],
+    [
+     96.1,
+     3.0
+    ],
+    [
+     77.93,
+     3.0
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.7
+  },
+  {
+   "id": "s1",
+   "name": "Chamber",
+   "poly": [
+    [
+     22.64,
+     3.4
+    ],
+    [
+     25.27,
+     3.4
+    ],
+    [
+     25.27,
+     9.15
+    ],
+    [
+     22.64,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s2",
+   "name": "Hypocaust",
+   "poly": [
+    [
+     25.27,
+     3.4
+    ],
+    [
+     30.0,
+     3.4
+    ],
+    [
+     30.0,
+     9.15
+    ],
+    [
+     25.27,
+     9.15
+    ]
+   ],
+   "floor": "hypocaust"
+  },
+  {
+   "id": "s3",
+   "name": "Hypocaust",
+   "poly": [
+    [
+     30.0,
+     3.4
+    ],
+    [
+     33.9,
+     3.4
+    ],
+    [
+     33.9,
+     9.15
+    ],
+    [
+     30.0,
+     9.15
+    ]
+   ],
+   "floor": "hypocaust"
+  },
+  {
+   "id": "s4a",
+   "name": "Chamber",
+   "poly": [
+    [
+     33.9,
+     3.4
+    ],
+    [
+     37.86,
+     3.4
+    ],
+    [
+     37.86,
+     6.61
+    ],
+    [
+     33.9,
+     6.61
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "signinum"
+  },
+  {
+   "id": "s4b",
+   "name": "Chamber",
+   "poly": [
+    [
+     33.9,
+     6.61
+    ],
+    [
+     37.86,
+     6.61
+    ],
+    [
+     37.86,
+     9.15
+    ],
+    [
+     33.9,
+     9.15
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "signinum"
+  },
+  {
+   "id": "s5",
+   "name": "Chamber",
+   "poly": [
+    [
+     37.86,
+     3.4
+    ],
+    [
+     48.7,
+     3.4
+    ],
+    [
+     48.7,
+     9.15
+    ],
+    [
+     37.86,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s6a",
+   "name": "Chamber",
+   "poly": [
+    [
+     48.7,
+     3.4
+    ],
+    [
+     52.2,
+     3.4
+    ],
+    [
+     52.2,
+     6.61
+    ],
+    [
+     48.7,
+     6.61
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "signinum"
+  },
+  {
+   "id": "s6b",
+   "name": "Chamber",
+   "poly": [
+    [
+     48.7,
+     6.61
+    ],
+    [
+     52.2,
+     6.61
+    ],
+    [
+     52.2,
+     9.15
+    ],
+    [
+     48.7,
+     9.15
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "signinum"
+  },
+  {
+   "id": "s7",
+   "name": "Chamber",
+   "poly": [
+    [
+     52.2,
+     3.4
+    ],
+    [
+     55.97,
+     3.4
+    ],
+    [
+     55.97,
+     9.15
+    ],
+    [
+     52.2,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s8",
+   "name": "Chamber",
+   "poly": [
+    [
+     55.97,
+     3.4
+    ],
+    [
+     59.95,
+     3.4
+    ],
+    [
+     59.95,
+     9.15
+    ],
+    [
+     55.97,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s9",
+   "name": "Chamber",
+   "poly": [
+    [
+     59.95,
+     3.4
+    ],
+    [
+     66.7,
+     3.4
+    ],
+    [
+     66.7,
+     9.15
+    ],
+    [
+     59.95,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s10",
+   "name": "Passage",
+   "poly": [
+    [
+     66.7,
+     3.4
+    ],
+    [
+     69.51,
+     3.4
+    ],
+    [
+     69.51,
+     9.15
+    ],
+    [
+     66.7,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s11",
+   "name": "Chamber",
+   "poly": [
+    [
+     69.51,
+     3.4
+    ],
+    [
+     77.93,
+     3.4
+    ],
+    [
+     77.93,
+     9.15
+    ],
+    [
+     69.51,
+     9.15
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "s-inner",
+   "name": "South inner corridor",
+   "poly": [
+    [
+     29.93,
+     9.15
+    ],
+    [
+     69.51,
+     9.15
+    ],
+    [
+     69.51,
+     12.8
+    ],
+    [
+     29.93,
+     12.8
+    ]
+   ],
+   "floor": "tile",
+   "labelAt": [
+    50,
+    11
+   ]
+  },
+  {
+   "id": "latrine-1",
+   "name": "Latrine",
+   "poly": [
+    [
+     69.51,
+     9.03
+    ],
+    [
+     77.93,
+     9.03
+    ],
+    [
+     77.93,
+     12.71
+    ],
+    [
+     69.51,
+     12.71
+    ]
+   ],
+   "floor": "tile",
+   "note": "\"at the eastern end of the internal corridor of the same wing were situated the latrines\" (Fox & St John Hope 1894)"
+  },
+  {
+   "id": "latrine-2",
+   "name": "Latrine",
+   "poly": [
+    [
+     69.9,
+     12.71
+    ],
+    [
+     77.93,
+     12.71
+    ],
+    [
+     77.93,
+     14.39
+    ],
+    [
+     69.9,
+     14.39
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.5
+  },
+  {
+   "id": "sw-corridor",
+   "name": "Corridor",
+   "poly": [
+    [
+     14.1,
+     3.4
+    ],
+    [
+     17.75,
+     3.4
+    ],
+    [
+     17.75,
+     16.39
+    ],
+    [
+     14.1,
+     16.39
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.6,
+   "note": "the south corridor \"returned northward round these latter till it met the apsidal room\" (1894)"
+  },
+  {
+   "id": "sw-1",
+   "name": "Chamber",
+   "poly": [
+    [
+     17.75,
+     3.8
+    ],
+    [
+     22.64,
+     3.8
+    ],
+    [
+     22.64,
+     9.53
+    ],
+    [
+     17.75,
+     9.53
+    ]
+   ],
+   "labelSize": 0.7,
+   "floor": "signinum"
+  },
+  {
+   "id": "sw-2",
+   "name": "Chamber",
+   "poly": [
+    [
+     17.75,
+     9.53
+    ],
+    [
+     22.64,
+     9.53
+    ],
+    [
+     22.64,
+     13.14
+    ],
+    [
+     17.75,
+     13.14
+    ]
+   ],
+   "labelSize": 0.7,
+   "floor": "signinum"
+  },
+  {
+   "id": "apse-room",
+   "name": "Apsidal room",
+   "poly": [
+    [
+     18.95,
+     16.39
+    ],
+    [
+     22.64,
+     16.39
+    ],
+    [
+     22.64,
+     22.35
+    ],
+    [
+     18.95,
+     22.35
+    ]
+   ],
+   "note": "added on the west in an alteration (1894); its use is not known",
+   "floor": "signinum"
+  },
+  {
+   "id": "w-outer",
+   "name": "West corridor",
+   "poly": [
+    [
+     19.2,
+     22.35
+    ],
+    [
+     22.7,
+     22.35
+    ],
+    [
+     22.7,
+     41.29
+    ],
+    [
+     19.2,
+     41.29
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.7,
+   "note": "the surviving middle third of the original outer corridor (1894)"
+  },
+  {
+   "id": "w-inner",
+   "name": "West inner corridor",
+   "poly": [
+    [
+     29.85,
+     12.8
+    ],
+    [
+     33.47,
+     12.8
+    ],
+    [
+     33.47,
+     48.5
+    ],
+    [
+     29.85,
+     48.5
+    ]
+   ],
+   "floor": "tile",
+   "labelAt": [
+    31.6,
+    30
+   ]
+  },
+  {
+   "id": "w1",
+   "name": "Chamber",
+   "poly": [
+    [
+     22.7,
+     12.97
+    ],
+    [
+     29.85,
+     12.97
+    ],
+    [
+     29.85,
+     18.69
+    ],
+    [
+     22.7,
+     18.69
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "w2",
+   "name": "Chamber",
+   "poly": [
+    [
+     22.7,
+     18.69
+    ],
+    [
+     29.85,
+     18.69
+    ],
+    [
+     29.85,
+     24.57
+    ],
+    [
+     22.7,
+     24.57
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "w3",
+   "name": "Hypocaust",
+   "poly": [
+    [
+     22.7,
+     27.85
+    ],
+    [
+     29.85,
+     27.85
+    ],
+    [
+     29.85,
+     33.43
+    ],
+    [
+     22.7,
+     33.43
+    ]
+   ],
+   "floor": "hypocaust"
+  },
+  {
+   "id": "w4",
+   "name": "Chamber",
+   "poly": [
+    [
+     22.7,
+     36.15
+    ],
+    [
+     29.85,
+     36.15
+    ],
+    [
+     29.85,
+     41.22
+    ],
+    [
+     22.7,
+     41.22
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "w-hyp-big",
+   "name": "Heated hall",
+   "poly": [
+    [
+     19.08,
+     41.25
+    ],
+    [
+     29.85,
+     41.25
+    ],
+    [
+     29.85,
+     47.45
+    ],
+    [
+     19.08,
+     47.45
+    ]
+   ],
+   "floor": "hypocaust",
+   "note": "the largest of the three heated rooms (1894)"
+  },
+  {
+   "id": "w5a",
+   "name": "Chamber",
+   "poly": [
+    [
+     22.7,
+     24.57
+    ],
+    [
+     24.9,
+     24.57
+    ],
+    [
+     24.9,
+     27.85
+    ],
+    [
+     22.7,
+     27.85
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w5b",
+   "name": "Chamber",
+   "poly": [
+    [
+     24.9,
+     24.57
+    ],
+    [
+     29.85,
+     24.57
+    ],
+    [
+     29.85,
+     27.85
+    ],
+    [
+     24.9,
+     27.85
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "signinum"
+  },
+  {
+   "id": "w6a",
+   "name": "Room",
+   "poly": [
+    [
+     22.7,
+     33.43
+    ],
+    [
+     25.75,
+     33.43
+    ],
+    [
+     25.75,
+     36.15
+    ],
+    [
+     22.7,
+     36.15
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w6b",
+   "name": "Room",
+   "poly": [
+    [
+     25.75,
+     33.43
+    ],
+    [
+     29.85,
+     33.43
+    ],
+    [
+     29.85,
+     36.15
+    ],
+    [
+     25.75,
+     36.15
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-passage",
+   "name": "Passage",
+   "poly": [
+    [
+     19.0,
+     47.45
+    ],
+    [
+     29.8,
+     47.45
+    ],
+    [
+     29.8,
+     49.25
+    ],
+    [
+     19.0,
+     49.25
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-nw1",
+   "name": "Room",
+   "poly": [
+    [
+     19.0,
+     49.25
+    ],
+    [
+     29.8,
+     49.25
+    ],
+    [
+     29.8,
+     52.1
+    ],
+    [
+     19.0,
+     52.1
+    ]
+   ],
+   "labelSize": 0.7,
+   "floor": "signinum"
+  },
+  {
+   "id": "kitchen",
+   "name": "Kitchen?",
+   "poly": [
+    [
+     19.0,
+     52.1
+    ],
+    [
+     29.8,
+     52.1
+    ],
+    [
+     29.8,
+     58.25
+    ],
+    [
+     19.0,
+     58.25
+    ]
+   ],
+   "note": "\"at the north-west corner, probably the kitchen and its dependencies\" (Fox & St John Hope 1894)",
+   "floor": "signinum"
+  },
+  {
+   "id": "w-nw2",
+   "name": "Room",
+   "poly": [
+    [
+     19.0,
+     58.25
+    ],
+    [
+     22.69,
+     58.25
+    ],
+    [
+     22.69,
+     61.8
+    ],
+    [
+     19.0,
+     61.8
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-nw3",
+   "name": "Room",
+   "poly": [
+    [
+     22.69,
+     58.25
+    ],
+    [
+     29.8,
+     58.25
+    ],
+    [
+     29.8,
+     61.8
+    ],
+    [
+     22.69,
+     61.8
+    ]
+   ],
+   "labelSize": 0.7,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-nw4",
+   "name": "Room",
+   "poly": [
+    [
+     29.8,
+     58.25
+    ],
+    [
+     33.9,
+     58.25
+    ],
+    [
+     33.9,
+     61.88
+    ],
+    [
+     29.8,
+     61.88
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-nw5",
+   "name": "Room",
+   "poly": [
+    [
+     29.8,
+     56.21
+    ],
+    [
+     33.47,
+     56.21
+    ],
+    [
+     33.47,
+     58.25
+    ],
+    [
+     29.8,
+     58.25
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-nw6",
+   "name": "Room",
+   "poly": [
+    [
+     29.8,
+     52.6
+    ],
+    [
+     33.47,
+     52.6
+    ],
+    [
+     33.47,
+     56.21
+    ],
+    [
+     29.8,
+     56.21
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "w-inner-n",
+   "name": "Corridor",
+   "poly": [
+    [
+     29.8,
+     48.5
+    ],
+    [
+     33.47,
+     48.5
+    ],
+    [
+     33.47,
+     52.6
+    ],
+    [
+     29.8,
+     52.6
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.5
+  },
+  {
+   "id": "n-inner",
+   "name": "North inner corridor",
+   "poly": [
+    [
+     33.47,
+     48.5
+    ],
+    [
+     70.64,
+     48.5
+    ],
+    [
+     70.64,
+     52.3
+    ],
+    [
+     33.47,
+     52.3
+    ]
+   ],
+   "floor": "tile",
+   "labelAt": [
+    58,
+    50.3
+   ]
+  },
+  {
+   "id": "n-pass",
+   "name": "Passage",
+   "poly": [
+    [
+     33.47,
+     52.3
+    ],
+    [
+     35.97,
+     52.3
+    ],
+    [
+     35.97,
+     58.2
+    ],
+    [
+     33.47,
+     58.2
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "n-platform",
+   "name": "Room with solid floor",
+   "poly": [
+    [
+     35.97,
+     52.53
+    ],
+    [
+     40.77,
+     52.53
+    ],
+    [
+     40.77,
+     58.2
+    ],
+    [
+     35.97,
+     58.2
+    ]
+   ],
+   "labelSize": 0.6,
+   "base": {
+    "poly": [
+     [
+      36.3,
+      52.85
+     ],
+     [
+      40.45,
+      52.85
+     ],
+     [
+      40.45,
+      57.9
+     ],
+     [
+      36.3,
+      57.9
+     ]
+    ],
+    "h": 0.45,
+    "note": "a solid mass of masonry here in the Great Plan (the 1893 plate shows a room): modelled as a low platform (user, 2026-10-12)"
+   },
+   "floor": "signinum"
+  },
+  {
+   "id": "vestibule",
+   "name": "Entrance hall",
+   "poly": [
+    [
+     40.77,
+     48.71
+    ],
+    [
+     47.43,
+     48.71
+    ],
+    [
+     47.43,
+     58.1
+    ],
+    [
+     40.77,
+     58.1
+    ]
+   ],
+   "floor": "tile",
+   "note": "the main entrance, near the west end of the north wing, \"in amplitude and arrangement very much resembled the main entrance to the forum\" (1894)"
+  },
+  {
+   "id": "n-outer",
+   "name": "North outer corridor",
+   "poly": [
+    [
+     33.9,
+     58.1
+    ],
+    [
+     74.25,
+     58.1
+    ],
+    [
+     74.25,
+     61.3
+    ],
+    [
+     33.9,
+     61.3
+    ]
+   ],
+   "floor": "tile",
+   "labelAt": [
+    60,
+    59.7
+   ]
+  },
+  {
+   "id": "n1",
+   "name": "Chamber",
+   "poly": [
+    [
+     47.43,
+     52.2
+    ],
+    [
+     52.85,
+     52.2
+    ],
+    [
+     52.85,
+     57.7
+    ],
+    [
+     47.43,
+     57.7
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "n2",
+   "name": "Chamber",
+   "poly": [
+    [
+     52.85,
+     52.2
+    ],
+    [
+     57.0,
+     52.2
+    ],
+    [
+     57.0,
+     57.7
+    ],
+    [
+     52.85,
+     57.7
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "n3a",
+   "name": "Chamber",
+   "poly": [
+    [
+     57.0,
+     52.2
+    ],
+    [
+     60.92,
+     52.2
+    ],
+    [
+     60.92,
+     54.7
+    ],
+    [
+     57.0,
+     54.7
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "n3b",
+   "name": "Chamber",
+   "poly": [
+    [
+     57.0,
+     54.7
+    ],
+    [
+     60.92,
+     54.7
+    ],
+    [
+     60.92,
+     57.7
+    ],
+    [
+     57.0,
+     57.7
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "n4",
+   "name": "Chamber",
+   "poly": [
+    [
+     60.92,
+     52.2
+    ],
+    [
+     66.34,
+     52.2
+    ],
+    [
+     66.34,
+     57.7
+    ],
+    [
+     60.92,
+     57.7
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "n5",
+   "name": "Chamber",
+   "poly": [
+    [
+     66.34,
+     52.2
+    ],
+    [
+     70.64,
+     52.2
+    ],
+    [
+     70.64,
+     57.7
+    ],
+    [
+     66.34,
+     57.7
+    ]
+   ],
+   "floor": "signinum"
+  },
+  {
+   "id": "n6a",
+   "name": "Chamber",
+   "poly": [
+    [
+     70.64,
+     51.5
+    ],
+    [
+     74.25,
+     51.5
+    ],
+    [
+     74.25,
+     54.3
+    ],
+    [
+     70.64,
+     54.3
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "n6b",
+   "name": "Chamber",
+   "poly": [
+    [
+     70.64,
+     54.3
+    ],
+    [
+     74.25,
+     54.3
+    ],
+    [
+     74.25,
+     57.26
+    ],
+    [
+     70.64,
+     57.26
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "ne-1",
+   "name": "Corner room",
+   "poly": [
+    [
+     70.64,
+     47.8
+    ],
+    [
+     78.36,
+     47.8
+    ],
+    [
+     78.36,
+     51.5
+    ],
+    [
+     70.64,
+     51.5
+    ]
+   ],
+   "labelSize": 0.7,
+   "floor": "signinum"
+  },
+  {
+   "id": "ne-2",
+   "name": "Chamber",
+   "poly": [
+    [
+     74.25,
+     51.44
+    ],
+    [
+     78.79,
+     51.44
+    ],
+    [
+     78.79,
+     57.16
+    ],
+    [
+     74.25,
+     57.16
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "signinum"
+  },
+  {
+   "id": "ne-3",
+   "name": "Room",
+   "poly": [
+    [
+     74.25,
+     57.16
+    ],
+    [
+     78.79,
+     57.16
+    ],
+    [
+     78.79,
+     60.79
+    ],
+    [
+     74.25,
+     60.79
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "granary",
+   "name": "Granary",
+   "poly": [
+    [
+     0.89,
+     28.9
+    ],
+    [
+     9.58,
+     28.9
+    ],
+    [
+     9.58,
+     37.75
+    ],
+    [
+     0.89,
+     37.75
+    ]
+   ],
+   "floor": "tile",
+   "note": "\"probably a granary, measuring 60 by 30 ft, with stoutly buttressed west wall and several smaller chambers\" (Boon 1957)"
+  },
+  {
+   "id": "granary-s1",
+   "name": "Chamber",
+   "poly": [
+    [
+     0.89,
+     22.9
+    ],
+    [
+     7.45,
+     22.9
+    ],
+    [
+     7.45,
+     25.9
+    ],
+    [
+     0.89,
+     25.9
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  },
+  {
+   "id": "granary-s2",
+   "name": "Chamber",
+   "poly": [
+    [
+     4.3,
+     25.9
+    ],
+    [
+     7.45,
+     25.9
+    ],
+    [
+     7.45,
+     28.9
+    ],
+    [
+     4.3,
+     28.9
+    ]
+   ],
+   "labelSize": 0.4,
+   "floor": "signinum"
+  },
+  {
+   "id": "granary-s3",
+   "name": "Chamber",
+   "poly": [
+    [
+     0.89,
+     25.9
+    ],
+    [
+     4.3,
+     25.9
+    ],
+    [
+     4.3,
+     28.9
+    ],
+    [
+     0.89,
+     28.9
+    ]
+   ],
+   "labelSize": 0.4,
+   "floor": "signinum"
+  },
+  {
+   "id": "granary-s4",
+   "name": "Chamber",
+   "poly": [
+    [
+     7.45,
+     22.9
+    ],
+    [
+     9.58,
+     22.9
+    ],
+    [
+     9.58,
+     28.9
+    ],
+    [
+     7.45,
+     28.9
+    ]
+   ],
+   "labelSize": 0.4,
+   "floor": "signinum"
+  },
+  {
+   "id": "b1",
+   "name": "1 Hot room",
+   "poly": [
+    [
+     96.74,
+     24.01
+    ],
+    [
+     101.6,
+     24.01
+    ],
+    [
+     101.6,
+     27.5
+    ],
+    [
+     96.74,
+     27.5
+    ]
+   ],
+   "floor": "hypocaust",
+   "labelSize": 0.6,
+   "note": "No. 1: hypocaust, 27 pilae, apse to the east; praefurnium at the north end (Hilton Price 1887)",
+   "vault": true
+  },
+  {
+   "id": "b2",
+   "name": "2 Hot room",
+   "poly": [
+    [
+     96.74,
+     20.72
+    ],
+    [
+     101.6,
+     20.72
+    ],
+    [
+     101.6,
+     24.01
+    ],
+    [
+     96.74,
+     24.01
+    ]
+   ],
+   "floor": "hypocaust",
+   "labelSize": 0.6,
+   "note": "No. 2: hypocaust, 20 pilae, apse to the east (Hilton Price 1887)",
+   "vault": true
+  },
+  {
+   "id": "b3",
+   "name": "3",
+   "poly": [
+    [
+     96.74,
+     16.46
+    ],
+    [
+     101.6,
+     16.46
+    ],
+    [
+     101.6,
+     20.72
+    ],
+    [
+     96.74,
+     20.72
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "tile"
+  },
+  {
+   "id": "b4",
+   "name": "4 Reservoir",
+   "poly": [
+    [
+     94.02,
+     17.0
+    ],
+    [
+     96.4,
+     17.0
+    ],
+    [
+     96.4,
+     19.42
+    ],
+    [
+     94.02,
+     19.42
+    ]
+   ],
+   "labelSize": 0.4,
+   "note": "spring-fed reservoir, 6 ft square inside, paved with heavy tiles (Boon 1957); walls 3 ft 4 in, lined with brick (Hilton Price 1887)",
+   "floor": "signinum"
+  },
+  {
+   "id": "b5",
+   "name": "5 Apodyterium",
+   "poly": [
+    [
+     96.07,
+     0.2
+    ],
+    [
+     102.0,
+     0.2
+    ],
+    [
+     102.0,
+     16.46
+    ],
+    [
+     96.07,
+     16.46
+    ]
+   ],
+   "floor": "tile",
+   "note": "No. 5, perhaps the apodyterium, 52 ft 2 in by 17 ft 8 in, red tessellated floor (Hilton Price 1887)"
+  },
+  {
+   "id": "b15",
+   "name": "15 Corridor",
+   "poly": [
+    [
+     101.6,
+     16.46
+    ],
+    [
+     116.7,
+     16.46
+    ],
+    [
+     116.7,
+     19.1
+    ],
+    [
+     101.6,
+     19.1
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.7
+  },
+  {
+   "id": "b16",
+   "name": "16 Latrine",
+   "poly": [
+    [
+     111.31,
+     12.68
+    ],
+    [
+     116.7,
+     12.68
+    ],
+    [
+     116.7,
+     16.46
+    ],
+    [
+     111.31,
+     16.46
+    ]
+   ],
+   "floor": "tile",
+   "labelSize": 0.6,
+   "note": "latrine (Fulford 2002 plan); a drain under its floor, with oak beams above it (Hilton Price 1887)"
+  },
+  {
+   "id": "b6",
+   "name": "6",
+   "poly": [
+    [
+     102.0,
+     8.5
+    ],
+    [
+     106.65,
+     8.5
+    ],
+    [
+     106.65,
+     13.62
+    ],
+    [
+     102.0,
+     13.62
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "tile"
+  },
+  {
+   "id": "b7",
+   "name": "7",
+   "poly": [
+    [
+     102.0,
+     3.63
+    ],
+    [
+     106.68,
+     3.63
+    ],
+    [
+     106.68,
+     8.5
+    ],
+    [
+     102.0,
+     8.5
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "tile"
+  },
+  {
+   "id": "b8w",
+   "name": "8 (recess)",
+   "poly": [
+    [
+     102.14,
+     0.2
+    ],
+    [
+     106.85,
+     0.2
+    ],
+    [
+     106.85,
+     3.63
+    ],
+    [
+     102.14,
+     3.63
+    ]
+   ],
+   "floor": "hypocaust",
+   "labelSize": 0.4,
+   "note": "western recess of No. 8 with a hypocaust of horizontal box-tile flues (Hilton Price 1887)",
+   "vault": true
+  },
+  {
+   "id": "b8",
+   "name": "8 Hot room",
+   "poly": [
+    [
+     106.85,
+     0.2
+    ],
+    [
+     112.79,
+     0.2
+    ],
+    [
+     112.79,
+     5.65
+    ],
+    [
+     106.85,
+     5.65
+    ]
+   ],
+   "floor": "hypocaust",
+   "labelSize": 0.6,
+   "vault": true
+  },
+  {
+   "id": "b9",
+   "name": "9",
+   "poly": [
+    [
+     106.68,
+     5.65
+    ],
+    [
+     109.38,
+     5.65
+    ],
+    [
+     109.38,
+     10.7
+    ],
+    [
+     106.68,
+     10.7
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "tile"
+  },
+  {
+   "id": "b10",
+   "name": "10",
+   "poly": [
+    [
+     109.38,
+     5.65
+    ],
+    [
+     113.5,
+     5.65
+    ],
+    [
+     113.5,
+     10.7
+    ],
+    [
+     109.38,
+     10.7
+    ]
+   ],
+   "floor": "hypocaust",
+   "labelSize": 0.6,
+   "vault": true
+  },
+  {
+   "id": "b11w",
+   "name": "Hot room",
+   "poly": [
+    [
+     112.79,
+     3.0
+    ],
+    [
+     117.5,
+     3.0
+    ],
+    [
+     117.5,
+     8.43
+    ],
+    [
+     112.79,
+     8.43
+    ]
+   ],
+   "floor": "hypocaust",
+   "labelSize": 0.5,
+   "vault": true
+  },
+  {
+   "id": "b11",
+   "name": "11",
+   "poly": [
+    [
+     117.5,
+     3.0
+    ],
+    [
+     121.6,
+     3.0
+    ],
+    [
+     121.6,
+     8.43
+    ],
+    [
+     117.5,
+     8.43
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "tile"
+  },
+  {
+   "id": "b12",
+   "name": "12",
+   "poly": [
+    [
+     121.6,
+     6.23
+    ],
+    [
+     124.6,
+     6.23
+    ],
+    [
+     124.6,
+     8.43
+    ],
+    [
+     121.6,
+     8.43
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "tile"
+  },
+  {
+   "id": "b13",
+   "name": "13",
+   "poly": [
+    [
+     121.6,
+     3.0
+    ],
+    [
+     124.6,
+     3.0
+    ],
+    [
+     124.6,
+     6.23
+    ],
+    [
+     121.6,
+     6.23
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "tile"
+  },
+  {
+   "id": "b14",
+   "name": "14",
+   "poly": [
+    [
+     124.6,
+     3.0
+    ],
+    [
+     129.51,
+     3.0
+    ],
+    [
+     129.51,
+     7.79
+    ],
+    [
+     124.6,
+     7.79
+    ]
+   ],
+   "labelSize": 0.6,
+   "floor": "tile"
+  },
+  {
+   "id": "b-s",
+   "name": "Service rooms",
+   "poly": [
+    [
+     112.79,
+     0.2
+    ],
+    [
+     122.15,
+     0.2
+    ],
+    [
+     122.15,
+     3.0
+    ],
+    [
+     112.79,
+     3.0
+    ]
+   ],
+   "labelSize": 0.5,
+   "floor": "signinum"
+  }
+ ],
+ "walls": [
+  {
+   "id": "d0",
+   "a": [
+    77.93,
+    0.11
+   ],
+   "b": [
+    96.07,
+    0.11
+   ],
+   "t": 0.5,
+   "h": 3.2,
+   "ev": "S"
+  },
+  {
+   "id": "d0n",
+   "a": [
+    96.07,
+    0.11
+   ],
+   "b": [
+    102.0,
+    0.11
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d0nnn",
+   "a": [
+    102.0,
+    0.11
+   ],
+   "b": [
+    112.79,
+    0.11
+   ],
+   "t": 0.5,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d0nn",
+   "a": [
+    112.79,
+    0.11
+   ],
+   "b": [
+    122.15,
+    0.11
+   ],
+   "t": 0.5,
+   "h": 3.0,
+   "ev": "S"
+  },
+  {
+   "id": "d1",
+   "a": [
+    14.1,
+    0.24
+   ],
+   "b": [
+    77.93,
+    0.24
+   ],
+   "t": 0.4,
+   "h": 3.22,
+   "ev": "S",
+   "windows": [
+    {
+     "at": 2.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 6.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 10.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 14.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 18.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 22.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 26.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 30.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 34.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 38.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 42.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 46.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 50.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 54.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 58.9,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d2",
+   "a": [
+    92.7,
+    2.9
+   ],
+   "b": [
+    96.07,
+    2.9
+   ],
+   "t": 0.4,
+   "h": 3.2,
+   "ev": "S"
+  },
+  {
+   "id": "d3",
+   "a": [
+    112.79,
+    3.01
+   ],
+   "b": [
+    129.51,
+    3.01
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d6",
+   "a": [
+    52.2,
+    3.28
+   ],
+   "b": [
+    77.93,
+    3.28
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d6+d5+d4",
+   "openings": [
+    {
+     "at": 15.9,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "cross passage between the corridors: gap in the survey"
+    }
+   ]
+  },
+  {
+   "id": "d8",
+   "a": [
+    33.9,
+    3.38
+   ],
+   "b": [
+    52.2,
+    3.38
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d8+d7"
+  },
+  {
+   "id": "d9",
+   "a": [
+    30.05,
+    3.48
+   ],
+   "b": [
+    33.9,
+    3.48
+   ],
+   "t": 0.4,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d10",
+   "a": [
+    25.27,
+    3.59
+   ],
+   "b": [
+    30.05,
+    3.59
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d11",
+   "a": [
+    103.7,
+    3.63
+   ],
+   "b": [
+    106.75,
+    3.63
+   ],
+   "t": 1.3,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d12",
+   "a": [
+    22.69,
+    3.69
+   ],
+   "b": [
+    25.27,
+    3.69
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d13",
+   "a": [
+    17.75,
+    3.8
+   ],
+   "b": [
+    22.69,
+    3.8
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.25,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d14",
+   "a": [
+    106.75,
+    5.65
+   ],
+   "b": [
+    112.79,
+    5.65
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d15",
+   "a": [
+    121.6,
+    6.23
+   ],
+   "b": [
+    124.1,
+    6.23
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d16",
+   "a": [
+    59.95,
+    6.34
+   ],
+   "b": [
+    63.5,
+    6.34
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d17",
+   "a": [
+    33.9,
+    6.61
+   ],
+   "b": [
+    37.86,
+    6.61
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.0,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d18",
+   "a": [
+    48.72,
+    6.61
+   ],
+   "b": [
+    52.2,
+    6.61
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.68,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d19",
+   "a": [
+    125.1,
+    7.79
+   ],
+   "b": [
+    129.51,
+    7.79
+   ],
+   "t": 0.9,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d20",
+   "a": [
+    112.79,
+    8.43
+   ],
+   "b": [
+    124.1,
+    8.43
+   ],
+   "t": 0.8,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d21",
+   "a": [
+    103.8,
+    8.5
+   ],
+   "b": [
+    106.67,
+    8.5
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d22",
+   "a": [
+    69.51,
+    9.03
+   ],
+   "b": [
+    77.93,
+    9.03
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 4.21,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 4.21,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d23",
+   "a": [
+    37.86,
+    9.11
+   ],
+   "b": [
+    69.51,
+    9.11
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d23+d25",
+   "openings": [
+    {
+     "at": 5.42,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 12.59,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 16.23,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 20.1,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 25.47,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 30.25,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 30.24,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true,
+     "note": "the passage room crosses the range between the two corridors"
+    }
+   ],
+   "windows": [
+    {
+     "at": 5.42,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    },
+    {
+     "at": 12.59,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    },
+    {
+     "at": 16.23,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    },
+    {
+     "at": 20.1,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    },
+    {
+     "at": 25.47,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    },
+    {
+     "at": 30.25,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d27",
+   "a": [
+    28.5,
+    9.19
+   ],
+   "b": [
+    37.86,
+    9.19
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d27+d26+d24",
+   "openings": [
+    {
+     "at": 3.45,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 7.38,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 3.45,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    },
+    {
+     "at": 7.38,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d28",
+   "a": [
+    25.27,
+    9.34
+   ],
+   "b": [
+    28.1,
+    9.34
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.36,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d29",
+   "a": [
+    22.69,
+    9.37
+   ],
+   "b": [
+    25.27,
+    9.37
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.26,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 1.26,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d30",
+   "a": [
+    17.75,
+    9.53
+   ],
+   "b": [
+    22.69,
+    9.53
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d31",
+   "a": [
+    106.67,
+    10.7
+   ],
+   "b": [
+    113.5,
+    10.7
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d33",
+   "a": [
+    69.51,
+    12.71
+   ],
+   "b": [
+    77.93,
+    12.71
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 4.19,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d32",
+   "a": [
+    111.31,
+    12.68
+   ],
+   "b": [
+    117.0,
+    12.68
+   ],
+   "t": 0.6,
+   "h": 3.6,
+   "ev": "S"
+  },
+  {
+   "id": "d34",
+   "a": [
+    33.47,
+    12.77
+   ],
+   "b": [
+    69.51,
+    12.77
+   ],
+   "t": 0.6,
+   "h": 3.21,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 17.53,
+     "w": 2.4,
+     "oh": 3.0,
+     "conjecture": true,
+     "note": "south inner corridor to the courtyard"
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 6.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 10.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 14.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 22.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 26.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 30.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 34.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d35",
+   "a": [
+    22.69,
+    12.97
+   ],
+   "b": [
+    29.93,
+    12.97
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d36",
+   "a": [
+    17.75,
+    13.14
+   ],
+   "b": [
+    22.69,
+    13.14
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d37",
+   "a": [
+    102.0,
+    13.62
+   ],
+   "b": [
+    106.67,
+    13.62
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d38",
+   "a": [
+    69.51,
+    14.39
+   ],
+   "b": [
+    77.93,
+    14.39
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d40",
+   "a": [
+    18.2,
+    16.39
+   ],
+   "b": [
+    22.69,
+    16.39
+   ],
+   "t": 1.4,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d41",
+   "a": [
+    97.9,
+    16.51
+   ],
+   "b": [
+    116.7,
+    16.51
+   ],
+   "t": 0.7,
+   "h": 3.6,
+   "ev": "S",
+   "src": "d41+d42",
+   "openings": [
+    {
+     "at": 16.1,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true,
+     "note": "latrine entered from corridor 15"
+    }
+   ]
+  },
+  {
+   "id": "d43",
+   "a": [
+    94.02,
+    17.0
+   ],
+   "b": [
+    96.07,
+    17.0
+   ],
+   "t": 1.0,
+   "h": 1.6,
+   "ev": "S",
+   "note": "reservoir No. 4: walls 3 ft 4 in thick, brick-lined; \"a superstructure of great weight, or one requiring extra protection\" (Hilton Price 1887). Shown as a low cistern (X)"
+  },
+  {
+   "id": "d44",
+   "a": [
+    22.69,
+    18.69
+   ],
+   "b": [
+    29.87,
+    18.69
+   ],
+   "t": 0.7,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d45",
+   "a": [
+    110.4,
+    19.05
+   ],
+   "b": [
+    116.7,
+    19.05
+   ],
+   "t": 0.7,
+   "h": 3.6,
+   "ev": "S"
+  },
+  {
+   "id": "d46",
+   "a": [
+    101.6,
+    19.19
+   ],
+   "b": [
+    108.5,
+    19.19
+   ],
+   "t": 0.7,
+   "h": 3.6,
+   "ev": "S"
+  },
+  {
+   "id": "d47",
+   "a": [
+    94.02,
+    19.42
+   ],
+   "b": [
+    96.74,
+    19.42
+   ],
+   "t": 1.0,
+   "h": 1.6,
+   "ev": "S",
+   "note": "reservoir No. 4: walls 3 ft 4 in thick, brick-lined; \"a superstructure of great weight, or one requiring extra protection\" (Hilton Price 1887). Shown as a low cistern (X)"
+  },
+  {
+   "id": "d48",
+   "a": [
+    96.74,
+    20.72
+   ],
+   "b": [
+    101.6,
+    20.72
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d49",
+   "a": [
+    16.6,
+    22.35
+   ],
+   "b": [
+    22.69,
+    22.35
+   ],
+   "t": 0.95,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 4.3,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d50",
+   "a": [
+    7.45,
+    22.59
+   ],
+   "b": [
+    9.58,
+    22.59
+   ],
+   "t": 0.6,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d51",
+   "a": [
+    0.89,
+    22.9
+   ],
+   "b": [
+    7.45,
+    22.9
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.11,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true,
+     "note": "granary chambers: no doorways recorded"
+    }
+   ]
+  },
+  {
+   "id": "d52",
+   "a": [
+    100.1,
+    24.01
+   ],
+   "b": [
+    101.6,
+    24.01
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d54",
+   "a": [
+    22.69,
+    24.61
+   ],
+   "b": [
+    29.87,
+    24.61
+   ],
+   "t": 0.5,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d54+d53"
+  },
+  {
+   "id": "d55",
+   "a": [
+    4.3,
+    25.73
+   ],
+   "b": [
+    7.45,
+    25.73
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.6,
+     "w": 0.9,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d56",
+   "a": [
+    0.89,
+    25.9
+   ],
+   "b": [
+    4.3,
+    25.9
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.71,
+     "w": 0.9,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d57",
+   "a": [
+    100.05,
+    27.45
+   ],
+   "b": [
+    101.6,
+    27.45
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d58",
+   "a": [
+    96.74,
+    27.6
+   ],
+   "b": [
+    99.15,
+    27.6
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d59",
+   "a": [
+    22.69,
+    27.85
+   ],
+   "b": [
+    29.87,
+    27.85
+   ],
+   "t": 0.65,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d60",
+   "a": [
+    5.9,
+    28.86
+   ],
+   "b": [
+    7.45,
+    28.86
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d61",
+   "a": [
+    2.8,
+    28.96
+   ],
+   "b": [
+    4.3,
+    28.96
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d62",
+   "a": [
+    22.69,
+    33.43
+   ],
+   "b": [
+    29.87,
+    33.43
+   ],
+   "t": 0.9,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d63",
+   "a": [
+    22.69,
+    36.15
+   ],
+   "b": [
+    29.87,
+    36.15
+   ],
+   "t": 0.5,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d64",
+   "a": [
+    0.89,
+    37.75
+   ],
+   "b": [
+    6.8,
+    37.75
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d65",
+   "a": [
+    0.89,
+    40.62
+   ],
+   "b": [
+    18.9,
+    40.62
+   ],
+   "t": 0.6,
+   "h": 2.4,
+   "ev": "S"
+  },
+  {
+   "id": "d66",
+   "a": [
+    22.69,
+    41.22
+   ],
+   "b": [
+    29.87,
+    41.22
+   ],
+   "t": 0.8,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d67",
+   "a": [
+    19.08,
+    41.29
+   ],
+   "b": [
+    22.69,
+    41.29
+   ],
+   "t": 0.55,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d68",
+   "a": [
+    14.08,
+    45.53
+   ],
+   "b": [
+    18.98,
+    45.53
+   ],
+   "t": 0.5,
+   "h": 2.4,
+   "ev": "S"
+  },
+  {
+   "id": "d70",
+   "a": [
+    18.98,
+    47.48
+   ],
+   "b": [
+    29.79,
+    47.48
+   ],
+   "t": 0.7,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d70+d69",
+   "openings": [
+    {
+     "at": 5.42,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d71",
+   "a": [
+    70.64,
+    47.8
+   ],
+   "b": [
+    78.36,
+    47.8
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d72",
+   "a": [
+    47.43,
+    48.28
+   ],
+   "b": [
+    70.64,
+    48.28
+   ],
+   "t": 0.6,
+   "h": 3.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 10.57,
+     "w": 2.4,
+     "oh": 3.0,
+     "conjecture": true,
+     "note": "north inner corridor to the courtyard"
+    }
+   ],
+   "windows": [
+    {
+     "at": 4.57,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 8.57,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 12.57,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 16.57,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 20.57,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d73",
+   "a": [
+    40.77,
+    48.71
+   ],
+   "b": [
+    47.43,
+    48.71
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.33,
+     "w": 3.6,
+     "oh": 3.6,
+     "conjecture": true,
+     "note": "entrance hall to the courtyard: the Great Plan shows a wall line here (a foundation?)"
+    }
+   ]
+  },
+  {
+   "id": "d74",
+   "a": [
+    33.47,
+    48.8
+   ],
+   "b": [
+    40.77,
+    48.8
+   ],
+   "t": 0.6,
+   "h": 3.29,
+   "ev": "S",
+   "windows": [
+    {
+     "at": 2.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 6.53,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d75",
+   "a": [
+    18.98,
+    49.25
+   ],
+   "b": [
+    29.79,
+    49.25
+   ],
+   "t": 0.7,
+   "h": 8.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 5.42,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d76",
+   "a": [
+    74.25,
+    51.44
+   ],
+   "b": [
+    78.36,
+    51.44
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.15,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d77",
+   "a": [
+    70.64,
+    51.52
+   ],
+   "b": [
+    74.25,
+    51.52
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.8,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 1.8,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d78",
+   "a": [
+    66.34,
+    51.69
+   ],
+   "b": [
+    70.64,
+    51.69
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.15,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.15,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d79",
+   "a": [
+    60.92,
+    51.82
+   ],
+   "b": [
+    66.34,
+    51.82
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.71,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.71,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d80",
+   "a": [
+    57.0,
+    51.94
+   ],
+   "b": [
+    60.92,
+    51.94
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.96,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 1.96,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d81",
+   "a": [
+    18.98,
+    52.1
+   ],
+   "b": [
+    29.79,
+    52.1
+   ],
+   "t": 0.4,
+   "h": 8.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 5.42,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d82",
+   "a": [
+    52.85,
+    52.1
+   ],
+   "b": [
+    57.0,
+    52.1
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.07,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.07,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d83",
+   "a": [
+    47.43,
+    52.27
+   ],
+   "b": [
+    52.85,
+    52.27
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.71,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.71,
+     "w": 0.8,
+     "sill": 4.65,
+     "head": 5.45,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d84",
+   "a": [
+    35.97,
+    52.53
+   ],
+   "b": [
+    40.77,
+    52.53
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.43,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d85",
+   "a": [
+    29.79,
+    52.6
+   ],
+   "b": [
+    33.31,
+    52.6
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d86",
+   "a": [
+    70.64,
+    54.3
+   ],
+   "b": [
+    74.25,
+    54.3
+   ],
+   "t": 0.4,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.76,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d87",
+   "a": [
+    57.0,
+    54.7
+   ],
+   "b": [
+    60.92,
+    54.7
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.0,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d89",
+   "a": [
+    29.79,
+    56.21
+   ],
+   "b": [
+    33.47,
+    56.21
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d90",
+   "a": [
+    74.25,
+    57.16
+   ],
+   "b": [
+    78.79,
+    57.16
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d91",
+   "a": [
+    70.64,
+    57.26
+   ],
+   "b": [
+    74.25,
+    57.26
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d92",
+   "a": [
+    66.34,
+    57.41
+   ],
+   "b": [
+    70.64,
+    57.41
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d93",
+   "a": [
+    60.92,
+    57.53
+   ],
+   "b": [
+    66.34,
+    57.53
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d94",
+   "a": [
+    57.0,
+    57.63
+   ],
+   "b": [
+    60.92,
+    57.63
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d95",
+   "a": [
+    52.85,
+    57.74
+   ],
+   "b": [
+    57.0,
+    57.74
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d96",
+   "a": [
+    47.43,
+    57.92
+   ],
+   "b": [
+    52.85,
+    57.92
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d97",
+   "a": [
+    45.3,
+    58.0
+   ],
+   "b": [
+    47.43,
+    58.0
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d100",
+   "a": [
+    22.69,
+    58.25
+   ],
+   "b": [
+    33.9,
+    58.25
+   ],
+   "t": 0.65,
+   "h": 8.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.51,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 8.91,
+     "w": 0.9,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d99",
+   "a": [
+    35.97,
+    58.2
+   ],
+   "b": [
+    43.6,
+    58.2
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d99+d98"
+  },
+  {
+   "id": "d101",
+   "a": [
+    18.98,
+    58.29
+   ],
+   "b": [
+    22.69,
+    58.29
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.82,
+     "w": 0.9,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d102",
+   "a": [
+    74.25,
+    60.79
+   ],
+   "b": [
+    78.79,
+    60.79
+   ],
+   "t": 0.8,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d103",
+   "a": [
+    47.2,
+    61.14
+   ],
+   "b": [
+    74.25,
+    61.14
+   ],
+   "t": 0.8,
+   "h": 3.26,
+   "ev": "S",
+   "windows": [
+    {
+     "at": 2.8,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 6.8,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 10.8,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 14.8,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 18.8,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    },
+    {
+     "at": 22.8,
+     "w": 0.6,
+     "sill": 1.9,
+     "head": 2.7,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d105",
+   "a": [
+    18.98,
+    61.84
+   ],
+   "b": [
+    33.9,
+    61.84
+   ],
+   "t": 0.8,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d105+d106"
+  },
+  {
+   "id": "d104",
+   "a": [
+    33.9,
+    61.75
+   ],
+   "b": [
+    41.4,
+    61.75
+   ],
+   "t": 0.9,
+   "h": 3.2,
+   "ev": "S"
+  },
+  {
+   "id": "d107",
+   "a": [
+    0.89,
+    22.9
+   ],
+   "b": [
+    0.89,
+    37.75
+   ],
+   "t": 0.6,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d107n",
+   "a": [
+    0.89,
+    37.75
+   ],
+   "b": [
+    0.89,
+    40.62
+   ],
+   "t": 0.6,
+   "h": 2.4,
+   "ev": "S"
+  },
+  {
+   "id": "d108",
+   "a": [
+    4.3,
+    25.9
+   ],
+   "b": [
+    4.3,
+    28.96
+   ],
+   "t": 0.6,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d109",
+   "a": [
+    7.45,
+    22.9
+   ],
+   "b": [
+    7.45,
+    28.86
+   ],
+   "t": 0.65,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.1,
+     "w": 0.9,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d110",
+   "a": [
+    9.58,
+    22.59
+   ],
+   "b": [
+    9.58,
+    38.0
+   ],
+   "t": 0.6,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 5.66,
+     "w": 1.7,
+     "oh": 2.6,
+     "note": "granary east wall: dotted on the 1893 plate, gap in the survey (a door?)"
+    },
+    {
+     "at": 5.66,
+     "w": 1.7,
+     "oh": 2.6,
+     "note": "granary east wall: dotted on the 1893 plate, gap in the survey (a door?)"
+    }
+   ]
+  },
+  {
+   "id": "d112",
+   "a": [
+    14.1,
+    0.24
+   ],
+   "b": [
+    14.1,
+    16.7
+   ],
+   "t": 0.6,
+   "h": 3.2,
+   "ev": "S"
+  },
+  {
+   "id": "d111",
+   "a": [
+    14.08,
+    45.53
+   ],
+   "b": [
+    14.08,
+    65.1
+   ],
+   "t": 0.5,
+   "h": 2.4,
+   "ev": "S"
+  },
+  {
+   "id": "d114",
+   "a": [
+    17.75,
+    3.8
+   ],
+   "b": [
+    17.75,
+    13.14
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.8,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 7.5,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d115",
+   "a": [
+    18.98,
+    47.48
+   ],
+   "b": [
+    18.98,
+    61.84
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d115+d117"
+  },
+  {
+   "id": "d116",
+   "a": [
+    18.98,
+    45.53
+   ],
+   "b": [
+    18.98,
+    47.48
+   ],
+   "t": 0.55,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d118",
+   "a": [
+    19.08,
+    41.29
+   ],
+   "b": [
+    19.08,
+    45.53
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d119",
+   "a": [
+    19.2,
+    22.35
+   ],
+   "b": [
+    19.2,
+    39.2
+   ],
+   "t": 0.6,
+   "h": 3.2,
+   "ev": "S"
+  },
+  {
+   "id": "d121",
+   "a": [
+    22.69,
+    3.8
+   ],
+   "b": [
+    22.69,
+    12.97
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d121+d124+d123"
+  },
+  {
+   "id": "d121n",
+   "a": [
+    22.69,
+    12.97
+   ],
+   "b": [
+    22.69,
+    41.22
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d121+d124+d123",
+   "openings": [
+    {
+     "at": 4.43,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "door from the apsidal room into the west-range chamber (gap in the survey)"
+    },
+    {
+     "at": 4.43,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "door from the apsidal room into the west-range chamber (gap in the survey)"
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.86,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 8.66,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 17.67,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 25.72,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 13.24,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 21.82,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d120",
+   "a": [
+    22.61,
+    47.48
+   ],
+   "b": [
+    22.61,
+    49.25
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d122",
+   "a": [
+    22.69,
+    58.29
+   ],
+   "b": [
+    22.69,
+    61.84
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d125",
+   "a": [
+    24.53,
+    31.8
+   ],
+   "b": [
+    24.53,
+    33.43
+   ],
+   "t": 0.8,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d126",
+   "a": [
+    24.9,
+    24.61
+   ],
+   "b": [
+    24.9,
+    27.85
+   ],
+   "t": 0.4,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d127",
+   "a": [
+    25.27,
+    3.69
+   ],
+   "b": [
+    25.27,
+    9.34
+   ],
+   "t": 0.4,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d128",
+   "a": [
+    25.75,
+    33.43
+   ],
+   "b": [
+    25.75,
+    36.15
+   ],
+   "t": 0.5,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d132",
+   "a": [
+    29.87,
+    18.69
+   ],
+   "b": [
+    29.87,
+    47.48
+   ],
+   "t": 0.7,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d132+d130+d135",
+   "openings": [
+    {
+     "at": 2.94,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 11.95,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 20.0,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 7.52,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 16.1,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 25.66,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 2.94,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 11.95,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 20.0,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 25.66,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 7.52,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    },
+    {
+     "at": 16.1,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d131",
+   "a": [
+    29.79,
+    47.48
+   ],
+   "b": [
+    29.79,
+    61.84
+   ],
+   "t": 0.45,
+   "h": 8.0,
+   "ev": "S",
+   "src": "d131+d129",
+   "openings": [
+    {
+     "at": 3.2,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    },
+    {
+     "at": 9.72,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 3.2,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d134",
+   "a": [
+    29.93,
+    9.19
+   ],
+   "b": [
+    29.93,
+    12.8
+   ],
+   "t": 0.5,
+   "h": 3.22,
+   "ev": "S"
+  },
+  {
+   "id": "d134n",
+   "a": [
+    29.93,
+    12.8
+   ],
+   "b": [
+    29.93,
+    18.69
+   ],
+   "t": 0.5,
+   "h": 8.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.03,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ],
+   "windows": [
+    {
+     "at": 3.03,
+     "w": 0.9,
+     "sill": 5.6,
+     "head": 6.9,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d133",
+   "a": [
+    29.91,
+    33.43
+   ],
+   "b": [
+    29.91,
+    36.15
+   ],
+   "t": 0.4,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d136",
+   "a": [
+    30.0,
+    7.4
+   ],
+   "b": [
+    30.0,
+    9.19
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d137",
+   "a": [
+    30.05,
+    3.59
+   ],
+   "b": [
+    30.05,
+    6.2
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d138",
+   "a": [
+    33.31,
+    48.8
+   ],
+   "b": [
+    33.31,
+    52.6
+   ],
+   "t": 0.6,
+   "h": 3.25,
+   "ev": "S"
+  },
+  {
+   "id": "d139",
+   "a": [
+    33.47,
+    12.77
+   ],
+   "b": [
+    33.47,
+    48.8
+   ],
+   "t": 0.75,
+   "h": 3.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 25.73,
+     "w": 2.4,
+     "oh": 3.0,
+     "conjecture": true,
+     "note": "west inner corridor to the courtyard"
+    }
+   ],
+   "windows": [
+    {
+     "at": 3.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 7.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 11.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 15.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 19.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 23.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    },
+    {
+     "at": 31.23,
+     "w": 0.9,
+     "sill": 1.6,
+     "head": 2.6,
+     "ev": "X"
+    }
+   ]
+  },
+  {
+   "id": "d139n",
+   "a": [
+    33.47,
+    48.8
+   ],
+   "b": [
+    33.47,
+    52.3
+   ],
+   "t": 0.75,
+   "h": 3.2,
+   "ev": "S"
+  },
+  {
+   "id": "d139nn",
+   "a": [
+    33.47,
+    52.3
+   ],
+   "b": [
+    33.47,
+    56.21
+   ],
+   "t": 0.75,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d140",
+   "a": [
+    33.9,
+    3.48
+   ],
+   "b": [
+    33.9,
+    9.19
+   ],
+   "t": 0.45,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d141",
+   "a": [
+    33.9,
+    56.21
+   ],
+   "b": [
+    33.9,
+    61.75
+   ],
+   "t": 0.6,
+   "h": 8.0,
+   "ev": "S"
+  },
+  {
+   "id": "d142",
+   "a": [
+    34.51,
+    28.9
+   ],
+   "b": [
+    34.51,
+    32.7
+   ],
+   "t": 0.4,
+   "h": 1.0,
+   "ev": "S",
+   "note": "small rectangular projection into the court (Great Plan, 1893 plate): purpose unknown; shown low"
+  },
+  {
+   "id": "d143",
+   "a": [
+    35.97,
+    52.53
+   ],
+   "b": [
+    35.97,
+    58.2
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d144",
+   "a": [
+    37.86,
+    3.38
+   ],
+   "b": [
+    37.86,
+    9.11
+   ],
+   "t": 0.55,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d145",
+   "a": [
+    40.77,
+    48.8
+   ],
+   "b": [
+    40.77,
+    58.2
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d146",
+   "a": [
+    43.75,
+    6.3
+   ],
+   "b": [
+    43.75,
+    9.11
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d147",
+   "a": [
+    47.43,
+    48.71
+   ],
+   "b": [
+    47.43,
+    57.92
+   ],
+   "t": 0.55,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d149",
+   "a": [
+    48.72,
+    3.38
+   ],
+   "b": [
+    48.72,
+    9.11
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S",
+   "src": "d149+d148"
+  },
+  {
+   "id": "d150",
+   "a": [
+    52.2,
+    3.38
+   ],
+   "b": [
+    52.2,
+    9.11
+   ],
+   "t": 0.55,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d151",
+   "a": [
+    52.85,
+    52.27
+   ],
+   "b": [
+    52.85,
+    57.74
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d152",
+   "a": [
+    55.97,
+    3.28
+   ],
+   "b": [
+    55.97,
+    9.11
+   ],
+   "t": 0.7,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d153",
+   "a": [
+    57.0,
+    52.1
+   ],
+   "b": [
+    57.0,
+    57.63
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d154",
+   "a": [
+    59.95,
+    3.28
+   ],
+   "b": [
+    59.95,
+    9.11
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d155",
+   "a": [
+    60.92,
+    51.94
+   ],
+   "b": [
+    60.92,
+    57.53
+   ],
+   "t": 0.55,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d156",
+   "a": [
+    66.34,
+    51.82
+   ],
+   "b": [
+    66.34,
+    57.41
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d157",
+   "a": [
+    66.7,
+    3.28
+   ],
+   "b": [
+    66.7,
+    9.11
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d158",
+   "a": [
+    69.51,
+    3.28
+   ],
+   "b": [
+    69.51,
+    14.39
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 7.62,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true,
+     "note": "latrines at the east end of the south inner corridor (1894)"
+    }
+   ]
+  },
+  {
+   "id": "d159",
+   "a": [
+    70.64,
+    48.28
+   ],
+   "b": [
+    70.64,
+    57.26
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.62,
+     "w": 1.2,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d160",
+   "a": [
+    74.25,
+    51.52
+   ],
+   "b": [
+    74.25,
+    60.79
+   ],
+   "t": 0.5,
+   "h": 5.8,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 7.48,
+     "w": 1.0,
+     "oh": 2.4,
+     "conjecture": true
+    }
+   ]
+  },
+  {
+   "id": "d161",
+   "a": [
+    77.93,
+    0.11
+   ],
+   "b": [
+    77.93,
+    3.3
+   ],
+   "t": 1.0,
+   "h": 3.2,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.64,
+     "w": 1.4,
+     "oh": 2.6,
+     "conjecture": true,
+     "note": "\"the external corridor of the southern wing communicated with the baths\" (Fox & St John Hope 1894); doorway position conjectural"
+    }
+   ]
+  },
+  {
+   "id": "d161n",
+   "a": [
+    77.93,
+    3.3
+   ],
+   "b": [
+    77.93,
+    14.39
+   ],
+   "t": 1.0,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d162",
+   "a": [
+    78.36,
+    14.39
+   ],
+   "b": [
+    78.36,
+    51.44
+   ],
+   "t": 1.1,
+   "h": 4.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 16.21,
+     "w": 2.4,
+     "oh": 3.0,
+     "conjecture": true,
+     "note": "door from the courtyard to the outer court and the baths: none recorded; one is needed and the courtyard's east wall is the shortest way"
+    }
+   ],
+   "note": "\"on the east the courtyard was closed by a wall only\" (Fox & St John Hope 1894); 3 ft 7 in thick in the Great Plan; height X"
+  },
+  {
+   "id": "d163",
+   "a": [
+    78.79,
+    51.44
+   ],
+   "b": [
+    78.79,
+    60.79
+   ],
+   "t": 0.95,
+   "h": 5.8,
+   "ev": "S"
+  },
+  {
+   "id": "d164",
+   "a": [
+    94.02,
+    17.0
+   ],
+   "b": [
+    94.02,
+    19.42
+   ],
+   "t": 0.95,
+   "h": 1.6,
+   "ev": "S",
+   "note": "reservoir No. 4: walls 3 ft 4 in thick, brick-lined; \"a superstructure of great weight, or one requiring extra protection\" (Hilton Price 1887). Shown as a low cistern (X)"
+  },
+  {
+   "id": "d165",
+   "a": [
+    96.07,
+    2.9
+   ],
+   "b": [
+    96.07,
+    17.0
+   ],
+   "t": 0.7,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d166",
+   "a": [
+    96.15,
+    0.11
+   ],
+   "b": [
+    96.15,
+    2.9
+   ],
+   "t": 0.7,
+   "h": 6.0,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 1.49,
+     "w": 1.4,
+     "oh": 2.6,
+     "note": "No. 5: \"the third exit was on the west side ... and leads into an ambulatory, which appears to connect these baths with the buildings of Block VIII\" (Hilton Price 1887)"
+    }
+   ]
+  },
+  {
+   "id": "d167",
+   "a": [
+    96.74,
+    17.4
+   ],
+   "b": [
+    96.74,
+    27.6
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 2.6,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "room 3 west side: gap in the survey and on the plate"
+    },
+    {
+     "at": 2.6,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "room 3 west side: gap in the survey and on the plate"
+    }
+   ]
+  },
+  {
+   "id": "d168",
+   "a": [
+    99.15,
+    27.6
+   ],
+   "b": [
+    99.15,
+    29.3
+   ],
+   "t": 0.5,
+   "h": 1.8,
+   "ev": "S",
+   "note": "flue walls of the praefurnium at the north end of No. 1 (Hilton Price 1887)"
+  },
+  {
+   "id": "d169",
+   "a": [
+    100.05,
+    27.6
+   ],
+   "b": [
+    100.05,
+    29.3
+   ],
+   "t": 0.5,
+   "h": 1.8,
+   "ev": "S",
+   "note": "flue walls of the praefurnium at the north end of No. 1 (Hilton Price 1887)"
+  },
+  {
+   "id": "d171",
+   "a": [
+    101.6,
+    16.51
+   ],
+   "b": [
+    101.6,
+    27.45
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S",
+   "openings": [
+    {
+     "at": 3.39,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "room 3 to corridor 15: gap in the survey and on the plate"
+    },
+    {
+     "at": 3.39,
+     "w": 2.0,
+     "oh": 2.6,
+     "note": "room 3 to corridor 15: gap in the survey and on the plate"
+    }
+   ]
+  },
+  {
+   "id": "d172",
+   "a": [
+    101.66,
+    29.2
+   ],
+   "b": [
+    101.66,
+    51.11
+   ],
+   "t": 0.7,
+   "h": 3.2,
+   "ev": "S",
+   "note": "east wall of the outer court, to the north end of the baths (Hilton Price 1887: \"a boundary wall running from the north end of the Baths\")",
+   "openings": [
+    {
+     "at": 11.8,
+     "w": 3.2,
+     "oh": 3.0,
+     "conjecture": true,
+     "note": "gateway from the street east of the building into the outer court: none recorded (the survey shows the wall continuous); conjectural"
+    }
+   ]
+  },
+  {
+   "id": "d174",
+   "a": [
+    102.0,
+    6.7
+   ],
+   "b": [
+    102.0,
+    16.51
+   ],
+   "t": 0.8,
+   "h": 6.0,
+   "ev": "S",
+   "src": "d174+d173"
+  },
+  {
+   "id": "d175",
+   "a": [
+    102.14,
+    0.11
+   ],
+   "b": [
+    102.14,
+    3.1
+   ],
+   "t": 0.9,
+   "h": 6.0,
+   "ev": "S"
+  },
+  {
+   "id": "d177",
+   "a": [
+    106.67,
+    8.5
+   ],
+   "b": [
+    106.67,
+    13.62
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S",
+   "src": "d177+d176"
+  },
+  {
+   "id": "d179",
+   "a": [
+    106.85,
+    0.11
+   ],
+   "b": [
+    106.85,
+    3.63
+   ],
+   "t": 0.5,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d178",
+   "a": [
+    106.75,
+    3.63
+   ],
+   "b": [
+    106.75,
+    5.65
+   ],
+   "t": 0.5,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d180",
+   "a": [
+    109.35,
+    8.5
+   ],
+   "b": [
+    109.35,
+    10.7
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d181",
+   "a": [
+    109.4,
+    5.65
+   ],
+   "b": [
+    109.4,
+    7.9
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d182",
+   "a": [
+    111.31,
+    12.68
+   ],
+   "b": [
+    111.31,
+    15.3
+   ],
+   "t": 0.5,
+   "h": 3.6,
+   "ev": "S"
+  },
+  {
+   "id": "d183",
+   "a": [
+    112.79,
+    0.11
+   ],
+   "b": [
+    112.79,
+    8.43
+   ],
+   "t": 0.65,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "d185",
+   "a": [
+    116.7,
+    16.51
+   ],
+   "b": [
+    116.7,
+    19.05
+   ],
+   "t": 0.6,
+   "h": 3.6,
+   "ev": "S"
+  },
+  {
+   "id": "d188",
+   "a": [
+    117.47,
+    0.11
+   ],
+   "b": [
+    117.47,
+    3.0
+   ],
+   "t": 0.7,
+   "h": 3.27,
+   "ev": "S",
+   "src": "d188+d187+d186"
+  },
+  {
+   "id": "d188n",
+   "a": [
+    117.47,
+    3.0
+   ],
+   "b": [
+    117.47,
+    8.43
+   ],
+   "t": 0.7,
+   "h": 5.5,
+   "ev": "S",
+   "src": "d188+d187+d186"
+  },
+  {
+   "id": "d189",
+   "a": [
+    122.15,
+    0.11
+   ],
+   "b": [
+    122.15,
+    3.01
+   ],
+   "t": 0.8,
+   "h": 3.27,
+   "ev": "S"
+  },
+  {
+   "id": "d190",
+   "a": [
+    129.51,
+    3.01
+   ],
+   "b": [
+    129.51,
+    7.79
+   ],
+   "t": 0.8,
+   "h": 5.5,
+   "ev": "S"
+  },
+  {
+   "id": "court-ne",
+   "a": [
+    78.79,
+    60.97
+   ],
+   "b": [
+    101.66,
+    51.11
+   ],
+   "t": 0.9,
+   "h": 3.2,
+   "ev": "S",
+   "note": "angled north-east wall of the outer court (ring r9; black on the 1893 plate)"
+  },
+  {
+   "id": "baths-corridor-n",
+   "a": [
+    77.93,
+    3.0
+   ],
+   "b": [
+    92.7,
+    3.0
+   ],
+   "t": 0.5,
+   "h": 3.2,
+   "ev": "S",
+   "note": "north wall of the corridor joining the south wing to the baths: hatched on the 1893 plate, not in the Great Plan (taken from the plate)"
+  },
+  {
+   "id": "baths-14-s",
+   "a": [
+    121.6,
+    3.0
+   ],
+   "b": [
+    125.0,
+    3.0
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S",
+   "note": "taken from the 1893 plate (gap in the Great Plan)"
+  },
+  {
+   "id": "baths-10-e",
+   "a": [
+    113.2,
+    8.43
+   ],
+   "b": [
+    113.2,
+    10.7
+   ],
+   "t": 0.6,
+   "h": 5.5,
+   "ev": "S",
+   "note": "east wall of No. 10: taken from the 1893 plate (not in the Great Plan)"
+  },
+  {
+   "id": "vest-n",
+   "a": [
+    43.3,
+    58.1
+   ],
+   "b": [
+    45.6,
+    58.1
+   ],
+   "t": 0.6,
+   "h": 5.8,
+   "ev": "S",
+   "note": "north wall of the entrance hall over the opening from the outer corridor",
+   "openings": [
+    {
+     "at": 1.15,
+     "w": 1.7,
+     "oh": 3.0,
+     "note": "gap in the survey between the outer corridor and the entrance hall: a doorway"
+    }
+   ]
+  },
+  {
+   "id": "apse-mass-s",
+   "a": [
+    14.1,
+    16.9
+   ],
+   "b": [
+    18.2,
+    16.9
+   ],
+   "t": 1.0,
+   "h": 3.23,
+   "ev": "S",
+   "note": "masonry round the apse, joining the return corridor (Great Plan)"
+  },
+  {
+   "id": "granary-n-e",
+   "a": [
+    6.8,
+    37.75
+   ],
+   "b": [
+    9.58,
+    37.75
+   ],
+   "t": 0.5,
+   "h": 6.0,
+   "ev": "X",
+   "note": "dotted on the 1893 plate: not found, completed by the excavators"
+  },
+  {
+   "id": "granary-buttress-1",
+   "a": [
+    0.1,
+    30.0
+   ],
+   "b": [
+    0.89,
+    30.0
+   ],
+   "t": 0.75,
+   "h": 4.6,
+   "ev": "S",
+   "note": "buttress on the granary west wall (\"stoutly buttressed west wall\", Boon 1957; 1893 plate)"
+  },
+  {
+   "id": "granary-buttress-2",
+   "a": [
+    0.1,
+    33.0
+   ],
+   "b": [
+    0.89,
+    33.0
+   ],
+   "t": 0.75,
+   "h": 4.6,
+   "ev": "S",
+   "note": "buttress on the granary west wall (\"stoutly buttressed west wall\", Boon 1957; 1893 plate)"
+  },
+  {
+   "id": "granary-buttress-3",
+   "a": [
+    0.1,
+    36.2
+   ],
+   "b": [
+    0.89,
+    36.2
+   ],
+   "t": 0.75,
+   "h": 4.6,
+   "ev": "S",
+   "note": "buttress on the granary west wall (\"stoutly buttressed west wall\", Boon 1957; 1893 plate)"
+  },
+  {
+   "id": "yard-buttress-1",
+   "a": [
+    11.6,
+    40.62
+   ],
+   "b": [
+    11.6,
+    41.3
+   ],
+   "t": 0.75,
+   "h": 2.4,
+   "ev": "S",
+   "note": "pier on the yard wall (1893 plate)"
+  },
+  {
+   "id": "yard-buttress-2",
+   "a": [
+    15.2,
+    40.62
+   ],
+   "b": [
+    15.2,
+    41.3
+   ],
+   "t": 0.75,
+   "h": 2.4,
+   "ev": "S",
+   "note": "pier on the yard wall (1893 plate)"
+  }
+ ],
+ "apses": [
+  {
+   "id": "apse-w",
+   "c": [
+    18.95,
+    19.65
+   ],
+   "r": 3.3,
+   "t": 1.3,
+   "start": 90,
+   "end": 270,
+   "h": 6.0,
+   "roof": "semidome",
+   "ev": "S",
+   "note": "apsidal room inserted into the west corridor in an alteration of unknown date (Fox & St John Hope 1894); shown as excavated"
+  }
+ ],
+ "columns": [],
+ "roofs": [
+  {
+   "id": "s-range",
+   "type": "gable",
+   "poly": [
+    [
+     22.64,
+     3.4
+    ],
+    [
+     69.51,
+     3.4
+    ],
+    [
+     69.51,
+     9.15
+    ],
+    [
+     22.64,
+     9.15
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "se-block",
+   "type": "gable",
+   "poly": [
+    [
+     69.51,
+     3.3
+    ],
+    [
+     77.93,
+     3.3
+    ],
+    [
+     77.93,
+     14.39
+    ],
+    [
+     69.51,
+     14.39
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "sw-rooms",
+   "type": "gable",
+   "poly": [
+    [
+     17.75,
+     3.8
+    ],
+    [
+     22.64,
+     3.8
+    ],
+    [
+     22.64,
+     13.14
+    ],
+    [
+     17.75,
+     13.14
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "s-outer",
+   "type": "lean-to",
+   "poly": [
+    [
+     14.1,
+     0.2
+    ],
+    [
+     77.93,
+     0.2
+    ],
+    [
+     77.93,
+     3.4
+    ],
+    [
+     14.1,
+     3.4
+    ]
+   ],
+   "highSide": "n",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "s-inner",
+   "type": "lean-to",
+   "poly": [
+    [
+     29.93,
+     9.15
+    ],
+    [
+     69.51,
+     9.15
+    ],
+    [
+     69.51,
+     12.8
+    ],
+    [
+     29.93,
+     12.8
+    ]
+   ],
+   "highSide": "s",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "baths-corridor",
+   "type": "gable",
+   "poly": [
+    [
+     77.93,
+     0.2
+    ],
+    [
+     96.07,
+     0.2
+    ],
+    [
+     96.07,
+     3.0
+    ],
+    [
+     77.93,
+     3.0
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 3.2,
+   "ev": "X"
+  },
+  {
+   "id": "sw-corridor",
+   "type": "lean-to",
+   "poly": [
+    [
+     14.1,
+     3.4
+    ],
+    [
+     17.75,
+     3.4
+    ],
+    [
+     17.75,
+     16.9
+    ],
+    [
+     14.1,
+     16.9
+    ]
+   ],
+   "highSide": "e",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "w-range",
+   "type": "gable",
+   "poly": [
+    [
+     22.64,
+     12.97
+    ],
+    [
+     29.85,
+     12.97
+    ],
+    [
+     29.85,
+     41.25
+    ],
+    [
+     22.64,
+     41.25
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 8.0,
+   "ev": "X"
+  },
+  {
+   "id": "w-north",
+   "type": "gable",
+   "poly": [
+    [
+     19.0,
+     41.25
+    ],
+    [
+     29.85,
+     41.25
+    ],
+    [
+     29.85,
+     52.1
+    ],
+    [
+     19.0,
+     52.1
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 8.0,
+   "ev": "X"
+  },
+  {
+   "id": "w-nw",
+   "type": "gable",
+   "poly": [
+    [
+     19.0,
+     52.1
+    ],
+    [
+     33.9,
+     52.1
+    ],
+    [
+     33.9,
+     61.88
+    ],
+    [
+     19.0,
+     61.88
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 8.0,
+   "ev": "X"
+  },
+  {
+   "id": "apse-room",
+   "type": "gable",
+   "poly": [
+    [
+     18.95,
+     16.39
+    ],
+    [
+     22.64,
+     16.39
+    ],
+    [
+     22.64,
+     22.35
+    ],
+    [
+     18.95,
+     22.35
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "w-outer",
+   "type": "lean-to",
+   "poly": [
+    [
+     19.2,
+     22.35
+    ],
+    [
+     22.64,
+     22.35
+    ],
+    [
+     22.64,
+     41.25
+    ],
+    [
+     19.2,
+     41.25
+    ]
+   ],
+   "highSide": "e",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "w-inner",
+   "type": "lean-to",
+   "poly": [
+    [
+     29.85,
+     12.8
+    ],
+    [
+     33.47,
+     12.8
+    ],
+    [
+     33.47,
+     52.1
+    ],
+    [
+     29.85,
+     52.1
+    ]
+   ],
+   "highSide": "w",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X"
+  },
+  {
+   "id": "n-range-w",
+   "type": "gable",
+   "poly": [
+    [
+     33.47,
+     52.3
+    ],
+    [
+     40.77,
+     52.3
+    ],
+    [
+     40.77,
+     58.1
+    ],
+    [
+     33.47,
+     58.1
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "vestibule",
+   "type": "gable",
+   "poly": [
+    [
+     40.77,
+     48.71
+    ],
+    [
+     47.43,
+     48.71
+    ],
+    [
+     47.43,
+     58.1
+    ],
+    [
+     40.77,
+     58.1
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "n-range",
+   "type": "gable",
+   "poly": [
+    [
+     47.43,
+     52.2
+    ],
+    [
+     70.64,
+     52.2
+    ],
+    [
+     70.64,
+     58.1
+    ],
+    [
+     47.43,
+     58.1
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "ne-block",
+   "type": "gable",
+   "poly": [
+    [
+     70.64,
+     47.8
+    ],
+    [
+     78.79,
+     47.8
+    ],
+    [
+     78.79,
+     61.0
+    ],
+    [
+     70.64,
+     61.0
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 5.8,
+   "ev": "X"
+  },
+  {
+   "id": "n-inner-w",
+   "type": "lean-to",
+   "poly": [
+    [
+     33.47,
+     48.5
+    ],
+    [
+     40.77,
+     48.5
+    ],
+    [
+     40.77,
+     52.3
+    ],
+    [
+     33.47,
+     52.3
+    ]
+   ],
+   "highSide": "n",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "n-inner",
+   "type": "lean-to",
+   "poly": [
+    [
+     47.43,
+     48.5
+    ],
+    [
+     70.64,
+     48.5
+    ],
+    [
+     70.64,
+     52.2
+    ],
+    [
+     47.43,
+     52.2
+    ]
+   ],
+   "highSide": "n",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "n-outer",
+   "type": "lean-to",
+   "poly": [
+    [
+     33.9,
+     58.1
+    ],
+    [
+     74.25,
+     58.1
+    ],
+    [
+     74.25,
+     61.3
+    ],
+    [
+     33.9,
+     61.3
+    ]
+   ],
+   "highSide": "s",
+   "highY": 4.4,
+   "lowY": 3.2,
+   "ev": "X",
+   "closeEnds": true
+  },
+  {
+   "id": "granary",
+   "type": "gable",
+   "poly": [
+    [
+     0.89,
+     22.9
+    ],
+    [
+     9.58,
+     22.9
+    ],
+    [
+     9.58,
+     37.75
+    ],
+    [
+     0.89,
+     37.75
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 6.0,
+   "ev": "X"
+  },
+  {
+   "id": "b-hot12",
+   "type": "gable",
+   "poly": [
+    [
+     96.74,
+     16.46
+    ],
+    [
+     101.6,
+     16.46
+    ],
+    [
+     101.6,
+     27.5
+    ],
+    [
+     96.74,
+     27.5
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b5",
+   "type": "gable",
+   "poly": [
+    [
+     96.07,
+     0.2
+    ],
+    [
+     102.0,
+     0.2
+    ],
+    [
+     102.0,
+     16.46
+    ],
+    [
+     96.07,
+     16.46
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 6.0,
+   "ev": "X"
+  },
+  {
+   "id": "b15",
+   "type": "gable",
+   "poly": [
+    [
+     101.6,
+     16.46
+    ],
+    [
+     116.7,
+     16.46
+    ],
+    [
+     116.7,
+     19.1
+    ],
+    [
+     101.6,
+     19.1
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 3.6,
+   "ev": "X"
+  },
+  {
+   "id": "b16",
+   "type": "gable",
+   "poly": [
+    [
+     111.31,
+     12.68
+    ],
+    [
+     116.7,
+     12.68
+    ],
+    [
+     116.7,
+     16.46
+    ],
+    [
+     111.31,
+     16.46
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 3.6,
+   "ev": "X"
+  },
+  {
+   "id": "b6",
+   "type": "gable",
+   "poly": [
+    [
+     102.0,
+     8.5
+    ],
+    [
+     106.68,
+     8.5
+    ],
+    [
+     106.68,
+     13.62
+    ],
+    [
+     102.0,
+     13.62
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b7-8w",
+   "type": "gable",
+   "poly": [
+    [
+     102.0,
+     0.2
+    ],
+    [
+     106.85,
+     0.2
+    ],
+    [
+     106.85,
+     8.5
+    ],
+    [
+     102.0,
+     8.5
+    ]
+   ],
+   "ridge": "v",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b9-10",
+   "type": "gable",
+   "poly": [
+    [
+     106.68,
+     5.65
+    ],
+    [
+     113.2,
+     5.65
+    ],
+    [
+     113.2,
+     10.7
+    ],
+    [
+     106.68,
+     10.7
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b8",
+   "type": "gable",
+   "poly": [
+    [
+     106.85,
+     0.2
+    ],
+    [
+     112.79,
+     0.2
+    ],
+    [
+     112.79,
+     5.65
+    ],
+    [
+     106.85,
+     5.65
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b11",
+   "type": "gable",
+   "poly": [
+    [
+     112.79,
+     3.0
+    ],
+    [
+     121.6,
+     3.0
+    ],
+    [
+     121.6,
+     8.43
+    ],
+    [
+     112.79,
+     8.43
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b12-14",
+   "type": "gable",
+   "poly": [
+    [
+     121.6,
+     3.0
+    ],
+    [
+     129.51,
+     3.0
+    ],
+    [
+     129.51,
+     8.43
+    ],
+    [
+     121.6,
+     8.43
+    ]
+   ],
+   "ridge": "u",
+   "eaves": 5.5,
+   "ev": "X"
+  },
+  {
+   "id": "b-service",
+   "type": "lean-to",
+   "poly": [
+    [
+     112.79,
+     0.2
+    ],
+    [
+     122.15,
+     0.2
+    ],
+    [
+     122.15,
+     3.0
+    ],
+    [
+     112.79,
+     3.0
+    ]
+   ],
+   "highSide": "n",
+   "highY": 4.2,
+   "lowY": 3.0,
+   "ev": "X",
+   "closeEnds": true
+  }
+ ]
+}

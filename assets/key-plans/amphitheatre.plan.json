@@ -1,0 +1,937 @@
+{
+ "id": "amphitheatre",
+ "name": "Amphitheatre",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint-ironstone",
+ "period": "late 3rd century AD (c. 270–280): the stone phase (arena wall, entrance passages and recesses rebuilt in stone in the first half of the 3rd century; arena, recess and passage floors raised with sand and gravel, Fulford's Stone Phase 2, c. 250s)",
+ "brief": "docs/key-buildings/amphitheatre.md",
+ "frame": {
+  "originEN": [
+   464423.33,
+   162581.22
+  ],
+  "angleDeg": -20.1,
+  "note": "local u (east-ish), v (north-ish) metres from the SW corner of the key anchor; E,N = origin + R(angle)*(u,v). Arena wall, passages and recesses from GIS layer 04 (stone phase); banks from the Fulford 2002 contour plan."
+ },
+ "conventions": "arena: wall centreline as polar samples [deg ccw from +u, radius] about c; heights in metres above the arena floor; d = metres outward from the wall centreline along the ray from c. conjecture:true marks things not evidenced.",
+ "drawings": [
+  {
+   "from": "e",
+   "cut": 37.25,
+   "caption": "Section along the arena through both entrances, looking west: the passages rise from the arena to the old ground level; the west seating beyond"
+  },
+  {
+   "from": "s",
+   "cut": 40.38,
+   "caption": "Section across the arena through the two recesses, looking north: arena wall, timber rows on the earth banks, the walk and fence at the top, the outer slope"
+  }
+ ],
+ "rooms": [],
+ "walls": [],
+ "arena": {
+  "id": "arena",
+  "c": [
+   37.25,
+   40.38
+  ],
+  "ring": [
+   [
+    0,
+    20.252
+   ],
+   [
+    2,
+    20.196
+   ],
+   [
+    4,
+    20.188
+   ],
+   [
+    6,
+    20.265
+   ],
+   [
+    8,
+    20.3
+   ],
+   [
+    10,
+    20.314
+   ],
+   [
+    12,
+    20.346
+   ],
+   [
+    14,
+    20.39
+   ],
+   [
+    16,
+    20.445
+   ],
+   [
+    18,
+    20.47
+   ],
+   [
+    20,
+    20.497
+   ],
+   [
+    22,
+    20.537
+   ],
+   [
+    24,
+    20.586
+   ],
+   [
+    26,
+    20.651
+   ],
+   [
+    28,
+    20.727
+   ],
+   [
+    30,
+    20.814
+   ],
+   [
+    32,
+    20.888
+   ],
+   [
+    34,
+    20.943
+   ],
+   [
+    36,
+    21.025
+   ],
+   [
+    38,
+    21.121
+   ],
+   [
+    40,
+    21.233
+   ],
+   [
+    42,
+    21.352
+   ],
+   [
+    44,
+    21.477
+   ],
+   [
+    46,
+    21.591
+   ],
+   [
+    48,
+    21.678
+   ],
+   [
+    50,
+    21.774
+   ],
+   [
+    52,
+    21.881
+   ],
+   [
+    54,
+    21.996
+   ],
+   [
+    56,
+    22.138
+   ],
+   [
+    58,
+    22.275
+   ],
+   [
+    60,
+    22.383
+   ],
+   [
+    62,
+    22.501
+   ],
+   [
+    64,
+    22.637
+   ],
+   [
+    66,
+    22.778
+   ],
+   [
+    68,
+    22.926
+   ],
+   [
+    70,
+    23.065
+   ],
+   [
+    72,
+    23.162
+   ],
+   [
+    74,
+    23.245
+   ],
+   [
+    76,
+    23.326
+   ],
+   [
+    78,
+    23.402
+   ],
+   [
+    80,
+    23.462
+   ],
+   [
+    82,
+    23.61
+   ],
+   [
+    84,
+    23.576
+   ],
+   [
+    86,
+    23.543
+   ],
+   [
+    88,
+    23.509
+   ],
+   [
+    90,
+    23.476
+   ],
+   [
+    92,
+    23.442
+   ],
+   [
+    94,
+    23.409
+   ],
+   [
+    96,
+    23.375
+   ],
+   [
+    98,
+    23.342
+   ],
+   [
+    100,
+    23.292
+   ],
+   [
+    102,
+    23.232
+   ],
+   [
+    104,
+    23.17
+   ],
+   [
+    106,
+    23.102
+   ],
+   [
+    108,
+    23.022
+   ],
+   [
+    110,
+    22.93
+   ],
+   [
+    112,
+    22.824
+   ],
+   [
+    114,
+    22.712
+   ],
+   [
+    116,
+    22.598
+   ],
+   [
+    118,
+    22.491
+   ],
+   [
+    120,
+    22.375
+   ],
+   [
+    122,
+    22.257
+   ],
+   [
+    124,
+    22.136
+   ],
+   [
+    126,
+    22.016
+   ],
+   [
+    128,
+    21.898
+   ],
+   [
+    130,
+    21.785
+   ],
+   [
+    132,
+    21.677
+   ],
+   [
+    134,
+    21.575
+   ],
+   [
+    136,
+    21.475
+   ],
+   [
+    138,
+    21.385
+   ],
+   [
+    140,
+    21.29
+   ],
+   [
+    142,
+    21.199
+   ],
+   [
+    144,
+    21.098
+   ],
+   [
+    146,
+    21.008
+   ],
+   [
+    148,
+    20.911
+   ],
+   [
+    150,
+    20.82
+   ],
+   [
+    152,
+    20.724
+   ],
+   [
+    154,
+    20.651
+   ],
+   [
+    156,
+    20.57
+   ],
+   [
+    158,
+    20.491
+   ],
+   [
+    160,
+    20.425
+   ],
+   [
+    162,
+    20.373
+   ],
+   [
+    164,
+    20.319
+   ],
+   [
+    166,
+    20.276
+   ],
+   [
+    168,
+    20.239
+   ],
+   [
+    170,
+    20.181
+   ],
+   [
+    172,
+    20.15
+   ],
+   [
+    174,
+    20.147
+   ],
+   [
+    176,
+    20.144
+   ],
+   [
+    178,
+    20.236
+   ],
+   [
+    180,
+    20.277
+   ],
+   [
+    182,
+    20.286
+   ],
+   [
+    184,
+    20.306
+   ],
+   [
+    186,
+    20.347
+   ],
+   [
+    188,
+    20.39
+   ],
+   [
+    190,
+    20.42
+   ],
+   [
+    192,
+    20.457
+   ],
+   [
+    194,
+    20.497
+   ],
+   [
+    196,
+    20.524
+   ],
+   [
+    198,
+    20.563
+   ],
+   [
+    200,
+    20.594
+   ],
+   [
+    202,
+    20.629
+   ],
+   [
+    204,
+    20.674
+   ],
+   [
+    206,
+    20.719
+   ],
+   [
+    208,
+    20.774
+   ],
+   [
+    210,
+    20.842
+   ],
+   [
+    212,
+    20.911
+   ],
+   [
+    214,
+    20.995
+   ],
+   [
+    216,
+    21.093
+   ],
+   [
+    218,
+    21.19
+   ],
+   [
+    220,
+    21.305
+   ],
+   [
+    222,
+    21.425
+   ],
+   [
+    224,
+    21.543
+   ],
+   [
+    226,
+    21.675
+   ],
+   [
+    228,
+    21.785
+   ],
+   [
+    230,
+    21.908
+   ],
+   [
+    232,
+    22.027
+   ],
+   [
+    234,
+    22.144
+   ],
+   [
+    236,
+    22.257
+   ],
+   [
+    238,
+    22.378
+   ],
+   [
+    240,
+    22.479
+   ],
+   [
+    242,
+    22.587
+   ],
+   [
+    244,
+    22.684
+   ],
+   [
+    246,
+    22.769
+   ],
+   [
+    248,
+    22.853
+   ],
+   [
+    250,
+    22.914
+   ],
+   [
+    252,
+    22.97
+   ],
+   [
+    254,
+    23.018
+   ],
+   [
+    256,
+    23.071
+   ],
+   [
+    258,
+    23.124
+   ],
+   [
+    260,
+    23.175
+   ],
+   [
+    262,
+    23.228
+   ],
+   [
+    264,
+    23.303
+   ],
+   [
+    266,
+    23.643
+   ],
+   [
+    268,
+    23.605
+   ],
+   [
+    270,
+    23.567
+   ],
+   [
+    272,
+    23.529
+   ],
+   [
+    274,
+    23.491
+   ],
+   [
+    276,
+    23.452
+   ],
+   [
+    278,
+    23.414
+   ],
+   [
+    280,
+    23.347
+   ],
+   [
+    282,
+    23.268
+   ],
+   [
+    284,
+    23.193
+   ],
+   [
+    286,
+    23.117
+   ],
+   [
+    288,
+    23.034
+   ],
+   [
+    290,
+    22.938
+   ],
+   [
+    292,
+    22.829
+   ],
+   [
+    294,
+    22.729
+   ],
+   [
+    296,
+    22.625
+   ],
+   [
+    298,
+    22.521
+   ],
+   [
+    300,
+    22.406
+   ],
+   [
+    302,
+    22.288
+   ],
+   [
+    304,
+    22.166
+   ],
+   [
+    306,
+    22.05
+   ],
+   [
+    308,
+    21.94
+   ],
+   [
+    310,
+    21.837
+   ],
+   [
+    312,
+    21.732
+   ],
+   [
+    314,
+    21.613
+   ],
+   [
+    316,
+    21.496
+   ],
+   [
+    318,
+    21.38
+   ],
+   [
+    320,
+    21.275
+   ],
+   [
+    322,
+    21.166
+   ],
+   [
+    324,
+    21.08
+   ],
+   [
+    326,
+    20.985
+   ],
+   [
+    328,
+    20.898
+   ],
+   [
+    330,
+    20.804
+   ],
+   [
+    332,
+    20.73
+   ],
+   [
+    334,
+    20.677
+   ],
+   [
+    336,
+    20.62
+   ],
+   [
+    338,
+    20.574
+   ],
+   [
+    340,
+    20.528
+   ],
+   [
+    342,
+    20.484
+   ],
+   [
+    344,
+    20.44
+   ],
+   [
+    346,
+    20.383
+   ],
+   [
+    348,
+    20.342
+   ],
+   [
+    350,
+    20.318
+   ],
+   [
+    352,
+    20.295
+   ],
+   [
+    354,
+    20.293
+   ],
+   [
+    356,
+    20.302
+   ],
+   [
+    358,
+    20.355
+   ]
+  ],
+  "t": 0.85,
+  "h": 2.9,
+  "ground": 2.0,
+  "floor": "sand",
+  "ev": "S",
+  "note": "Stone arena wall of flint and brown ironstone, about 3 m high (Fulford 2002); 0.8-0.9 m thick (Fulford 1989, 37). Plan from the GIS (stone phase). The arena floor lies about 2 m below the original ground (C&F 2016; Fulford 2002).",
+  "openings": [
+   {
+    "id": "north-entrance",
+    "from": 82.92,
+    "to": 98.03,
+    "kind": "passage"
+   },
+   {
+    "id": "south-entrance",
+    "from": 266.02,
+    "to": 277.55,
+    "kind": "passage"
+   },
+   {
+    "id": "west-recess",
+    "from": 170.45,
+    "to": 176.22,
+    "kind": "recess",
+    "oh": 1.7,
+    "arch": true
+   },
+   {
+    "id": "east-recess",
+    "from": 359.02,
+    "to": 4.2,
+    "kind": "recess",
+    "oh": 1.7,
+    "arch": true
+   }
+  ],
+  "rail": {
+   "h": 0.75,
+   "ev": "X",
+   "note": "Timber rail on the arena wall, as on Fulford's reconstruction section (Fulford 2002). Conjecture."
+  },
+  "seating": {
+   "rows": 12,
+   "tread": 0.78,
+   "rise": 0.36,
+   "ev": "C",
+   "note": "Timber seating on the earth bank: 12 rows as on Fulford's reconstruction of the stone phase (Fulford 2002); Sunter (in Fulford 1989) reconstructs 11 or 12 rows raised on radial timbers. Row size from the section."
+  },
+  "bank": {
+   "crest": 1.0,
+   "toe": 17.0,
+   "ev": "S",
+   "note": "Earth banks built from the soil dug out of the arena (C&F 2016; Fulford 2002); extent from the surviving earthwork (Fulford 2002 contour plan). Crest height from the reconstruction section."
+  },
+  "palisade": {
+   "h": 1.0,
+   "ev": "C",
+   "note": "Fence along the back of the seating: a post on Fulford's section; a free-standing palisade closed the top of the cavea in the first timber phase (Sunter in Fulford 1989, via Kovacsovics 1993)."
+  },
+  "passages": [
+   {
+    "id": "north-passage",
+    "walls": [
+     {
+      "a": [
+       33.99,
+       63.49
+      ],
+      "b": [
+       34.01,
+       75.3
+      ],
+      "t": 0.87
+     },
+     {
+      "a": [
+       40.16,
+       63.8
+      ],
+      "b": [
+       40.1,
+       75.29
+      ],
+      "t": 0.96
+     }
+    ],
+    "ev": "S",
+    "floor": "gravel",
+    "note": "North entrance: open passage walled in stone (GIS stone phase), clear width about 5.3 m; it rises from the arena to the old ground level. Its collapse is recorded later (Fulford 1989, via Kovacsovics 1993)."
+   },
+   {
+    "id": "south-passage",
+    "walls": [
+     {
+      "a": [
+       35.61,
+       16.8
+      ],
+      "b": [
+       35.46,
+       5.66
+      ],
+      "t": 0.95
+     },
+     {
+      "a": [
+       40.33,
+       17.16
+      ],
+      "b": [
+       39.96,
+       5.41
+      ],
+      "t": 0.92
+     }
+    ],
+    "ev": "S",
+    "floor": "gravel",
+    "note": "South entrance: open passage walled in stone, clear width about 3.8 m against the north entrance's 5.3 m (GIS stone phase): the entrances differ in width (Fulford 1989, via Kovacsovics 1993)."
+   }
+  ],
+  "recesses": [
+   {
+    "id": "west-recess",
+    "c": [
+     15.37,
+     42.94
+    ],
+    "r": 1.24,
+    "t": 0.45,
+    "h": 2.9,
+    "ev": "S",
+    "note": "West recess: a small semicircular room opening off the arena (GIS stone phase), probably vaulted (Fulford 2002). Its use is unknown: altars to Nemesis stood in similar recesses elsewhere; or a refuge for participants (Fulford 2002)."
+   },
+   {
+    "id": "east-recess",
+    "c": [
+     59.42,
+     41.0
+    ],
+    "r": 1.14,
+    "t": 0.45,
+    "h": 2.9,
+    "ev": "S",
+    "note": "East recess: a small semicircular room opening off the arena (GIS stone phase), probably vaulted (Fulford 2002). Its use is unknown: altars to Nemesis stood in similar recesses elsewhere; or a refuge for participants (Fulford 2002)."
+   }
+  ],
+  "stairs": [
+   {
+    "id": "stair-0",
+    "angle": 45,
+    "w": 1.6,
+    "ev": "X",
+    "note": "Stair up the outside of the bank to the seats: conjecture. The first timber phase was reached by stairs from outside (Sunter in Fulford 1989, via Kovacsovics 1993); positions are not known."
+   },
+   {
+    "id": "stair-1",
+    "angle": 135,
+    "w": 1.6,
+    "ev": "X",
+    "note": "Stair up the outside of the bank to the seats: conjecture. The first timber phase was reached by stairs from outside (Sunter in Fulford 1989, via Kovacsovics 1993); positions are not known."
+   },
+   {
+    "id": "stair-2",
+    "angle": 225,
+    "w": 1.6,
+    "ev": "X",
+    "note": "Stair up the outside of the bank to the seats: conjecture. The first timber phase was reached by stairs from outside (Sunter in Fulford 1989, via Kovacsovics 1993); positions are not known."
+   },
+   {
+    "id": "stair-3",
+    "angle": 315,
+    "w": 1.6,
+    "ev": "X",
+    "note": "Stair up the outside of the bank to the seats: conjecture. The first timber phase was reached by stairs from outside (Sunter in Fulford 1989, via Kovacsovics 1993); positions are not known."
+   }
+  ]
+ }
+}

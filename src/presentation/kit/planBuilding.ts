@@ -17,6 +17,9 @@ import { CELL_TILE_M, cellVec } from './atlasTiled.js';
 // what a picked face is (elementAtFace) and highlight it (elementTriangles).
 
 import type { Ev, UV, PlanOpening, PlanWindow, PlanWall, PlanRoom, PlanApse, PlanColumns, PlanRoof, BuildingPlan } from '../../domain/keyPlan.js';
+import { buildArena } from './planArena.js';
+import { emitCurtain, emitMerlons } from './curtain.js';
+import { FACE, WALL } from '../../domain/townWall.js';
 export type { Ev, UV, PlanOpening, PlanWindow, PlanWall, PlanRoom, PlanApse, PlanColumns, PlanRoof, BuildingPlan };
 
 export type Lod = 0 | 1 | 2;
@@ -30,7 +33,9 @@ export interface PlanBuildOptions {
    * eaves and verges. A few hundred triangles. Off only for the materials-lab baseline. */
   roofTrim?: boolean;
   /** Override the plan's wall facing (materials lab comparisons). */
-  facing?: 'greensand' | 'flint';
+  facing?: 'greensand' | 'flint' | 'flint-ironstone' | 'flint-limestone';
+  /** Arena plans: plan-space corners of the ground hole the bowl fills (an apron reaches out to it). */
+  apron?: UV[];
 }
 /** Collision footprint in plan coordinates: box along a->b of thickness t, or a circle. */
 export type PlanFootprint =
@@ -38,7 +43,9 @@ export type PlanFootprint =
   | { kind: 'circle'; c: UV; r: number; h: number };
 export type PlanElementKind =
   | 'wall' | 'stylobate' | 'window' | 'door' | 'apse' | 'floor' | 'pool' | 'labrum' | 'base'
-  | 'roof' | 'vault' | 'column' | 'pier' | 'arch' | 'beam';
+  | 'roof' | 'vault' | 'column' | 'pier' | 'arch' | 'beam' | 'platform'
+  // amphitheatre (planArena.ts)
+  | 'arena-wall' | 'passage-wall' | 'seating' | 'bank' | 'rail' | 'palisade' | 'stair' | 'recess';
 /** A pickable part of the building; `ref` is the plan item's id (wall, room, roof...). */
 export interface PlanElement { id: string; kind: PlanElementKind; ref: string; ev?: Ev; note?: string; conjecture?: boolean }
 export interface PlanBuild {
@@ -69,13 +76,13 @@ const EV_RGB: Record<Ev | 'N' | 'gS' | 'gC' | 'gX', [number, number, number]> = 
   // glass: darker shade of its evidence colour so windows read in the drawings
   gS: [0.16, 0.4, 0.2], gC: [0.55, 0.36, 0.08], gX: [0.5, 0.16, 0.14],
 };
-type Tint = keyof typeof EV_RGB;
+export type Tint = keyof typeof EV_RGB;
 
 type V3 = THREE.Vector3;
-const v3 = (u: number, y: number, v: number): V3 => new THREE.Vector3(u, y, -v);
+export const v3 = (u: number, y: number, v: number): V3 => new THREE.Vector3(u, y, -v);
 
 /** Triangle soup with tiling UVs, per-vertex atlas cell and optional evidence colour. */
-class Acc {
+export class Acc {
   pos: number[] = []; nor: number[] = []; uv: number[] = []; cell: number[] = []; col: number[] = [];
   /** Set while emitting open surfaces (roofs, floors, glass...); dropped when solidOnly. */
   surface = false;
@@ -192,7 +199,8 @@ const FLOOR_CELL: Record<string, AtlasCell> = {
 export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanBuild {
   const { lod } = opts;
   /** Exterior wall facing cell for this building. */
-  const mas: AtlasCell = (opts.facing ?? plan.facing) === 'flint' ? 'flint' : 'masonry';
+  const facing = opts.facing ?? plan.facing;
+  const mas: AtlasCell = facing === 'flint' ? 'flint' : facing === 'flint-ironstone' ? 'flintIron' : facing === 'flint-limestone' ? 'flintLime' : 'masonry';
   const drop = opts.footingDrop ?? 0;
   const acc = new Acc(!!opts.evidenceColors, !!opts.solidOnly);
   const footprints: PlanFootprint[] = [];
@@ -251,7 +259,9 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
    * roof height there (faces above a lower neighbouring roof are exterior). */
   const interiorHeight = (u: number, v: number): number => {
     if (!interiorRooms.some((r) => inPoly(u, v, r.poly))) return 0;
-    return roofHeightAt(u, v) ?? Infinity;
+    // a platform over the room (a tower's floor, a gate's platform) is its ceiling
+    const ceil = Math.min(...(plan.platforms ?? []).filter((p) => p.y > 0.5 && inPoly(u, v, p.poly)).map((p) => p.y));
+    return Math.min(roofHeightAt(u, v) ?? Infinity, ceil);
   };
   /** Which room + roof a plan point is in (heights vary along a wall; identity does not). */
   const sideKeyAt = (u: number, v: number): string => {
@@ -270,10 +280,37 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
 
   // ---------------- walls ----------------
   const wallById = new Map(plan.walls.map((w) => [w.id, w]));
-  for (const w of plan.walls) {
-    const ev = w.ev ?? 'C';
-    const wallEl: PlanElement = { id: w.id, kind: w.kind === 'stylobate' ? 'stylobate' : 'wall', ref: w.id, ev, note: w.note };
+  const M = (u: number, v: number, y: number): V3 => v3(u, y, v);
+  for (const w0 of plan.walls) {
+    const ev = w0.ev ?? 'C';
+    const wallEl: PlanElement = { id: w0.id, kind: w0.kind === 'stylobate' ? 'stylobate' : 'wall', ref: w0.id, ev, note: w0.note };
     tag(wallEl);
+    if (w0.kind === 'curtain') {
+      // a stretch of the town wall's own section (domain/townWall.ts), its field side to w.outer; consecutive
+      // stretches that join end to end (a curved flank) are swept as one path, so their mitres meet
+      const parapetEl: PlanElement = { id: `${w0.id}/parapet`, kind: 'wall', ref: w0.id, ev: 'C', note: 'crenellated parapet (comparison: no Silchester evidence either way)' };
+      const joins = (p: PlanWall | undefined, q: PlanWall | undefined): boolean => !!p && !!q && p.kind === 'curtain' && q.kind === 'curtain' && p.outer === q.outer && Math.hypot(p.b[0] - q.a[0], p.b[1] - q.a[1]) < 0.02;
+      const wi = plan.walls.indexOf(w0);
+      if (!joins(plan.walls[wi - 1], w0)) {
+        const path: UV[] = [w0.a, w0.b];
+        for (let k = wi; joins(plan.walls[k], plan.walls[k + 1]); k++) path.push(plan.walls[k + 1].b);
+        emitCurtain(acc, path, path.map(() => 0), w0.outer === 'r', M, {
+          lod, mas, drop, capA: true, capB: true, ev, evParapet: 'C', onPart: (p) => tag(p === 'body' ? wallEl : parapetEl),
+        });
+      }
+      const L = Math.hypot(w0.b[0] - w0.a[0], w0.b[1] - w0.a[1]) || 1, sg = w0.outer === 'r' ? 1 : -1;
+      const lu = (-(w0.b[1] - w0.a[1]) / L) * sg, lv = ((w0.b[0] - w0.a[0]) / L) * sg;
+      const band = (d0: number, d1: number, h: number): void => {
+        const dm = (d0 + d1) / 2;
+        footprints.push({ kind: 'box', a: [w0.a[0] + lu * dm, w0.a[1] + lv * dm], b: [w0.b[0] + lu * dm, w0.b[1] + lv * dm], t: d1 - d0, h });
+      };
+      band(FACE.plinth, FACE.innerUpper, WALL.walk);
+      band(FACE.outer, FACE.parapetIn, WALL.top);
+      continue;
+    }
+    // a crenellated wall: solid to the breastwork, merlons above
+    const w = w0.crenel ? { ...w0, h: w0.h - (WALL.top - WALL.breast) } : w0;
+    if (w0.crenel) emitMerlons(acc, w0.a, w0.b, w0.t, w0.h, M, w0.material ?? mas, ev);
     const [au, av] = w.a, [bu, bv] = w.b;
     const L = Math.hypot(bu - au, bv - av);
     if (L < 1e-6) continue;
@@ -310,7 +347,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     if (lod < 2) {
       (w.openings ?? []).forEach((o, i) => {
         const el: PlanElement = { id: `${w.id}/door${i}`, kind: 'door', ref: w.id, ev, note: o.note, conjecture: o.conjecture };
-        if (!o.arch) { holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0: 0, y1: Math.min(o.oh, w.h), glass: false, ev, el }); return; }
+        if (!o.arch) { const y0 = o.y0 ?? 0; holes.push({ s0: o.at - o.w / 2, s1: o.at + o.w / 2, y0, y1: Math.min(y0 + o.oh, w.h), glass: false, ev, el }); return; }
         // arched head: slices whose soffit follows chords of the semicircle above the springing
         const n = lod === 0 ? 8 : 4, r = o.w / 2;
         const yAt = (s: number): number => Math.min(o.oh + Math.sqrt(Math.max(0, r * r - (s - o.at) ** 2)), w.h);
@@ -718,6 +755,43 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       if (cg.beam === true) for (const wid of cg.on ?? []) { const w = wallById.get(wid); if (w) beam(w.a, w.b); }
       else if (cg.beam && typeof cg.beam === 'object') beam(cg.beam.from, cg.beam.to);
     }
+  }
+
+  // ---------------- platforms (timber decks: a gate's platform, a tower's floors) and stairs
+  for (const pf of plan.platforms ?? []) {
+    const ev = pf.ev ?? 'X';
+    tag({ id: pf.id, kind: 'platform', ref: pf.id, ev, note: pf.note });
+    const th = 0.3, top = pf.poly.map(([u, v]) => v3(u, pf.y, v)), bot = pf.poly.map(([u, v]) => v3(u, pf.y - th, v));
+    acc.surf(() => {
+      acc.poly(top, 'wood', ev, UP);
+      if (lod === 0) acc.poly(bot, 'wood', ev, DOWN);
+    });
+    const c = top.reduce((m, q) => m.clone().add(q), new THREE.Vector3()).multiplyScalar(1 / top.length);
+    for (let i = 0; i < top.length; i++) {
+      const j = (i + 1) % top.length, mid = top[i].clone().add(top[j]).multiplyScalar(0.5);
+      acc.surf(() => acc.poly([bot[i], bot[j], top[j], top[i]], 'wood', ev, mid.sub(c).setY(0)));
+    }
+  }
+  for (const st of plan.stairs ?? []) {
+    const ev = st.ev ?? 'X';
+    tag({ id: st.id, kind: 'stair', ref: st.id, ev, note: st.note });
+    const L = Math.hypot(st.b[0] - st.a[0], st.b[1] - st.a[1]) || 1, du = (st.b[0] - st.a[0]) / L, dv = (st.b[1] - st.a[1]) / L;
+    const nu = (-dv * st.w) / 2, nv = (du * st.w) / 2, n = Math.max(2, Math.round((st.y1 - st.y0) / 0.25));
+    const S = (s: number, side: number, y: number): V3 => v3(st.a[0] + du * s + nu * side, y, st.a[1] + dv * s + nv * side);
+    const fwd = v3(du, 0, dv), side = v3(nu, 0, nv).normalize();
+    for (let k = 0; k < n; k++) {
+      const sA = (k * L) / n, sB = ((k + 1) * L) / n, yR = st.y0 + (k * (st.y1 - st.y0)) / n, yT = st.y0 + ((k + 1) * (st.y1 - st.y0)) / n;
+      acc.poly([S(sA, -1, yR), S(sA, 1, yR), S(sA, 1, yT), S(sA, -1, yT)], 'stone', ev, fwd.clone().negate());
+      acc.poly([S(sA, -1, yT), S(sA, 1, yT), S(sB, 1, yT), S(sB, -1, yT)], 'stone', ev, UP);
+      for (const sd of [-1, 1]) acc.poly([S(sA, sd, st.y0), S(sB, sd, st.y0), S(sB, sd, yT), S(sA, sd, yT)], 'stone', ev, side.clone().multiplyScalar(sd));
+    }
+    acc.poly([S(L, -1, st.y0), S(L, 1, st.y0), S(L, 1, st.y1), S(L, -1, st.y1)], 'stone', ev, fwd);
+  }
+  acc.surface = false;
+
+  if (plan.arena) {
+    buildArena(plan.arena, { acc, tag, lod, mas, drop, footprints, apron: opts.apron });
+    acc.surface = false;
   }
 
   const geometry = acc.build();

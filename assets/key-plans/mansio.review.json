@@ -1,0 +1,316 @@
+{
+ "id": "mansio",
+ "note": "Reading of Great Plan rings (tmp/audit-buildings/raw.geojson refs) for user review. cls: in | maybe | out. 'why' is Claude's reading of Fox & St John Hope 1894 (Archaeologia 54, Pl. XVII) and Hilton Price 1887 (Archaeologia 50, Pls. XV, XVII), not established fact.",
+ "scope": "User 2026-10-12: main block, baths + outer court, granary + west yard; not the SW dependency. West-wing alterations shown as excavated.",
+ "underlays": [
+  {
+   "file": "mansio-1893-west.jpg",
+   "label": "Fox & St John Hope 1894, Archaeologia 54, Pl. XVII (west part; scan p.261)",
+   "source": "https://archive.org/details/sim_archaeologia-tracts-relating-to-antiquity_1894_54",
+   "width": 1440,
+   "height": 1220,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N] generated from an affine chamfer fit of the plate walls to the in-rings (scratch chamfit.py): 88% of wall pixels within 0.3 m of a ring wall, 93% within 0.6 m; 0.0526 m/px",
+   "points": [
+    [
+     144,
+     122,
+     463985.99,
+     162157.93
+    ],
+    [
+     1296,
+     122,
+     464046.44,
+     162161.41
+    ],
+    [
+     1296,
+     1098,
+     464050.42,
+     162111.07
+    ],
+    [
+     144,
+     1098,
+     463989.97,
+     162107.59
+    ],
+    [
+     720,
+     366,
+     464017.21,
+     162147.09
+    ],
+    [
+     432,
+     854,
+     464004.09,
+     162121.05
+    ]
+   ]
+  },
+  {
+   "file": "mansio-1893-east.jpg",
+   "label": "Fox & St John Hope 1894, Archaeologia 54, Pl. XVII (east part with the baths; scan p.258)",
+   "source": "https://archive.org/details/sim_archaeologia-tracts-relating-to-antiquity_1894_54",
+   "width": 1250,
+   "height": 1150,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N] generated from an affine chamfer fit of the plate walls to the in-rings (scratch chamfit.py): 87% of wall pixels within 0.3 m of a ring wall, 90% within 0.6 m; 0.0527 m/px",
+   "points": [
+    [
+     125,
+     115,
+     464053.26,
+     162156.26
+    ],
+    [
+     1125,
+     115,
+     464105.9,
+     162158.82
+    ],
+    [
+     1125,
+     1035,
+     464108.74,
+     162112.16
+    ],
+    [
+     125,
+     1035,
+     464056.09,
+     162109.6
+    ],
+    [
+     625,
+     345,
+     464080.29,
+     162145.87
+    ],
+    [
+     375,
+     805,
+     464068.55,
+     162121.9
+    ]
+   ]
+  }
+ ],
+ "omit": [],
+ "rings": {
+  "r1674": {
+   "cls": "in",
+   "why": "north and south wings, inner corridors and the courtyard walls (rooms = holes); OS survey of Joyce 1876-77 (Fox 1894, Pl. XVII, lighter walls)"
+  },
+  "r1673": {
+   "cls": "in",
+   "why": "west wing: rooms, three hypocausts, stair, kitchen (Fox 1894)"
+  },
+  "r864": {
+   "cls": "in",
+   "why": "outer walls: south outer corridor and the ~370 ft south wall shared with the baths court and baths (Fox 1894); the apsidal room and SW rooms added on the west (1893, black on Pl. XVII); baths outline"
+  },
+  "r856": {
+   "cls": "in",
+   "why": "corner of the south-west added room (1893)"
+  },
+  "r8": {
+   "cls": "in",
+   "why": "small piece of the north outer wall beside the main gate (Pl. XVII \"GATE\")"
+  },
+  "r9": {
+   "cls": "in",
+   "why": "outer (baths) court: angled north-east boundary wall (Pl. XVII; Hilton Price 1887 \"boundary wall ... turning with a rounded corner\")"
+  },
+  "r855": {
+   "cls": "in",
+   "why": "granary (Boon 1957: 60 x 30 ft, buttressed west wall) and the walls of its yard joining the west wing (1893, black on Pl. XVII)"
+  },
+  "r854": {
+   "cls": "in",
+   "why": "granary east wall (dotted on Pl. XVII)"
+  },
+  "r857": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r858": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r859": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r860": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r861": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r862": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r863": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r884": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r885": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r886": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1710": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1711": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1712": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1713": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1714": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1715": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1716": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r1717": {
+   "cls": "in",
+   "why": "baths (Block IX) interior fragments; the Great Plan shows only part of the Hodge 1881 plan here"
+  },
+  "r0": {
+   "cls": "out",
+   "why": "oblique fragments ~42 ft SW of the building: Fox 1894 \"probably formed a dependency\"; different alignment, partial (user scope 2026-10-12: not built)"
+  },
+  "r887": {
+   "cls": "out",
+   "why": "oblique fragments ~42 ft SW of the building: Fox 1894 \"probably formed a dependency\"; different alignment, partial (user scope 2026-10-12: not built)"
+  },
+  "r888": {
+   "cls": "out",
+   "why": "oblique fragments ~42 ft SW of the building: Fox 1894 \"probably formed a dependency\"; different alignment, partial (user scope 2026-10-12: not built)"
+  },
+  "r849": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r850": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r851": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r852": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r853": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r880": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r881": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r882": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r1707": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r1708": {
+   "cls": "out",
+   "why": "Insula VIII buildings south-west of the mansio (House VIII.4 area and fragments)"
+  },
+  "r5": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r890": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r893": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r703": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r900": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r904": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r905": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r907": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r917": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r922": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r1725": {
+   "cls": "out",
+   "why": "houses north-west of the mansio (Houses VIII.1-3)"
+  },
+  "r701": {
+   "cls": "out",
+   "why": "buildings beyond the street to the north-east"
+  },
+  "r929": {
+   "cls": "out",
+   "why": "buildings beyond the street to the north-east"
+  },
+  "r1727": {
+   "cls": "out",
+   "why": "buildings beyond the street to the north-east"
+  }
+ }
+}

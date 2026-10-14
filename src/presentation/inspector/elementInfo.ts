@@ -3,6 +3,7 @@
 // Wording follows assets/key-plans/<id>.about.md; plan notes are appended.
 import type { BuildingPlan, Ev, PlanRoom, UV } from '../../domain/keyPlan.js';
 import type { PlanElement } from '../kit/planBuilding.js';
+import { arenaProfile, corridorAt, inRecess, polarDeg, ringRadius } from '../../domain/arenaPlan.js';
 
 export interface ElementInfo { title: string; ev?: Ev; lines: string[] }
 
@@ -70,6 +71,9 @@ const WALL_HEIGHT: Record<Ev, string> = {
   X: 'Height: conjecture.',
 };
 
+/** "north" / "south" / "west" / "east" from an amphitheatre part's id. */
+const side = (id: string): string => (/^(north|south|west|east)/.exec(id)?.[1] ?? '');
+
 /** Describe an element; `at` is the picked plan point (u, v), when known. */
 export function describeElement(plan: BuildingPlan, el: PlanElement, at?: UV): ElementInfo {
   const room = (id: string): PlanRoom | undefined => plan.rooms.find((r) => r.id === id);
@@ -77,6 +81,37 @@ export function describeElement(plan: BuildingPlan, el: PlanElement, at?: UV): E
   let title = '';
   let ev: Ev | undefined = el.ev;
   switch (el.kind) {
+    // ---- amphitheatre (planArena.ts)
+    case 'arena-wall':
+      title = 'Arena wall';
+      lines.push('Its line is the stone arena wall of the Silchester survey, excavated in 1979–85. About 3 m high, as the excavator reconstructs it.');
+      break;
+    case 'passage-wall':
+      title = `Wall of the ${side(el.ref)} entrance`;
+      lines.push('Excavated stone wall lining the entrance passage and holding back the bank. Its top follows the seating beside it: a reconstruction.');
+      break;
+    case 'seating':
+      title = 'Timber seating';
+      lines.push('No seats survive: the seating was of timber on the earth banks. Twelve rows, as on the excavator’s reconstruction.');
+      break;
+    case 'bank':
+      title = el.id === 'arena/apron' ? 'Ground round the amphitheatre' : 'Earth bank';
+      if (el.id !== 'arena/apron') lines.push('Built from the soil dug out of the arena. Its spread is the surviving earthwork; its height is from the reconstruction.');
+      break;
+    case 'rail':
+      title = 'Timber rail on the arena wall';
+      break;
+    case 'palisade':
+      title = 'Fence at the back of the seating';
+      break;
+    case 'stair':
+      title = 'Stair up the bank';
+      ev = 'X';
+      break;
+    case 'recess':
+      title = `${cap(side(el.ref))} recess`;
+      lines.push('Its plan is excavated.');
+      break;
     case 'wall':
       title = cap(wallPlace(plan, el.ref, at));
       lines.push('Wall line: surveyed and excavated (1903–4 plan, matched to the town survey).');
@@ -107,6 +142,10 @@ export function describeElement(plan: BuildingPlan, el: PlanElement, at?: UV): E
       break;
     }
     case 'floor': {
+      if (plan.arena && !room(el.ref)) {
+        title = el.ref === plan.arena.id ? 'Arena floor' : plan.arena.passages.some((p) => p.id === el.ref) ? `Floor of the ${side(el.ref)} entrance` : `Floor of the ${side(el.ref)} recess`;
+        break;
+      }
       const r = room(el.ref);
       title = r ? `${r.name}: floor` : 'Floor';
       const [text, fev] = FLOOR_TEXT[r?.floor ?? ''] ?? ['Floor.', undefined];
@@ -135,6 +174,7 @@ export function describeElement(plan: BuildingPlan, el: PlanElement, at?: UV): E
       break;
     }
     case 'vault': {
+      if (plan.arena && !room(el.ref)) { title = `Vault of the ${side(el.ref)} recess`; break; }
       const r = room(el.ref);
       title = r ? `Vaulted ceiling of ${the(r)}` : 'Vaulted ceiling';
       lines.push('Wedge-shaped and hollow arch bricks and wall-heating tiles found at Silchester show the hot rooms were vaulted.');
@@ -159,6 +199,22 @@ export function describeElement(plan: BuildingPlan, el: PlanElement, at?: UV): E
   }
   if (el.note) lines.push(`${cap(el.note)}${/[.)]$/.test(el.note) ? '' : '.'}`);
   return { title, ev, lines: lines.filter(Boolean) };
+}
+
+/** Description of the part of an amphitheatre under a plan point, for the plan drawing. */
+export function describeArenaAt(plan: BuildingPlan, u: number, v: number): ElementInfo | undefined {
+  const ar = plan.arena;
+  if (!ar) return undefined;
+  const d = Math.hypot(u - ar.c[0], v - ar.c[1]) - ringRadius(ar, polarDeg(ar, u, v)), P = arenaProfile(ar);
+  const note = (s?: string): string[] => (s ? [`${cap(s)}${/[.)]$/.test(s) ? '' : '.'}`] : []);
+  if (d > ar.bank.toe) return undefined;
+  if (d < -ar.t / 2) return { title: 'Arena', ev: ar.ev, lines: [`About 45 by 39 m inside the wall, its floor some ${ar.ground} m below the ground round it.`, ...note(ar.note)] };
+  const cor = corridorAt(ar, [u, v]);
+  if (cor) { const ps = ar.passages.find((p) => p.id.startsWith(cor.ax >= 0 && v > ar.c[1] ? 'north' : 'south')); return { title: v > ar.c[1] ? 'North entrance' : 'South entrance', ev: ps?.ev, lines: note(ps?.note) }; }
+  if (inRecess(ar, [u, v])) { const rc = ar.recesses.find((r) => Math.hypot(u - r.c[0], v - r.c[1]) < r.r + 2); return { title: rc ? `${cap(side(rc.id))} recess` : 'Recess', ev: rc?.ev, lines: note(rc?.note) }; }
+  if (d < ar.t / 2) return { title: 'Arena wall', ev: ar.ev, lines: note(ar.note) };
+  if (d < P.rowsEnd) return { title: 'Seating', ev: ar.seating.ev, lines: note(ar.seating.note) };
+  return { title: 'Earth bank', ev: ar.bank.ev, lines: note(ar.bank.note) };
 }
 
 /** Description of a room, for the plan drawing. */

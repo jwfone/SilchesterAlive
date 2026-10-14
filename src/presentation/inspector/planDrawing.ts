@@ -4,7 +4,8 @@
 // lines; hover / tap a room for its name and notes. Rooms whose names do not
 // fit at the current size are numbered, with a key list beside the drawing.
 import type { BuildingPlan, Ev, UV } from '../../domain/keyPlan.js';
-import { describeRoom, EV_COLOR, roomAt } from './elementInfo.js';
+import { describeArenaAt, describeRoom, EV_COLOR, roomAt } from './elementInfo.js';
+import { arenaProfile, openingAt, planExtentUV, ringPoint } from '../../domain/arenaPlan.js';
 import { Tooltip } from './tooltip.js';
 import type { InspectorMode } from './BuildingInspector.js';
 
@@ -32,21 +33,86 @@ export class PlanDrawing {
     const add = (u: number, v: number, pad: number): void => { u0 = Math.min(u0, u - pad); u1 = Math.max(u1, u + pad); v0 = Math.min(v0, v - pad); v1 = Math.max(v1, v + pad); };
     for (const w of plan.walls) { add(w.a[0], w.a[1], w.t / 2); add(w.b[0], w.b[1], w.t / 2); }
     for (const ap of plan.apses ?? []) add(ap.c[0], ap.c[1], ap.r + ap.t / 2);
+    if (plan.arena) { const e = planExtentUV(plan); add(e.u0, e.v0, 0.5); add(e.u1, e.v1, 0.5); }
     this.b = { u0, u1, v0, v1 };
     this.ro = new ResizeObserver(() => this.draw());
     this.ro.observe(this.canvas);
     const pick = (e: PointerEvent): void => {
       const r = this.canvas.getBoundingClientRect();
       const px = (e.clientX - r.left) * (this.canvas.width / r.width), py = (e.clientY - r.top) * (this.canvas.height / r.height);
-      const room = roomAt(plan, (px - this.ox) / this.k, (this.oy - py) / this.k);
-      if (!room) { this.tip.hide(); this.onPick?.(null); return; }
-      const info = describeRoom(room);
+      const pu = (px - this.ox) / this.k, pv = (this.oy - py) / this.k;
+      const room = roomAt(plan, pu, pv);
+      const info = room ? describeRoom(room) : plan.arena ? describeArenaAt(plan, pu, pv) : undefined;
+      if (!info) { this.tip.hide(); this.onPick?.(null); return; }
       this.tip.show(info, e.clientX, e.clientY);
       this.onPick?.([info.title, ...info.lines].join('. '));
     };
     this.canvas.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') pick(e); });
     this.canvas.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') pick(e); });
     this.canvas.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') this.tip.hide(); });
+  }
+
+  /** Amphitheatre: bank, seating and arena as rings (passages cut through), the arena wall with its openings,
+   * passage walls and recesses, and labels. */
+  private drawArena(ctx: CanvasRenderingContext2D, X: (u: number) => number, Y: (v: number) => number, k: number, dpr: number,
+    wallColor: (ev: Ev | undefined) => string): void {
+    const ar = this.plan.arena!, P = arenaProfile(ar);
+    const ring = (d: number): void => {
+      ctx.beginPath();
+      for (let a = 0; a <= 360; a += 2) { const [u, v] = ringPoint(ar, a, d); if (a) ctx.lineTo(X(u), Y(v)); else ctx.moveTo(X(u), Y(v)); }
+      ctx.closePath();
+    };
+    ring(ar.bank.toe); ctx.fillStyle = FILL.open; ctx.fill();
+    ring(P.crestEnd); ctx.fillStyle = '#e9dcc0'; ctx.fill();
+    ctx.strokeStyle = 'rgba(120,90,50,.35)'; ctx.lineWidth = dpr;
+    for (let r = 1; r <= ar.seating.rows; r++) { ring(ar.t / 2 + r * ar.seating.tread); ctx.stroke(); }
+    ring(-ar.t / 2); ctx.fillStyle = '#f1e6cf'; ctx.fill();
+    // passages: corridors cut through the banks
+    for (const ps of ar.passages) {
+      const [w0, w1] = ps.walls;
+      ctx.beginPath(); ctx.moveTo(X(w0.a[0]), Y(w0.a[1])); ctx.lineTo(X(w0.b[0]), Y(w0.b[1])); ctx.lineTo(X(w1.b[0]), Y(w1.b[1])); ctx.lineTo(X(w1.a[0]), Y(w1.a[1])); ctx.closePath();
+      ctx.fillStyle = '#f1e6cf'; ctx.fill();
+    }
+    for (const rc of ar.recesses) { ctx.beginPath(); ctx.arc(X(rc.c[0]), Y(rc.c[1]), (rc.r - rc.t / 2) * k, 0, Math.PI * 2); ctx.fillStyle = '#f1e6cf'; ctx.fill(); }
+    // arena wall, gaps at the openings
+    ctx.lineCap = 'butt'; ctx.lineWidth = Math.max(1.5 * dpr, ar.t * k); ctx.strokeStyle = wallColor(ar.ev);
+    let open = true;
+    for (let a = 0; a <= 360; a += 0.5) {
+      const gap = !!openingAt(ar, a % 360);
+      const [u, v] = ringPoint(ar, a);
+      if (gap) { if (!open) ctx.stroke(); open = true; continue; }
+      if (open) { ctx.beginPath(); ctx.moveTo(X(u), Y(v)); open = false; } else ctx.lineTo(X(u), Y(v));
+    }
+    if (!open) ctx.stroke();
+    for (const ps of ar.passages) for (const w of ps.walls) {
+      ctx.beginPath(); ctx.moveTo(X(w.a[0]), Y(w.a[1])); ctx.lineTo(X(w.b[0]), Y(w.b[1]));
+      ctx.lineWidth = Math.max(1.5 * dpr, w.t * k); ctx.strokeStyle = wallColor(ps.ev); ctx.stroke();
+    }
+    for (const rc of ar.recesses) {
+      const am = Math.atan2(rc.c[1] - ar.c[1], rc.c[0] - ar.c[0]);
+      ctx.beginPath(); ctx.arc(X(rc.c[0]), Y(rc.c[1]), rc.r * k, -am - Math.PI / 2, -am + Math.PI / 2);
+      ctx.lineWidth = Math.max(1.5 * dpr, rc.t * k); ctx.strokeStyle = wallColor(rc.ev); ctx.stroke();
+    }
+    for (const st of ar.stairs ?? []) {
+      const [u0, v0] = ringPoint(ar, st.angle, P.crestEnd), [u1, v1] = ringPoint(ar, st.angle, ar.bank.toe);
+      ctx.beginPath(); ctx.moveTo(X(u0), Y(v0)); ctx.lineTo(X(u1), Y(v1));
+      ctx.lineWidth = Math.max(2 * dpr, st.w * k); ctx.strokeStyle = this.mode === 'ev' ? EV_COLOR[st.ev ?? 'X'] : '#8a6a44'; ctx.stroke();
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const label = (t: string, u: number, v: number): void => {
+      ctx.font = `600 ${Math.max(10 * dpr, Math.min(14 * dpr, k * 1.4))}px system-ui, sans-serif`;
+      ctx.lineWidth = 3 * dpr; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.strokeText(t, X(u), Y(v));
+      ctx.fillStyle = '#23201b'; ctx.fillText(t, X(u), Y(v));
+    };
+    label('Arena', ar.c[0], ar.c[1]);
+    for (const ps of ar.passages) {
+      const m = [(ps.walls[0].b[0] + ps.walls[1].b[0]) / 2, (ps.walls[0].b[1] + ps.walls[1].b[1]) / 2];
+      label(ps.id.startsWith('north') ? 'North entrance' : 'South entrance', m[0], m[1] + (m[1] > ar.c[1] ? 3 : -3));
+    }
+    const [su, sv] = ringPoint(ar, 225, P.rowsEnd / 2);
+    label('Seating', su, sv);
+    const [bu, bv] = ringPoint(ar, 315, (P.crestEnd + ar.bank.toe) / 2);
+    label('Bank', bu, bv);
   }
 
   setMode(mode: InspectorMode): void { this.mode = mode; this.draw(); }
@@ -88,6 +154,7 @@ export class PlanDrawing {
     }
 
     const wallColor = (ev: Ev | undefined): string => (this.mode === 'ev' ? EV_COLOR[ev ?? 'C'] : FILL.line);
+    if (plan.arena) this.drawArena(ctx, X, Y, k, dpr, wallColor);
     // Walls: solid between doorways; windows drawn as a thin line across the opening.
     ctx.lineCap = 'butt';
     for (const w of plan.walls) {

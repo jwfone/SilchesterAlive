@@ -3,6 +3,7 @@
 //   http://localhost:5173/tools/materials.html?id=baths            walls
 //   http://localhost:5173/tools/materials.html?id=baths&set=roof   roofs
 //   http://localhost:5173/tools/materials.html?id=forum-basilica&set=flint   flint facing
+//   http://localhost:5173/tools/materials.html?id=amphitheatre&set=arena    flint with ironstone courses
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildFromPlan, type BuildingPlan } from '../presentation/kit/planBuilding.js';
@@ -17,7 +18,8 @@ const plan = (await (await fetch(`/assets/key-plans/${id}.plan.json`)).json()) a
 const params = new URLSearchParams(location.search);
 const only = params.get('only')?.split(',');
 const set = params.get('set') ?? 'wall';
-interface Pane { key: string; style: SurfaceStyle; title: string; note: string; trim?: false; set?: 'roof' | 'flint'; benchOnly?: boolean; facing?: 'greensand' | 'flint'; flintTiles?: number }
+type Facing = 'greensand' | 'flint' | 'flint-ironstone' | 'flint-limestone';
+interface Pane { key: string; style: SurfaceStyle; title: string; note: string; trim?: false; set?: 'roof' | 'flint' | 'arena' | 'town'; benchOnly?: boolean; facing?: Facing; flintTiles?: number }
 const allPanes: Pane[] = [
   { key: 'texture', style: 'texture', title: 'A · Painted texture (current)', note: 'one 2 × 1.6 m tile, repeated' },
   { key: 'procedural', style: 'procedural', title: 'B · Generated stonework', note: 'every block and brick its own size and tone' },
@@ -34,6 +36,14 @@ const allPanes: Pane[] = [
   { key: 'flint2', style: 'hybrid', set: 'flint', flintTiles: 2, title: 'K2 · Flint, 2 tile courses', note: '5 flint courses (~0.12 m) then a double tile course, like the double bonding course of the town wall' },
   { key: 'flint3', style: 'hybrid', set: 'flint', flintTiles: 3, title: 'K3 · Flint, 3 tile courses', note: 'as K2 with 3 tile courses, like the brick bands at the baths' },
   { key: 'flintLite', style: 'hybridLite', set: 'flint', flintTiles: 2, title: 'K2s · Flint, Standard tier', note: 'K2 without fine grain or lumpy outlines (1 texture read)' },
+  // amphitheatre (?id=amphitheatre&set=arena): the arena wall
+  { key: 'arenaK2', style: 'hybrid', set: 'arena', facing: 'flint', flintTiles: 2, title: 'K2 · Flint, 2 tile courses (before)', note: 'the forum facing: tile courses not recorded here' },
+  { key: 'arenaFI', style: 'hybrid', set: 'arena', facing: 'flint-ironstone', title: 'FI · Flint, brown ironstone courses', note: 'single courses of flat ironstone slabs, 0.26-0.74 m apart; rough flint between' },
+  { key: 'arenaFIs', style: 'hybridLite', set: 'arena', facing: 'flint-ironstone', title: 'FIs · FI, Standard tier', note: 'FI without fine grain, lumpy outlines or laminations' },
+  // town wall (?id=south-gate&set=town): the wall either side of the south gate
+  { key: 'townK2', style: 'hybrid', set: 'town', facing: 'flint', flintTiles: 2, title: 'K2 · Flint, 2 tile courses (before)', note: 'the forum facing: tile bands are not the town wall\'s' },
+  { key: 'townFL', style: 'hybrid', set: 'town', facing: 'flint-limestone', title: 'FL · Flint, double limestone courses', note: '4-5 flint courses (0.55 m) then two courses of flat slabs, mostly pale limestone (Collis 1983)' },
+  { key: 'townFLs', style: 'hybridLite', set: 'town', facing: 'flint-limestone', title: 'FLs · FL, Standard tier', note: 'FL without fine grain or lumpy outlines' },
 ];
 const panes = only ? allPanes.filter((p) => only.includes(p.key)) : allPanes.filter((p) => (p.set ?? 'wall') === set && !p.benchOnly);
 
@@ -65,10 +75,19 @@ scene.add(new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2)
 const geoGame = buildFromPlan(plan, { lod: 0 }).geometry;
 const geoNoTrim = buildFromPlan(plan, { lod: 0, roofTrim: false }).geometry;
 const geoGreensand = set === 'flint' ? buildFromPlan(plan, { lod: 0, facing: 'greensand' }).geometry : geoGame;
+const geoByFacing = new Map<Facing, THREE.BufferGeometry>();
+const geoFor = (f: Facing): THREE.BufferGeometry => {
+  if (!geoByFacing.has(f)) geoByFacing.set(f, buildFromPlan(plan, { lod: 0, facing: f }).geometry);
+  return geoByFacing.get(f)!;
+};
 const mesh = new THREE.Mesh(geoGame);
 scene.add(mesh);
 const mats = panes.map((p) => { const m = createTiledAtlasMaterial({}, p.style); if (p.flintTiles) m.userData.flintTiles = p.flintTiles; return m; });
-const usePane = (i: number): void => { mesh.material = mats[i]; mesh.geometry = panes[i].facing === 'greensand' ? geoGreensand : panes[i].trim === false ? geoNoTrim : geoGame; };
+const usePane = (i: number): void => {
+  const p = panes[i];
+  mesh.material = mats[i];
+  mesh.geometry = (p.set === 'arena' || p.set === 'town') && p.facing ? geoFor(p.facing) : p.facing === 'greensand' ? geoGreensand : p.trim === false ? geoNoTrim : geoGame;
+};
 
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -92,6 +111,16 @@ const presets: Record<string, [THREE.Vector3, THREE.Vector3]> = {
   flintCourt: [new THREE.Vector3(62, 1.7, -28), new THREE.Vector3(36, 4.5, -50)],
   flintStreet: [new THREE.Vector3(-12, 1.8, -24), new THREE.Vector3(6.2, 4, -46)],
   flintAerial: [new THREE.Vector3(140, 55, 30), new THREE.Vector3(48, 3, -43)],
+  // amphitheatre (?id=amphitheatre&set=arena; the arena floor is y = 0): the wall by the east recess, from the arena, the air
+  arenaDetail: [new THREE.Vector3(56.2, 1.5, -38.6), new THREE.Vector3(58.9, 1.3, -39.6)],
+  arenaClose: [new THREE.Vector3(50, 1.7, -36), new THREE.Vector3(59, 1.6, -42)],
+  arenaWide: [new THREE.Vector3(37, 1.7, -30), new THREE.Vector3(55, 2, -52)],
+  arenaAerial: [new THREE.Vector3(95, 45, 20), new THREE.Vector3(37, 0, -42)],
+  // town wall (?id=south-gate&set=town; v up = the field): the west flank's outer face, the wall-walk, the field front, the air
+  townDetail: [new THREE.Vector3(9.6, 1.5, -15.9), new THREE.Vector3(9.4, 1.4, -14.0)],
+  townClose: [new THREE.Vector3(1.5, 1.7, -21), new THREE.Vector3(6, 2.4, -14.3)],
+  townWide: [new THREE.Vector3(-6, 1.8, -30), new THREE.Vector3(15, 3, -13)],
+  townAerial: [new THREE.Vector3(30, 28, -45), new THREE.Vector3(14, 2, -8)],
 };
 const setCam = (k: string): void => {
   const [eye, target] = presets[k];
@@ -174,4 +203,4 @@ function snap(view: string, pw = 1200, ph = 675): string {
 (window as unknown as { snap: typeof snap }).snap = snap;
 controls.addEventListener('change', draw);
 addEventListener('resize', draw);
-setCam(params.get('cam') ?? (set === 'roof' ? 'roofClose' : set === 'flint' ? 'flintClose' : 'close'));
+setCam(params.get('cam') ?? (set === 'roof' ? 'roofClose' : set === 'flint' ? 'flintClose' : set === 'arena' ? 'arenaClose' : 'close'));

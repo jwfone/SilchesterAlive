@@ -7,6 +7,9 @@ import { sampleTerrain, type TownPlan } from './townPlan.js';
 
 /** Axis-aligned rectangle (world metres) that is levelled flat, with a ramp back to natural ground. */
 export interface Platform { minX: number; maxX: number; minZ: number; maxZ: number; ramp: number }
+/** Axis-aligned rectangle (world metres) the drawn ground leaves open: a building fills it with its own
+ * surfaces (a sunken arena). Heights there still read the platform level; the building's floor overrides them. */
+export interface GroundHole { minX: number; maxX: number; minZ: number; maxZ: number }
 
 export interface TerrainSurface {
   /** Grid lines (ascending, same set for x and z); nodes sit at every pair. */
@@ -17,6 +20,8 @@ export interface TerrainSurface {
   levels: number[];
   /** Height of the drawn surface at (x, z): the mesh's own triangles, edge-clamped. */
   sample: (x: number, z: number) => number;
+  /** Rectangles the ground mesh does not draw (grid lines run along their edges). */
+  holes: GroundHole[];
 }
 
 /** Grid lines closer than this to a platform line are dropped (avoids sliver cells). */
@@ -24,11 +29,11 @@ const MIN_LINE_GAP = 2;
 /** Beyond this distance from the origin the natural grid is thinned to every other line. */
 const FAR_FIELD = 420;
 
-export function buildTerrainSurface(terrain: TownPlan['terrain'], scale: number, platforms: Platform[] = []): TerrainSurface {
+export function buildTerrainSurface(terrain: TownPlan['terrain'], scale: number, platforms: Platform[] = [], holes: GroundHole[] = []): TerrainSurface {
   const half = terrain.size / 2;
   const natural = (x: number, z: number): number => sampleTerrain(terrain, x, z) * scale;
   if (!terrain.heights.length) {
-    return { coords: [-half, half], heights: new Float32Array(4), levels: platforms.map(() => 0), sample: () => 0 };
+    return { coords: [-half, half], heights: new Float32Array(4), levels: platforms.map(() => 0), sample: () => 0, holes: [] };
   }
 
   // Natural nodes at the heightfield's own texel centres (plus the clamped edge), so the
@@ -41,6 +46,7 @@ export function buildTerrainSurface(terrain: TownPlan['terrain'], scale: number,
   });
   const platformLines: number[] = [];
   for (const p of platforms) platformLines.push(p.minX - p.ramp, p.minX, p.maxX, p.maxX + p.ramp, p.minZ - p.ramp, p.minZ, p.maxZ, p.maxZ + p.ramp);
+  for (const h of holes) platformLines.push(h.minX, h.maxX, h.minZ, h.maxZ);
   const lines = [...new Set(platformLines.map((v) => Math.round(v * 1000) / 1000))].filter((v) => v > -half && v < half);
   const coarse = [-half, half];
   for (let k = 0; k < terrain.grid; k++) {
@@ -80,5 +86,5 @@ export function buildTerrainSurface(terrain: TownPlan['terrain'], scale: number,
     const h00 = heights[j * n + i], h10 = heights[j * n + i + 1], h01 = heights[(j + 1) * n + i], h11 = heights[(j + 1) * n + i + 1];
     return tx + tz <= 1 ? h00 + (h10 - h00) * tx + (h01 - h00) * tz : h11 + (h01 - h11) * (1 - tx) + (h10 - h11) * (1 - tz);
   };
-  return { coords, heights, levels, sample };
+  return { coords, heights, levels, sample, holes };
 }

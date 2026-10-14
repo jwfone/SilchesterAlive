@@ -84,12 +84,61 @@ LOD0 caps: baths 12k, forum 20k). New generator features: arched openings (`arch
 extraction, apse fits, the plan writer and the review pictures; Python, scratch venv) are kept in gitignored
 `tmp/key-plans/forum-scripts/`.
 
+## Done: mansio (2026-10-13)
+
+Plan-built from the Great Plan rings (main block, west additions, granary and yard, outer court, baths), flint walls, as excavated
+(with the undated west-wing alteration). Brief, sources (Hilton Price 1887 and Fox & St John Hope 1894, *Archaeologia* 50 and 54 on
+the Internet Archive), decisions and the reasoning for every height: [`mansio.md`](mansio.md). The old kit `kit/mansio.ts` is gone; the
+anchor is now `mansio` (130 × 65.1 m, 3.9°), replacing the courtyard pin `mansio-courtyard`. Smoke LOD0 11,520, cap 16k; whole town
+34 draws. Scratch scripts (raster walls, plate fit, plan writer, roof check, review pictures; Python) are in gitignored
+`tmp/key-plans/mansio-scripts/`; the fitted plate images in `tmp/research/mansio-1893-*.jpg`.
+
+## Done: amphitheatre (2026-10-14)
+
+Plan-built from GIS layer 04 (the stone-phase arena wall, entrance passages and recesses; there are no Great Plan rings here) and the
+surviving earthwork (Fulford 2002 contour plan and C&F 2016 LiDAR, fitted to that wall), as in the stone phase. A new plan element
+`arena` (`src/domain/arenaPlan.ts` for the shared geometry and walking heights, `src/presentation/kit/planArena.ts` for the mesh) builds
+the sunken arena, wall, passages, vaulted recesses, 12 timber seat rows, the banks and outside stairs. The arena floor is 2 m below the
+ground: the ground mesh leaves a rectangular hole (`GroundHole`, `terrainSurface.ts`) that the building fills, out to an apron, and its
+floor overrides the ground (`floorOverrides`). Brief, sources and the reasoning for every height: [`amphitheatre.md`](amphitheatre.md).
+The old kit `kit/amphitheatre.ts` and its `EllipseBand` are gone; the maps draw the arena from the plan. Walls in a new style
+`flintIronF` (`facing: 'flint-ironstone'`: flint with single brown ironstone courses at uneven heights, from the user's photographs;
+lab `tools/materials.html?id=amphitheatre&set=arena`). Smoke LOD0 9,494, cap 12k;
+whole town 22 draws (the old kit was 13 meshes). Scratch scripts (GIS reader, plate fit, ellipse fit, plan writer, review pictures;
+Python) are in gitignored `tmp/key-plans/amphitheatre-scripts/`; the fitted figures in `tmp/research/amphi-*.jpg`; the GIS layers the
+user supplied in `tmp/gis04/`, `tmp/gis01/`.
+
+## Done: town wall and gates (2026-10-14)
+
+The stone wall of c. 260–280 between seven plan-built gates (north, south, east, west, Lesser West, amphitheatre, SE footway), with the
+earlier rampart behind and the U-shaped ditch in front. Brief, sources (Fox & St John Hope 1890, *Archaeologia* 52; Collis 1983; C&F 2016
+ch. 8; Fulford 2002 and the user's photographs), 13 decisions and the reasoning for every height: [`town-walls.md`](town-walls.md).
+The north gate moved ~120 m west to where the GIS (and the 1890 plan) put it. The wall line and counterforts are re-derived from the GIS 04
+strips (`assets/key-plans/town-wall.json`); the old kit `kit/walls.ts` is gone.
+
+New engine pieces, reusable elsewhere:
+- **Two-level walking**: `groundY(x, z, feet)`; raised decks (platforms, stairs, the wall-walk, bridges) count when they are no more
+  than 0.6 m above the feet (`DECK_STEP`); `PolyCollider.top` lets you walk on a wall top you have reached. Plan JSON: `platforms`,
+  `stairs`, opening `y0`, walls `crenel` and `kind: 'curtain'`.
+- **Ground changes without terrain grid lines**: the ditch lowers the ground and an earthworks mesh (2.5 m grid) draws it, with the coarse
+  ground hidden there by a mask on its material; the gates are levelled the same way (a platform per gate added grid lines across the
+  whole map and ~40k triangles of cut decals).
+- **Facing** `flintLimeF` (`facing: 'flint-limestone'`): flint with double courses of mixed limestone and ironstone slabs.
+
+Smoke: town wall section 21,034 tris (cap 24k), earthworks 23,666; gates 590–1,742; whole town **28 draws (was 22), 258k tris (was 216k)**.
+Lab: `tools/materials.html?id=south-gate&set=town`. Scratch scripts (GIS gate frames, wall line, counterforts, plan writer, notes writer,
+review pictures, `shots.ts` for rendering fixed game views through Vite) in gitignored `tmp/key-plans/walls-scripts/`; the user's photos
+and Fulford 2002 notes in `tmp/research/walls/`; the 1890 volume in `tmp/research/arch52/`.
+
+Possible follow-ups: the gates' order in the HUD list (alphabetical by id, so they interleave with the other buildings); the outer
+earthworks (GIS 03 banks) are untouched; Joyce 1881, St John Hope 1897/1909 and Fulford 1984 not read (east, Lesser West gates).
+
 ## Next: the other key buildings
 
 One session per building, in any order. The repeatable procedure is [`playbook.md`](playbook.md) (steps,
 deliverables, the code touch-points for replacing an old kit, pitfalls, a kickoff prompt); what is known about each
 building, open questions for the user and research leads are in [`other-buildings.md`](other-buildings.md). Suggested
-order there: temples, amphitheatre, mansio, church (forum-basilica done). The church is blocked on a user decision (the
+order there: temples, church (forum-basilica, mansio and amphitheatre done). The church is blocked on a user decision (the
 pin is probably on the medieval St Mary's; the Roman church may postdate the c. 270–280 snapshot).
 
 ## Done: in-game reconstruction viewer (was Next 2)

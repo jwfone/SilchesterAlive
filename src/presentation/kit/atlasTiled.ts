@@ -37,7 +37,7 @@ export const CELL_TILE_M: Record<AtlasCell, [number, number]> = {
   stone: [2, 2], plaster: [2, 2], timber: [2, 2], tile: [3.2, 4],
   street: [4, 4], grass: [4, 4], wood: [2, 2], arena: [4, 4], water: [4, 4],
   masonry: [2, 1.6], plasterPink: [2, 2], dado: [2, 1], signinum: [2, 2],
-  mosaic: [1, 1], window: [1, 1], brick: [1, 0.56], flint: [2, 1.6],
+  mosaic: [1, 1], window: [1, 1], brick: [1, 0.56], flint: [2, 1.6], flintIron: [2, 1.6], flintLime: [2, 1.6],
 };
 
 /** cellRect packed as the shader attribute (u0, v0, du, dv). */
@@ -69,6 +69,8 @@ uniform int uStyle;
 uniform vec2 uMasonryCell;
 uniform vec2 uBrickCell;
 uniform vec2 uFlintCell;
+uniform vec2 uFlintIronCell;
+uniform vec2 uFlintLimeCell;
 uniform float uFlintTiles;
 uniform vec2 uTileCell;
 uniform sampler2D uBakedMasonry;
@@ -202,6 +204,7 @@ vec3 masonryF(vec2 m) {
 // "Wall facing"): 0.6 m of flint nodules in 5 rough courses (~0.12 m, as the town wall's 4-5 flint courses),
 // then uFlintTiles courses of brick/tile (~0.067 m each), repeated. Nodules ~0.12-0.22 m long, rounded,
 // set in plenty of lime mortar; most show pale grey cortex, some a broken dark face, a few iron-stained.
+vec3 flintCourses(vec2 m, float yb, float H, float n, float band, float px, float far, vec3 mortar);
 vec3 flintF(vec2 m) {
   float tileH = 0.2 / 3.0, nt = uFlintTiles, bandH = 0.6 + nt * tileH;
   float band = floor(m.y / bandH), yb = m.y - band * bandH;
@@ -221,12 +224,17 @@ vec3 flintF(vec2 m) {
     col *= 1.0 + (r2 - 0.5) * 0.22 * far;
     return mix(mortar, col, inside);
   }
-  // flint courses: bed lines jittered +/-1.5 cm around k * 0.12 (as masonryF)
-  float k = min(floor(yb / 0.12), 4.0);
-  float b0 = k * 0.12 + (k > 0.0 ? (ih(band, k + 40.0) - 0.5) * 0.03 : 0.0);
-  float b1 = k < 4.0 ? (k + 1.0) * 0.12 + (ih(band, k + 41.0) - 0.5) * 0.03 : 0.6;
-  if (yb < b0) { k -= 1.0; b1 = b0; b0 = k * 0.12 + (k > 0.0 ? (ih(band, k + 40.0) - 0.5) * 0.03 : 0.0); }
-  else if (yb >= b1) { k += 1.0; b0 = b1; b1 = k < 4.0 ? (k + 1.0) * 0.12 + (ih(band, k + 41.0) - 0.5) * 0.03 : 0.6; }
+  return flintCourses(m, yb, 0.6, 5.0, band, px, far, mortar);
+}
+// Rough flint courses filling a band of height H with n courses: bed lines jittered +/-1.5 cm (as masonryF).
+// yb = height within the band; band = the band's index (seeds). Shared by flintF and flintIronF.
+vec3 flintCourses(vec2 m, float yb, float H, float n, float band, float px, float far, vec3 mortar) {
+  float c = H / n;
+  float k = min(floor(yb / c), n - 1.0);
+  float b0 = k * c + (k > 0.0 ? (ih(band, k + 40.0) - 0.5) * 0.03 : 0.0);
+  float b1 = k < n - 1.0 ? (k + 1.0) * c + (ih(band, k + 41.0) - 0.5) * 0.03 : H;
+  if (yb < b0) { k -= 1.0; b1 = b0; b0 = k * c + (k > 0.0 ? (ih(band, k + 40.0) - 0.5) * 0.03 : 0.0); }
+  else if (yb >= b1) { k += 1.0; b0 = b1; b1 = k < n - 1.0 ? (k + 1.0) * c + (ih(band, k + 41.0) - 0.5) * 0.03 : H; }
   float ch = b1 - b0, fy = yb - b0, cid = band * 10.0 + k;
   vec3 blk = courseBlock(m.x, 0.17, 0.5 * mod(k, 2.0), 0.3, cid * 7.0 + 5.0);
   float r = ih(blk.x, cid), r2 = ih(cid, blk.x + 9.0), r3 = ih(blk.x + 3.0, cid + 17.0);
@@ -250,6 +258,74 @@ vec3 flintF(vec2 m) {
   col *= 1.0 + (texture(uGrain, m / 1.7 + 0.41).r - 0.47) * 0.45 * far;               // mid-scale mottling
   // at distance the mortar/flint mix reads as one speckled surface: keep it pale and even
   return mix(mortar, col, inside);
+}
+// Flint with single courses of flat brown ironstone slabs at uneven heights (the amphitheatre's arena wall and
+// recesses: "flint and brown ironstone", Fulford 2002; spacing and slabs from site photographs, see
+// docs/key-buildings/amphitheatre.md "Wall facing"). Ironstone course k sits at k * 0.5 m +/- 0.12 m (so 0.26-0.74 m
+// apart), 5-8 cm thick; slabs 0.25-0.45 m long, brown to buff-grey; rough flint courses (~0.11 m) between.
+vec3 flintIronF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  float far = wallStyle() == 6 ? 1.0 : smoothstep(0.015, 0.09, px);
+  vec3 mortar = vec3(0.79, 0.76, 0.69) * (0.9 + 0.1 * (far < 1.0 ? mix(texture(uGrain, m * 0.8).g, 0.5, far) : 0.5));
+  if (m.y < 0.0) return flintCourses(m, mod(m.y, 0.55), 0.55, 5.0, floor(m.y / 0.55) - 50.0, px, far, mortar); // footings: flint only
+  // the ironstone course at or below m.y (course k nominally at k * 0.5 m)
+  float k = floor(m.y / 0.5) + 1.0, y0 = 0.0;
+  for (int i = 0; i < 3; i++) { y0 = k * 0.5 + (ih(k, 61.0) - 0.5) * 0.24; if (y0 <= m.y) break; k -= 1.0; }
+  float th = 0.05 + 0.03 * ih(k, 62.0), yNext = (k + 1.0) * 0.5 + (ih(k + 1.0, 61.0) - 0.5) * 0.24;
+  float yb = m.y - y0;
+  if (k < 1.0) { y0 = 0.0; yb = m.y; th = 0.0; } // flint from the foot up to the first course
+  if (yb < th) {
+    // slabs: flat, long, uneven lengths; thin joints
+    vec3 blk = courseBlock(m.x, 0.34, ih(k, 63.0), 0.3, k * 13.0 + 7.0);
+    float inside = joint(blk.y, blk.z, 0.012, px) * joint(yb, th, 0.008, px);
+    float r = ih(blk.x, k + 70.0), r2 = ih(k + 71.0, blk.x);
+    vec3 col = mix(vec3(0.42, 0.29, 0.18), vec3(0.62, 0.45, 0.28), r);                 // brown ironstone
+    col = mix(col, vec3(0.55, 0.5, 0.42), step(0.75, r2) * 0.7);                      // some buff-grey slabs
+    // stone, not wood: blotchy iron staining and a darker weathered edge, no streaks
+    float blot = far < 1.0 ? (texture(uGrain, m * 2.2 + vec2(r, r2)).g - 0.5) * 0.3 * (1.0 - far) : 0.0;
+    float edge = 1.0 - 0.18 * (1.0 - far) * (1.0 - smoothstep(0.0, 0.012, min(yb, th - yb)));
+    col *= (0.92 + blot + 0.14 * (far < 1.0 ? mix(texture(uGrain, m * 1.4 + r2).r, 0.47, far) : 0.47)) * edge;
+    col *= 1.0 + (r - 0.5) * 0.2 * far;
+    return mix(mortar, col, inside);
+  }
+  float H = yNext - y0 - th, n = max(2.0, floor(H / 0.11 + 0.5));
+  return flintCourses(m, yb - th, H, n, k + 100.0, px, far, mortar);
+}
+// The town wall (docs/key-buildings/town-walls.md "Materials"): flint in 4 or 5 rough courses (0.55 m) then a double
+// course of flat slabs (~6.5 cm each) through the wall's thickness, "after every 4-5 flint layers there were double horizontal
+// courses of limestone" (Collis 1983); the slabs of mixed stone (C&F 2016; Fulford 2002: limestone from the Bath region; the
+// user's photographs: one double course of long brown ironstone slabs, others of thinner grey and grey-brown slabs). Each band
+// has a dominant stone, brown ironstone in about 4 bands in 10, grey to buff limestone in the rest, with a third of its slabs
+// of the other kinds; slabs 5-9 cm thick, now and then only one course. Bands every 0.68 m, level along the wall (Collis: the
+// string courses of two gangs "more or less correspond").
+vec3 flintLimeF(vec2 m) {
+  float bandH = 0.68;
+  float px = fwidth(m.x) + fwidth(m.y);
+  float far = wallStyle() == 6 ? 1.0 : smoothstep(0.015, 0.09, px);
+  vec3 mortar = vec3(0.79, 0.76, 0.69) * (0.9 + 0.1 * (far < 1.0 ? mix(texture(uGrain, m * 0.8).g, 0.5, far) : 0.5));
+  if (m.y < 0.0) return flintCourses(m, mod(m.y, 0.55), 0.55, 5.0, floor(m.y / 0.55) - 50.0, px, far, mortar); // footings
+  float band = floor(m.y / bandH), yb = m.y - band * bandH;
+  float slabH = 0.05 + 0.04 * ih(band, 83.0), nSlab = ih(band, 84.0) < 0.15 ? 1.0 : 2.0;
+  float flintH = bandH - nSlab * slabH;
+  if (yb >= flintH) {
+    float course = min(floor((yb - flintH) / slabH), nSlab - 1.0), fy = yb - flintH - course * slabH;
+    float cid = band * 10.0 + 5.0 + course;
+    // long flat slabs, uneven lengths, joints broken against the course below
+    vec3 blk = courseBlock(m.x, 0.42, 0.5 * mod(course, 2.0) + 0.25 * ih(band, 81.0), 0.3, cid * 7.0 + 3.0);
+    float inside = joint(blk.y, blk.z, 0.012, px) * joint(fy, slabH, 0.009, px);
+    float r = ih(blk.x, cid), r2 = ih(cid, blk.x + 9.0);
+    bool ironBand = ih(band, 85.0) < 0.4;
+    bool iron = r2 < 0.67 ? ironBand : !ironBand;                                          // the band's stone, or another
+    vec3 col = iron ? mix(vec3(0.36, 0.24, 0.15), vec3(0.54, 0.37, 0.23), r)               // brown ironstone
+                    : mix(vec3(0.44, 0.43, 0.4), vec3(0.64, 0.6, 0.5), r);                // grey to buff limestone
+    col = mix(col, vec3(0.4, 0.4, 0.39), step(0.88, ih(blk.x + 5.0, cid)) * 0.7);         // the odd dark weathered slab
+    float blot = far < 1.0 ? (texture(uGrain, m * 2.0 + vec2(r, r2)).g - 0.5) * 0.24 * (1.0 - far) : 0.0;
+    float edge = 1.0 - 0.16 * (1.0 - far) * (1.0 - smoothstep(0.0, 0.012, min(fy, slabH - fy)));
+    col *= (0.93 + blot + 0.12 * (far < 1.0 ? mix(texture(uGrain, m * 1.4 + r2).r, 0.47, far) : 0.47)) * edge;
+    col *= 1.0 + (r - 0.5) * 0.18 * far;
+    return mix(mortar, col, inside);
+  }
+  return flintCourses(m, yb, flintH, ih(band, 82.0) < 0.5 ? 4.0 : 5.0, band, px, far, mortar); // 4-5 flint layers
 }
 vec3 brickF(vec2 m) {
   // All-brick surfaces (piers, quoins): same bricks and joints as the bonding courses.
@@ -358,6 +434,8 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
       uMasonryCell: { value: new THREE.Vector2(...cellVec('masonry').slice(0, 2)) },
       uBrickCell: { value: new THREE.Vector2(...cellVec('brick').slice(0, 2)) },
       uFlintCell: { value: new THREE.Vector2(...cellVec('flint').slice(0, 2)) },
+      uFlintIronCell: { value: new THREE.Vector2(...cellVec('flintIron').slice(0, 2)) },
+      uFlintLimeCell: { value: new THREE.Vector2(...cellVec('flintLime').slice(0, 2)) },
       uFlintTiles: { value: (mat.userData.flintTiles as number | undefined) ?? FLINT_TILE_COURSES },
       uTileCell: { value: new THREE.Vector2(...cellVec('tile').slice(0, 2)) },
     };
@@ -380,10 +458,16 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     if (isCell(uMasonryCell)) sampledDiffuseColor = vec4(0.68, 0.64, 0.54, 1.0);
     if (isCell(uBrickCell)) sampledDiffuseColor = vec4(0.66, 0.33, 0.21, 1.0);
     if (isCell(uFlintCell)) sampledDiffuseColor = vec4(0.72, 0.71, 0.66, 1.0);
+    if (isCell(uFlintIronCell)) sampledDiffuseColor = vec4(0.7, 0.67, 0.6, 1.0);
+    if (isCell(uFlintLimeCell)) sampledDiffuseColor = vec4(0.72, 0.7, 0.63, 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uMasonryCell)) {
     sampledDiffuseColor = vec4(masonryF(tUv * vec2(2.0, 1.6)), 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uFlintCell)) {
     sampledDiffuseColor = vec4(flintF(tUv * vec2(2.0, 1.6)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uFlintIronCell)) {
+    sampledDiffuseColor = vec4(flintIronF(tUv * vec2(2.0, 1.6)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uFlintLimeCell)) {
+    sampledDiffuseColor = vec4(flintLimeF(tUv * vec2(2.0, 1.6)), 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uBrickCell)) {
     sampledDiffuseColor = vec4(brickF(tUv * vec2(1.0, 0.56)), 1.0);
   } else if ((uStyle == 5 || uStyle == 6) && isCell(uTileCell)) {
@@ -400,7 +484,7 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     vec2 aUv = vCellRect.xy + fract(tUv) * vCellRect.zw;
     sampledDiffuseColor = textureGrad(map, aUv, dFdx(tUv) * vCellRect.zw, dFdy(tUv) * vCellRect.zw);
   }
-  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell) || isCell(uFlintCell))) {
+  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell) || isCell(uFlintCell) || isCell(uFlintIronCell) || isCell(uFlintLimeCell))) {
     vec2 m = tUv * (isCell(uBrickCell) ? vec2(1.0, 0.56) : vec2(2.0, 1.6));
     // colour drift from two unrelated scales of the grain tile: no visible period
     float drift = texture(uGrain, m / 11.0).b * 0.6 + texture(uGrain, m / 29.3 + 0.37).b * 0.4;

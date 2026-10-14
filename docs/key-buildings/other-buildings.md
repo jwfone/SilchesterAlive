@@ -19,8 +19,9 @@ Treat ◐ and ✎ as leads. Re-verify before they go into a brief, and correct t
 | **Forum-basilica** | **Done 2026-10-11**: plan-built (`forum-basilica.plan.json`), flint walls | Full outline, 97 × 82 m | Best: 1977–86 excavation monograph, Victorian plan, 47 Great Plan rings | Basilica nave, aisles, clerestory, big roof; courtyard ranges |
 | **Temples** (Insula XXX) | Solid boxes + classical column rows | Centres only, sizes are placeholders | Good: 2017 Reading excavation, GPR, Victorian plan | Cella with ambulatory (two-tier roof), temenos wall |
 | **Church** | Solid box | On the **medieval** St Mary's (probably), no Roman walls | Contested identity and date | Small apsidal hall (if built) |
-| **Mansio** | Hand kit `kit/mansio.ts`, an invented courtyard inn | Courtyard only, 46 × 34 m | **Thin**: 4 rings; identification seen only in a secondary source | Courtyard ranges; maybe timber walls |
-| **Amphitheatre** | Dedicated LOD kit `kit/amphitheatre.ts` | GIS ellipse | Excellent excavation record (1979–85) | Elliptical bowl, not a wall plan |
+| **Mansio** | **Done 2026-10-13**: plan-built (`mansio.plan.json`), flint walls | Full outline, 130 × 65.1 m | Good: 1887 and 1894 *Archaeologia* reports, the 1893 plate fits the rings (88% within 0.3 m) | None new (walls, roofs, apse, vaults) |
+| **Amphitheatre** | **Done 2026-10-14**: plan-built (`amphitheatre.plan.json`, new `arena` element), sunken arena | Full outline, 74.8 × 81.1 m | Good: GIS 04 is the stone phase; Fulford 1989 via a full review; Fulford 2002 plan and section (user) | Elliptical bowl: arena wall, passages, recesses, seat rows, banks, ground hole |
+| **Town wall and gates** | **Done 2026-10-14**: curtain generator (`kit/townWall.ts`) + seven plan-built gates, rampart and ditch | GIS 04 line and gate plans; seven gate anchors | Good: 1890 *Archaeologia* 52 gate plans, C&F 2016 ch. 8, Collis 1983 | Curtain wall generator (profile, counterforts, rampart, ditch); seven gates |
 
 **Suggested order** (my judgement, for the user to change): forum-basilica (largest and best evidenced; most
 visible), temples (small, report online, tests the two-tier roof), amphitheatre, mansio (research first; may end up
@@ -31,10 +32,11 @@ mostly conjecture), church (blocked on a decision). Any building can go in any o
 | Id | Centre x, z | w × d (m) | rotY | Pinned from |
 |---|---|---|---|---|
 | forum-basilica | −89.2, 45.0 | 97.3 × 81.6 | 0.012 | lat/lon NW 51.357496, −1.083949, SE 51.356762, −1.082551 |
-| mansio-courtyard | 15.4, 316.3 | 45.8 × 34.1 | 0.015 | NW 51.354831, −1.082125, SE 51.354525, −1.081468 |
+| mansio (was mansio-courtyard) | 24.7, 313.8 | 130.0 × 65.1 | 0.068 | min-area rectangle of the rings in `mansio.review.json` (2026-10-12); the first pin (15.4, 316.3; 45.8 × 34.1 m) was the courtyard only |
 | temple-1 | 289.7, 52.5 | 18 × 18 (placeholder) | 0 | centre 51.357019, −1.07781 |
 | temple-2 | 288.8, 84.9 | 14 × 14 (placeholder) | 0 | centre 51.356728, −1.077829 |
 | church-st-mary | 319.9, 84.9 | 20.1 × 10.1 (placeholder) | 0.103 | centre 51.356724, −1.077382 |
+| amphitheatre | 452.2, −156.3 | 74.8 × 81.1 | 1.217 | min-area rectangle of the GIS 04 stone-phase walls and the banks' toe (2026-10-13); before, only the ellipse fitted to the GIS 04 strips (`GENERATED_AMPHITHEATRE`) |
 
 The game's origin is the forum point E 464020, N 162450; +x east, +z south. For comparison the baths pin as first
 supplied covered about 40% of the building, so check each of these (playbook step 2). ✔ ring overlap, measured
@@ -43,7 +45,7 @@ supplied covered about 40% of the building, so check each of these (playbook ste
 | Anchor | Rings | By shade 1 / 2 / 3 | Reading |
 |---|---|---|---|
 | forum-basilica | 47 | 16 / 12 / 19 | ~~Rings span 73 m … ~20 m short of the east edge~~: **wrong**, that count left out rings over 1500 m². ✔ (forum session) The main ring r1657 (1878 m², 23 holes) spans E 463881.3–463980.5, the anchor's full width. Min-area rectangle of the outline: 95.6 × 85.9 m turned 2.5° (the pin is 97.3 × 81.6 m at 0.7°), so the outline pokes ~3 m past the pin at the NE and SW corners. |
-| mansio-courtyard | 4 | 2 / 2 / 0 | Little surveyed; the rings that touch it belong to larger buildings (union 117 × 66 m). |
+| mansio-courtyard | 4 | 2 / 2 / 0 | ~~Little surveyed~~: **wrong**. ✔ (mansio session) The rings are few because each is a large wall network (r1674 has 20 holes); the building is fully surveyed, 130 × 65 m with the baths and granary. |
 | temple-1 | 10 | 5 / 5 / 0 | Long north–south runs (union 104 m long): the temenos wall. |
 | temple-2 | 5 | 3 / 2 / 0 | Same. |
 | church-st-mary | 0 | | No Great Plan walls: the pin is on a building that is not in the Antiquaries' plan. |
@@ -185,21 +187,27 @@ church of St Mary the Virgin**, which is medieval and not a Roman building ◐ (
 
 ## Mansio
 
-**In game.** `kit/mansio.ts` ✔ (read in the pilot): an invented coaching inn. A north range of four rooms, east and west
+**Status (2026-10-13): done, plan-built and in the game.** Brief `mansio.md`, plan `assets/key-plans/mansio.plan.json` (flint facing),
+notes `mansio.about.md`. The old kit `kit/mansio.ts` is deleted. ✔ Sources read: Hilton Price 1887 (*Archaeologia* 50, "Block VIII"
+and the baths, "Block IX"), Fox & St John Hope 1894 (*Archaeologia* 54, Insula VIII, the "hospitium", Pl. XVII), C&F 2016 pp. 147–52.
+The section below is the pre-session record, kept with corrections.
+
+**In game (before).** `kit/mansio.ts` ✔ (read in the pilot): an invented coaching inn. A north range of four rooms, east and west
 wings of 8 × 18 m (the east with a stable and mangers), a gravel courtyard 36 × 18 m, timber porticos, south gate
 posts, a wellhead; designed around (40, 245) then **translated** onto the pin. **No source for this layout has been
 found.** The pin `mansio-courtyard` marks the **courtyard** only (46 × 34 m); `townPlan` re-centres the whole inn
 on it.
 
-**Position.** ✔ The GIS south gate is at (−116, 396). The pin (15, 316) is about 130 m east and 80 m north of it, well
-inside the town, so "near the south gate" is loose.
+**Position.** ✔ The GIS south gate is at (−116, 396). The pin (15, 316) is about 130 m east and 80 m north of it.
+✔ (mansio session) The building is in **Insula VIII**, whose south-west corner the south gate occupies (Fox & St John Hope 1894); its
+SW corner is about 100 m from the gate.
 
 **Evidence.**
 - ✔ Only 4 Great Plan rings overlap the pin (2 shade 1, 2 shade 2): the survey shows little here.
 - ◐ One heritage-tourism summary (secondary, not scholarly) says there was "a large mansio in Insula VIII near the south
-  gate" with three wings around a central courtyard (<https://www.ancient-history-sites.com/?p=7574>). **I could not find
-  a primary source for a mansio at Silchester.** Candidates to check: Boon, *Roman Silchester* (1957/1974);
-  Creighton & Fry 2016; the Antiquaries' reports of the 1890s on Insula VIII.
+  gate" with three wings around a central courtyard (<https://www.ancient-history-sites.com/?p=7574>). ~~I could not find
+  a primary source~~ ✔ (mansio session) **Confirmed at source**: Hilton Price 1887 and Fox & St John Hope 1894 (*Archaeologia*
+  50 and 54, both on the Internet Archive); C&F 2016 pp. 147–52; Boon 1957 and Fulford 2002 supplied by the user.
 
 **First task in that session: establish what is actually known.** If the evidence is a plan plus an interpretive
 label, the model will be mostly conjecture (red in the viewer) and the notes must say so, or the user may choose a
@@ -217,29 +225,67 @@ possibly timber-framed or daub walls (a new wall material and a lab round) depen
 
 ## Amphitheatre
 
-**In game.** The only key building with its own LOD ✔ (read in the pilot): `kit/amphitheatre.ts` builds a stepped cavea
+**Status (2026-10-14): done, plan-built and in the game.** Brief `amphitheatre.md`, plan `assets/key-plans/amphitheatre.plan.json`
+(a new `arena` element: `domain/arenaPlan.ts`, `kit/planArena.ts`), notes `amphitheatre.about.md`. The old kit `kit/amphitheatre.ts` and
+its `EllipseBand` collider are deleted. The section below is the pre-session record, kept with corrections.
+
+**In game (before).** The only key building with its own LOD ✔ (read in the pilot): `kit/amphitheatre.ts` builds a stepped cavea
 (28 segments / 9 steps near, 12 / 4 far, switch at 260 m), a 2.2 m podium wall with entrance gaps, arena, outer wall
 and entrances, plus an `EllipseBand` collider for the seating. Geometry from the GIS fit: centre (452, −157), radii
-23 × 34 m, height 9 m (check whether the radii are the arena or the outer bank). It lies outside the town wall, north-east
-of the east gate (✔ GIS; `townPlan.ts` header says "outside E wall").
+23 × 34 m, height 9 m (check whether the radii are the arena or the outer bank). ✔ (amphitheatre session) The radii were the **arena
+wall with its passage walls**, used as the outer edge, so the banks were missing; the kit put the entrances on the short axis (east and
+west; they are north and south) and drew an outer wall that **did not exist** (Fulford 2018, citing Fulford 1989). It lies outside the
+town wall, north-east of the east gate (✔ GIS).
 
 **Evidence.**
-- ◐ Excavated by Fulford 1979–85; Britannia Monograph 10 (1989).
-- ◐ Phases (from a gazetteer and an interim report): built **c. AD 55–75** (capacity about 3,600–3,700) with **timber** seating,
-  arena wall and entrance passages; a second timber phase in the 2nd century; the **arena wall and entrance passages
-  rebuilt in stone in the early to mid 3rd century**. Stone-phase plan: two opposed entrances on the long axis and two
-  apsidal recesses on the short axis; earthen seating banks well preserved. So c. 270–280 should be the **stone-phase
-  arena with earth banks and timber seating**.
-- Leads: English Heritage description <https://www.english-heritage.org.uk/visit/places/silchester-roman-city-walls-and-amphitheatre/history/description>;
-  gazetteer <https://gatehouse-gazetteer.info/English%20sites/1292.html>; the *Antiquaries Journal* interim report
-  (link under the forum). Arena dimensions were not in any summary.
+- ~~◐ Excavated by Fulford 1979–85; Britannia Monograph 10 (1989).~~ ✔ (C&F 2016, p. 220; Kovacsovics 1993, a full review of the
+  monograph, read.) The Antiquaries never dug it: the landowner refused (C&F 2016), so there is **no Victorian report**.
+- ~~◐ Phases ... built c. AD 55–75 (capacity about 3,600–3,700)~~ ✔ corrected: Timber 1 c. AD 55–77 (round arena 43 × 42.2 m);
+  Timber 2 mid-2nd c. (oval, 44.4 × 37.5 m); **Stone 1** (early 3rd c.?: arena wall, entrances and apsidal recesses in stone, arena
+  45.5 × 39.2 m); **Stone 2** (c. 250s?: floors raised with sand and gravel only); dereliction 4th–5th c.; robbing and a medieval hall
+  (C&F 2016; Kovacsovics 1993). Capacity: EH 3,500–7,250 ✔; Fulford 2002 4,500–9,000 ✎.
+- ✔ The arena wall is 0.8–0.9 m thick (Fulford 2018, citing Fulford 1989, 37), of flint and brown ironstone, about 3 m high (✎ Fulford
+  2002); the arena floor lies about 2 m below the old ground (C&F 2016; ✎ Fulford 2002).
+- ✔ GIS layer 04's metadata: "the stone phase of the Amphitheatre". The user's Fulford 2002 contour plan and seating section fit it.
+- Leads not read: Fulford 1989 itself; the interim reports; the Gatehouse gazetteer.
 
-**Open questions.** Generator or kit: this is an elliptical bowl, not a wall plan. Either add an elliptical element
-(arena wall, bank, seating rows, entrance passages, recesses) to `planBuilding`, or keep the dedicated kit and add
-what the playbook gives every building (evidence levels, notes, viewer drawings, tooltips). Decide at the start.
+**Open questions (answered 2026-10-13).** ~~Generator or kit~~: the generator, with a new `arena` element (user). Stone Phase 2; a
+sunken arena (option A); LOD0 cap 12k.
 
-**Code touchpoints.** `kit/amphitheatre.ts`, `WorldBuilder` amphitheatre block and platform, `bands` (the
-collider), `plan.amphitheatre`.
+**Code touchpoints (now).** `domain/arenaPlan.ts` (shared geometry, walking heights, ground hole), `kit/planArena.ts` (mesh),
+`terrainSurface.ts` (`GroundHole`), `planWorld.ts` (`floorOverrides`, sunken base), `WorldBuilder` (hole, floor override, no contact
+shadow), `townPlan.ts` (`amphitheatreFromPlan` for the maps), smoke test (amphitheatre block).
+
+---
+
+## Town wall and gates
+
+**Status (2026-10-14): done, in the game.** Brief [`town-walls.md`](town-walls.md): sources, every height's reasoning, materials table,
+13 decisions. The curtain wall is generated from `assets/key-plans/town-wall.json` (line and counterforts from the GIS 04 strips) by
+`kit/townWall.ts` with `domain/townWall.ts` (section, rampart, ditch, walking); the seven gates are plan-built (`assets/key-plans/*-gate.*`).
+The old kit `kit/walls.ts` is deleted. The section below is the pre-session record, kept with corrections. Before this session the circuit
+was built by `kit/walls.ts` (`buildWallSegmentGeometry`, `buildGateGeometry`) in `WorldBuilder`, from `GENERATED_WALLS` / `GENERATED_GATES`
+(`scripts/import-gis.mjs`, GIS layer 04).
+
+**In game (before).** ✔ (read 2026-10-14) A wall 6 m high and 4 m thick with a coping, a footing and a pilaster every ~16 m, on a
+coarse GIS centreline; four identical gates of two square towers 9 m high with pyramid roofs and a timber lintel, instanced. The
+**north gate is about 120 m east of the excavated one** (the GIS draws it with its inturned flanks at about (−170, −347)); there is no
+rampart, ditch or minor gate.
+
+**Evidence** (details and tags in the brief).
+- ✔ Fox & St John Hope 1890 (*Archaeologia* 52): plans and dimensions of the north, south and west gates; the wall's thickness
+  (9 ft 9 in), inner set-off and counterforts.
+- ✔ C&F 2016 ch. 8: all seven gates, the wall sections, dating (stone wall c. 260–280 after the rampart of c. 200).
+- ✔ Collis 1983: construction (ironstone slab footing, double limestone courses every 4–5 flint layers, inner set-off at 2 m).
+- ✔ GIS layer 04: the wall line "based on the OS Landline location", gate plans "from Joyce and the Antiquaries' excavation reports".
+- ✎ Fulford 2002 (user's notes) and the user's photographs.
+
+**Code touchpoints (now).** `domain/townWall.ts` (section `WALL`/`FACE`, `RAMPART`, `DITCH`, `earthworkOffset`, `wallDeckAt`);
+`kit/townWall.ts` (circuit mesh, earthworks grid, bridges, colliders with tops); `kit/curtain.ts` (the section, shared with the gates'
+`kind: 'curtain'` walls); `planBuilding` (curtain walls, crenellated walls, platforms, stairs, door sills); `planWorld` (decks, collider
+tops); `PlayerControls` (feet height, `PolyCollider.top`); `WorldBuilder` (ditch mask on the ground material, gate levelling, rampart
+lift, walls layer for the gates); `townPlan.ts` (`WALLS` from the wall line, `GATES` from the gate plans); `atlasTiled.ts` (`flintLimeF`);
+smoke test (town wall block).
 
 ---
 
@@ -267,5 +313,5 @@ The opening plan (2026-10-08) said some things from memory. Updated:
   stands; the second is **wrong**: the Roman church is in Insula XXXV in the south-east quarter, not by the forum.
 - The temples are Romano-Celtic with a cella and ambulatory: **supported** (◐ double-square plan); and there are **three**
   temples in the precinct, not two.
-- "Mansio near the south gate": the pin is ~150 m from the GIS south gate; and no primary source for the mansio has been found yet.
+- "Mansio near the south gate": the pin is ~150 m from the GIS south gate; ~~and no primary source for the mansio has been found yet~~ ✔ the primary sources are the 1887 and 1894 *Archaeologia* reports (mansio session, 2026-10-13); the building fills Insula VIII, whose SW corner holds the gate.
 - Forum description (ranges of rooms on three sides, east entrance): still ✎.

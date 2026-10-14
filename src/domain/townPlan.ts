@@ -20,8 +20,22 @@ import {
   GENERATED_WALLS,
   GENERATED_WATER,
 } from './townPlan.generated.js';
-import { KEY_PLANS } from './keyPlans.generated.js';
+import { KEY_PLANS, TOWN_WALL } from './keyPlans.generated.js';
 import { planToWorld, planRotationY } from './keyPlan.js';
+
+/** The amphitheatre's map ellipse from its plan (assets/key-plans/amphitheatre.plan.json): the arena wall's
+ * radii along the plan's u (rx) and v (rz) axes, the plan's turn, and the banks' toe. */
+function amphitheatreFromPlan(): TownPlan['amphitheatre'] | undefined {
+  const kp = KEY_PLANS['amphitheatre'];
+  const ar = kp?.arena;
+  if (!kp || !ar) return undefined;
+  const c = planToWorld(kp, ar.c[0], ar.c[1]);
+  const r = (deg: number): number => {
+    const n = ar.ring.length, k = (deg / 360) * n;
+    return (ar.ring[Math.floor(k) % n][1] + ar.ring[Math.floor(k + n / 2) % n][1]) / 2; // mean of opposite sides
+  };
+  return { x: c.x, z: c.z, rx: r(0), rz: r(90), h: ar.h, rot: planRotationY(kp) * -1, toe: ar.bank.toe };
+}
 
 /** User-pinned anchor (assets/key-buildings.geojson via GENERATED_KEYS), if present. */
 export function keyAnchor(id: string): { x: number; z: number; w: number; d: number; rotY: number } | undefined {
@@ -82,7 +96,9 @@ export interface TownPlan {
   roadPolys: RoadPoly[]; // GIS 26 surfaces (visuals + maps; exact joins/widths)
   drains: StreetSpec[]; // GIS 27 roadside drains only — own layer, never merged into streets
   buildings: BuildingSpec[];
-  amphitheatre: { x: number; z: number; rx: number; rz: number; h: number };
+  /** Amphitheatre for the maps: arena wall ellipse (rx along its own x axis, rz across), turned `rot` radians
+   * clockwise on the map, and the banks' outer toe `toe` metres beyond the wall (from its plan, else the GIS fit). */
+  amphitheatre: { x: number; z: number; rx: number; rz: number; h: number; rot?: number; toe?: number };
   terrain: { size: number; grid: number; heights: number[] }; // median-centred relief, y≈0
   contours: ContourLine[]; // exact GIS 01 1m contour vectors (elev in m OD, local metres)
   water: Vec2[][];        // pond/stream outlines (flat decals)
@@ -161,7 +177,10 @@ const WALLS_FALLBACK: Vec2[] = [
   { x: 295, z: -170 }, { x: 290, z: 210 }, { x: 140, z: 300 },
   { x: -190, z: 290 }, { x: -310, z: 140 },
 ];
-const WALLS: Vec2[] = GENERATED_WALLS.length >= 4 ? GENERATED_WALLS : WALLS_FALLBACK;
+// The circuit from the town wall's own line (assets/key-plans/town-wall.json, GIS 04 strips): its runs in order,
+// straight across each gate; else the coarse import, else the hand fallback.
+const TOWN_WALL_LINE: Vec2[] = TOWN_WALL.runs.flatMap((r) => r.map(([x, z]) => ({ x, z })));
+const WALLS: Vec2[] = TOWN_WALL_LINE.length >= 4 ? TOWN_WALL_LINE : GENERATED_WALLS.length >= 4 ? GENERATED_WALLS : WALLS_FALLBACK;
 
 const GATES_FALLBACK: GateSpec[] = [
   { id: 'north-gate', x: 0, z: -300, rotY: 0 },
@@ -169,7 +188,14 @@ const GATES_FALLBACK: GateSpec[] = [
   { id: 'east-gate', x: 292, z: 15, rotY: Math.PI / 2 },
   { id: 'west-gate', x: -310, z: -30, rotY: Math.PI / 2 },
 ];
-const GATES: GateSpec[] = GENERATED_GATES.length ? GENERATED_GATES as GateSpec[] : GATES_FALLBACK;
+/** The town gates from their plans (assets/key-plans/*-gate.plan.json): the middle between the curtain's two ends,
+ * rotY along the passage (plan +v, out to the field). */
+const PLAN_GATES: GateSpec[] = Object.values(KEY_PLANS).filter((p) => p.id.endsWith('-gate') && p.curtainEnds?.length === 2).map((p) => {
+  const [a, b] = p.curtainEnds!.map(([u, v]) => planToWorld(p, u, v));
+  const o = planToWorld(p, 0, 0), ov = planToWorld(p, 0, 1);
+  return { id: p.id, x: (a.x + b.x) / 2, z: (a.z + b.z) / 2, rotY: Math.atan2(ov.x - o.x, ov.z - o.z) };
+});
+const GATES: GateSpec[] = PLAN_GATES.length ? PLAN_GATES : GENERATED_GATES.length ? GENERATED_GATES as GateSpec[] : GATES_FALLBACK;
 
 function mainStreets(): StreetSpec[] {
   if (GENERATED_STREETS.length) return GENERATED_STREETS as StreetSpec[];
@@ -203,7 +229,7 @@ function anchorReserve(id: string, kitW: number, kitD: number, fbX: number, fbZ:
 const RESERVES = [
   { ...anchorReserve('forum-basilica', 68, 72, 8, -8), }, // forum E + basilica W
   { ...anchorReserve('baths', 44, 30, 150, 150), },       // baths
-  { ...anchorReserve('mansio-courtyard', 52, 26, 40, 245), }, // mansio
+  { ...anchorReserve('mansio', 52, 26, 40, 245), },       // mansio
   { ...templeReserve(), }, // temples precinct (anchor midpoint when pinned)
   { ...anchorReserve('church-st-mary', 20, 10, 238, 10), }, // St Mary plot
 ];
@@ -265,11 +291,9 @@ export function buildTownPlan(seed = 1234): TownPlan {
 
   // Snap key buildings to user-pinned anchors (assets/key-buildings.geojson).
   // Forum + basilica move together so the kit pair keeps its internal offset.
-  // Mansio anchor is the courtyard: the whole inn recentres on it (within a
-  // few metres of the full-complex centre). The baths anchor is the full
-  // surveyed outline (assets/key-plans/baths.review.json), so the baths take its
-  // size and rotation too; the building itself is generated from its plan
-  // (assets/key-plans/baths.plan.json).
+  // The baths and mansio anchors are the full surveyed outlines
+  // (assets/key-plans/<id>.review.json), so they take their size and rotation
+  // too; the buildings are generated from their plans (assets/key-plans/<id>.plan.json).
   {
     // The forum-basilica is generated from its plan (assets/key-plans/forum-basilica.plan.json):
     // the two entries (map labels, reserves) sit on the basilica hall and on the forum court and
@@ -285,10 +309,10 @@ export function buildTownPlan(seed = 1234): TownPlan {
       place('basilica', 26.0, 43.3, 19.2, 73.0);
       place('forum', 60.8, 43.0, 59.0, 85.0);
     }
-    const mc = keyAnchor('mansio-courtyard');
+    const mc = keyAnchor('mansio');
     if (mc) {
       const m = buildings.find((b) => b.id === 'mansio');
-      if (m) { m.x = mc.x; m.z = mc.z; }
+      if (m) { m.x = mc.x; m.z = mc.z; m.w = mc.w; m.d = mc.d; m.rotY = mc.rotY; }
     }
     // Temples and church are centre-pinned only: position follows the anchor,
     // size and rotation stay kit placeholders until full outlines are pinned.
@@ -395,7 +419,7 @@ export function buildTownPlan(seed = 1234): TownPlan {
     ),
     drains,
     buildings,
-    amphitheatre: GENERATED_AMPHITHEATRE ?? { x: 480, z: 45, rx: 34, rz: 27, h: 9 },
+    amphitheatre: amphitheatreFromPlan() ?? GENERATED_AMPHITHEATRE ?? { x: 480, z: 45, rx: 34, rz: 27, h: 9 },
     terrain: GENERATED_TERRAIN?.heights?.length
       ? GENERATED_TERRAIN
       : { size: 1400, grid: 0, heights: [] },

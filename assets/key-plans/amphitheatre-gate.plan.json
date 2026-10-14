@@ -1,0 +1,207 @@
+{
+ "id": "amphitheatre-gate",
+ "name": "Amphitheatre gate",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint-limestone",
+ "period": "late 3rd century AD (c. 270–280): the stone wall as newly built, all gates open",
+ "brief": "docs/key-buildings/town-walls.md",
+ "frame": {
+  "originEN": [
+   464361.63,
+   162550.51
+  ],
+  "angleDeg": -32.309
+ },
+ "conventions": "u along the town wall, v out to the field (so the \"n\" drawing is the field front); metres; origin the anchor corner",
+ "rooms": [
+  {
+   "id": "passage",
+   "name": "Gateway",
+   "poly": [
+    [
+     5.75,
+     0.55
+    ],
+    [
+     9.8,
+     0.55
+    ],
+    [
+     9.8,
+     3.9
+    ],
+    [
+     5.75,
+     3.9
+    ]
+   ],
+   "floor": "gravel",
+   "finish": "exterior",
+   "note": "the wall's foundation runs across the base of the gate, so it was secondary to the original design (C&F 2016)"
+  }
+ ],
+ "walls": [
+  {
+   "id": "wall-1",
+   "a": [
+    3.2,
+    2.6
+   ],
+   "b": [
+    5.75,
+    2.6
+   ],
+   "t": 2.55,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "the town wall either side of the gate (GIS)"
+  },
+  {
+   "id": "jamb-1",
+   "a": [
+    3.2,
+    0.98
+   ],
+   "b": [
+    5.75,
+    0.98
+   ],
+   "t": 0.87,
+   "h": 4.2,
+   "ev": "S",
+   "note": "the wall thickened on the town side either side of the gate (GIS)"
+  },
+  {
+   "id": "wall-2",
+   "a": [
+    9.8,
+    2.6
+   ],
+   "b": [
+    12.05,
+    2.6
+   ],
+   "t": 2.55,
+   "h": 4.2,
+   "ev": "S",
+   "kind": "curtain",
+   "outer": "l",
+   "note": "the town wall either side of the gate (GIS)"
+  },
+  {
+   "id": "jamb-2",
+   "a": [
+    9.8,
+    0.98
+   ],
+   "b": [
+    12.05,
+    0.98
+   ],
+   "t": 0.87,
+   "h": 4.2,
+   "ev": "S",
+   "note": "the wall thickened on the town side either side of the gate (GIS)"
+  },
+  {
+   "id": "arch-out",
+   "a": [
+    5.75,
+    3.48
+   ],
+   "b": [
+    9.8,
+    3.48
+   ],
+   "t": 0.6,
+   "h": 6.0,
+   "ev": "X",
+   "openings": [
+    {
+     "at": 2.03,
+     "w": 3.3,
+     "oh": 2.2,
+     "arch": true,
+     "note": "the arch's outer ring, carried up as the parapet (conjecture)"
+    }
+   ],
+   "crenel": true
+  },
+  {
+   "id": "arch",
+   "a": [
+    5.75,
+    1.87
+   ],
+   "b": [
+    9.8,
+    1.87
+   ],
+   "t": 2.63,
+   "h": 4.2,
+   "ev": "X",
+   "openings": [
+    {
+     "at": 2.03,
+     "w": 3.3,
+     "oh": 2.2,
+     "arch": true,
+     "note": "single carriageway 3.3 m wide (C&F 2016); the GIS gap is 4.05 m; carried through the wall as an arched passage (conjecture)"
+    }
+   ]
+  }
+ ],
+ "platforms": [
+  {
+   "id": "walk",
+   "poly": [
+    [
+     3.2,
+     0.55
+    ],
+    [
+     12.05,
+     0.55
+    ],
+    [
+     12.05,
+     3.18
+    ],
+    [
+     3.2,
+     3.18
+    ]
+   ],
+   "y": 4.25,
+   "ev": "X",
+   "note": "the wall-walk carried over the gate"
+  }
+ ],
+ "stairs": [],
+ "curtainEnds": [
+  [
+   3.2,
+   2.6
+  ],
+  [
+   12.05,
+   2.6
+  ]
+ ],
+ "mound": [],
+ "crossing": "bridge",
+ "crossingEv": "S",
+ "drawings": [
+  {
+   "from": "n",
+   "caption": "Field front: the arch through the wall towards the amphitheatre"
+  },
+  {
+   "from": "e",
+   "cut": 7.8,
+   "caption": "Section through the gateway"
+  }
+ ]
+}
