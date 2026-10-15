@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Acc } from './planBuilding.js';
 import { emitCurtain } from './curtain.js';
-import { COUNTERFORT, DITCH, FACE, RAMPART, REACH, WALL, earthworkOffset, type TownWall, type XZ } from '../../domain/townWall.js';
+import { COUNTERFORT, DITCH, FACE, RAMPART, REACH, WALL, earthworkOffset, runSlice, type TownWall, type XZ } from '../../domain/townWall.js';
 
 // The town wall's circuit between the gates (the gates themselves are plan-built key buildings):
 // the wall's section along each run, counterforts with steps up from the rampart, the earth rampart
@@ -65,28 +65,37 @@ export function buildTownWallMesh(tw: TownWall, ground: (x: number, z: number) =
       polys.push(polyOf(ring(FACE.outer, FACE.parapetIn), fy + WALL.top));
     }
   }
-  // ---------------- counterforts and their steps
+  // ---------------- counterforts (swept along the wall line, so they bend with it) and their steps
+  const cm = opts.facing ?? 'flintLime';
   for (const c of tw.counterforts) {
-    const [cx, cz] = c.at, [nx, nz] = c.n, ax = -nz, az = nx; // along the wall
-    const fy = ground(cx, cz), h = c.len / 2;
-    const Q = (s: number, d: number, y: number): THREE.Vector3 => W(cx + ax * s + nx * d, cz + az * s + nz * d, fy + y);
-    const n = new THREE.Vector3(nx, 0, nz), al = new THREE.Vector3(ax, 0, az);
+    const sl = runSlice(tw, c.run, c.s - c.len / 2, c.s + c.len / 2);
+    if (sl.length < 2) continue;
+    const foot = sl.map((p) => ground(p.x, p.z));
+    const Q = (i: number, d: number, y: number): THREE.Vector3 => W(sl[i].x + sl[i].nx * d, sl[i].z + sl[i].nz * d, foot[i] + y);
     const d0 = FACE.innerUpper, d1 = FACE.innerLower, y0 = WALL.setoffY, y1 = WALL.walk;
-    const cm = opts.facing ?? 'flintLime';
-    acc.poly([Q(-h, d1, y0), Q(h, d1, y0), Q(h, d1, y1), Q(-h, d1, y1)], cm, c.ev, n);
-    acc.poly([Q(-h, d0, y0), Q(-h, d1, y0), Q(-h, d1, y1), Q(-h, d0, y1)], cm, c.ev, al.clone().negate());
-    acc.poly([Q(h, d0, y0), Q(h, d1, y0), Q(h, d1, y1), Q(h, d0, y1)], cm, c.ev, al);
-    acc.poly([Q(-h, d0, y1), Q(h, d0, y1), Q(h, d1, y1), Q(-h, d1, y1)], 'stone', c.ev, UP);
-    const ring = [Q(-h, d0, 0), Q(h, d0, 0), Q(h, d1, 0), Q(-h, d1, 0)].map((p) => ({ x: p.x, z: p.z }));
-    polys.push(polyOf(ring, fy + WALL.walk));
-    // steps from the rampart's crest up onto the counterfort (conjecture)
+    for (let i = 0; i + 1 < sl.length; i++) {
+      const n = new THREE.Vector3(sl[i].nx, 0, sl[i].nz).normalize();
+      acc.poly([Q(i, d1, y0), Q(i + 1, d1, y0), Q(i + 1, d1, y1), Q(i, d1, y1)], cm, c.ev, n);
+      acc.poly([Q(i, d0, y1), Q(i + 1, d0, y1), Q(i + 1, d1, y1), Q(i, d1, y1)], 'stone', c.ev, UP);
+      const ring = [Q(i, d0, 0), Q(i + 1, d0, 0), Q(i + 1, d1, 0), Q(i, d1, 0)].map((p) => ({ x: p.x, z: p.z }));
+      polys.push(polyOf(ring, Math.min(foot[i], foot[i + 1]) + WALL.walk));
+    }
+    for (const [i, sg] of [[0, -1], [sl.length - 1, 1]] as const) {
+      const al = Q(Math.min(i + 1, sl.length - 1), 0, 0).sub(Q(Math.max(i - 1, 0), 0, 0)).normalize().multiplyScalar(sg);
+      acc.poly([Q(i, d0, y0), Q(i, d1, y0), Q(i, d1, y1), Q(i, d0, y1)], cm, c.ev, al);
+    }
+    if (!c.stairs) continue;
+    // steps from the rampart's crest up onto the counterfort (conjecture), square to the wall at its middle
+    const [cx, cz] = c.at, [nx, nz] = c.n, ax = -nz, az = nx, fy = ground(cx, cz);
+    const S = (sv: number, d: number, y: number): THREE.Vector3 => W(cx + ax * sv + nx * d, cz + az * sv + nz * d, fy + y);
+    const n = new THREE.Vector3(nx, 0, nz), alv = new THREE.Vector3(ax, 0, az);
     const sw = COUNTERFORT.stairW / 2, steps = 6, run = COUNTERFORT.stairTo - FACE.innerLower, rise = (WALL.walk - RAMPART.crest) / steps;
     for (let k = 0; k < steps; k++) {
       const dA = COUNTERFORT.stairTo - (k + 1) * (run / steps), dB = COUNTERFORT.stairTo - k * (run / steps);
       const yT = RAMPART.crest + (k + 1) * rise, yR = RAMPART.crest + k * rise;
-      acc.poly([Q(-sw, dA, yT), Q(sw, dA, yT), Q(sw, dB, yT), Q(-sw, dB, yT)], 'stone', 'X', UP);
-      acc.poly([Q(-sw, dB, yR), Q(sw, dB, yR), Q(sw, dB, yT), Q(-sw, dB, yT)], 'stone', 'X', n);
-      for (const s of [-sw, sw]) acc.poly([Q(s, dA, RAMPART.crest), Q(s, dB, RAMPART.crest), Q(s, dB, yT), Q(s, dA, yT)], 'stone', 'X', al.clone().multiplyScalar(Math.sign(s)));
+      acc.poly([S(-sw, dA, yT), S(sw, dA, yT), S(sw, dB, yT), S(-sw, dB, yT)], 'stone', 'X', UP);
+      acc.poly([S(-sw, dB, yR), S(sw, dB, yR), S(sw, dB, yT), S(-sw, dB, yT)], 'stone', 'X', n);
+      for (const sv of [-sw, sw]) acc.poly([S(sv, dA, RAMPART.crest), S(sv, dB, RAMPART.crest), S(sv, dB, yT), S(sv, dA, yT)], 'stone', 'X', alv.clone().multiplyScalar(Math.sign(sv)));
     }
   }
   const trisWall = acc.pos.length / 9;
@@ -120,6 +129,30 @@ export function buildTownWallMesh(tw: TownWall, ground: (x: number, z: number) =
       const y = (k: number, ov: number): number => gyv[k] + (Math.abs(ov) < E && rz[k] < E ? (ditch ? 0.02 : -0.03) : ov);
       acc.poly([W(xa, za, y(k00, o[0])), W(xb, za, y(k10, o[1])), W(xb, zb, y(k11, o[2])), W(xa, zb, y(k01, o[3]))], 'grass', 'S', UP);
       if (ditch) ditchQuads.push([xa, za, xb, zb]);
+    }
+  }
+  // the rampart's crest as a strip along each run, from the wall's inner face out across the flat top: the 2.5 m grid alone
+  // cannot follow the face, and left the bank short of the wall where a grid cell straddled it. 2 cm over the grid there.
+  {
+    const d0 = FACE.innerUpper, d1 = FACE.innerLower + RAMPART.crestW, STEP = 2;
+    for (const run of new Set(tw.segs.filter((g) => g.kind === 'run').map((g) => g.run))) {
+      const segs = tw.segs.filter((g) => g.kind === 'run' && g.run === run);
+      const len = segs.reduce((m, g) => Math.max(m, g.s0 + g.len), 0);
+      const base = runSlice(tw, run, 0, len), pts: typeof base = [];
+      for (let i = 0; i + 1 < base.length; i++) {
+        // between two vertices the normal is that piece's own
+        const a = base[i], b = base[i + 1], k = Math.max(1, Math.ceil((b.s - a.s) / STEP));
+        const g = segs.find((q) => (a.s + b.s) / 2 >= q.s0 && (a.s + b.s) / 2 <= q.s0 + q.len) ?? segs[0];
+        pts.push(a);
+        for (let j = 1; j < k; j++) { const t = j / k; pts.push({ x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t, nx: g.nx, nz: g.nz, s: a.s + (b.s - a.s) * t }); }
+      }
+      pts.push(base[base.length - 1]);
+      const h = pts.map((p) => earthworkOffset(tw, p.x + p.nx * (d0 + d1) / 2, p.z + p.nz * (d0 + d1) / 2));
+      const V = (i: number, d: number): THREE.Vector3 => { const x = pts[i].x + pts[i].nx * d, z = pts[i].z + pts[i].nz * d; return W(x, z, ground(x, z) + h[i] + 0.02); };
+      for (let i = 0; i + 1 < pts.length; i++) {
+        if (h[i] < 0.3 && h[i + 1] < 0.3) continue; // no bank here (a minor gate's passage)
+        acc.poly([V(i, d0), V(i + 1, d0), V(i + 1, d1), V(i, d1)], 'grass', 'S', UP);
+      }
     }
   }
   const trisEarth = acc.pos.length / 9 - trisWall;

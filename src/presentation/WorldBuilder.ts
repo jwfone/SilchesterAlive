@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { insideReserve, earthworkWidth, earthworkHeight, earthworkProfile, type TownPlan } from '../domain/townPlan.js';
 import { getAtlas, remapUV } from './kit/atlas.js';
 import { mergeMixed } from './kit/merge.js';
-import { carveRects, drapeOnGround, type Rect } from './kit/decal.js';
+import { carveRects, drapeOnGround, splitByRects, type Rect } from './kit/decal.js';
 import { buildTownWallMesh } from './kit/townWall.js';
 import { getTiledAtlasMaterial } from './kit/atlasTiled.js';
 import { DITCH, FACE, buildTownWall, earthworkOffset, wallDeckAt, type TownWall } from '../domain/townWall.js';
@@ -333,6 +333,23 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
     for (const sv of [s0, s1]) for (const l of [-half, half]) { xs.push(g.centre.x + g.out.x * sv + g.along.x * l); zs.push(g.centre.z + g.out.z * sv + g.along.z * l); }
     keepOuts.push({ minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs) });
   }
+  // Roads that cross a gate's levelled ground are draped on a 2.5 m grid there (the levelling is finer than the terrain
+  // grid, so a road draped on the terrain grid alone runs under it); everywhere else the terrain grid is enough.
+  const gateZones: Rect[] = gateLevels.map((gl) => {
+    const xs: number[] = [], zs: number[] = [], m = GATE_BLEND + 1.5;
+    for (const [u, v] of [[gl.e.u0 - m, gl.e.v0 - m], [gl.e.u1 + m, gl.e.v0 - m], [gl.e.u1 + m, gl.e.v1 + m], [gl.e.u0 - m, gl.e.v1 + m]]) {
+      const p = planToWorld(gl.plan, u, v); xs.push(p.x); zs.push(p.z);
+    }
+    return { minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs) };
+  });
+  const gateGrid = (() => {
+    const lines = new Set(surface.coords);
+    for (const r of gateZones) {
+      for (let x = Math.floor(r.minX / 2.5) * 2.5; x <= r.maxX; x += 2.5) lines.add(x);
+      for (let z = Math.floor(r.minZ / 2.5) * 2.5; z <= r.maxZ; z += 2.5) lines.add(z);
+    }
+    return [...lines].sort((a, b) => a - b);
+  })();
   const townWallMeshes: THREE.Mesh[] = [];
   const groundMaterial = ditchMaskedMaterial(kitMat, builtWall.ditchQuads);
 
@@ -399,10 +416,16 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
           flat.rotateX(-Math.PI / 2); // shape (x,-z) -> world (x, 0, z)
           const g = carveRects(flat, keepOuts);
           if (!g) continue;
-          const draped = drapeOnGround(g, gy, DECAL_LIFT, surface.coords);
-          draped.computeVertexNormals();
-          remapUV(draped, 'street', 1, 1);
-          roadParts.push(draped);
+          // over a gate's levelled ground the road is draped on the fine grid, elsewhere on the terrain grid
+          const split = splitByRects(g, gateZones);
+          const parts: Array<[THREE.BufferGeometry | null, number[]]> = [[split.outside, surface.coords], [split.inside, gateGrid]];
+          for (const [part, grid] of parts) {
+            if (!part) continue;
+            const draped = drapeOnGround(part, gy, DECAL_LIFT, grid);
+            draped.computeVertexNormals();
+            remapUV(draped, 'street', 1, 1);
+            roadParts.push(draped);
+          }
         } catch {
           continue; // per-poly skip (bad ring): rest of network still renders
         }

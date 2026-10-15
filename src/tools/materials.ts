@@ -43,6 +43,7 @@ const allPanes: Pane[] = [
   // town wall (?id=south-gate&set=town): the wall either side of the south gate
   { key: 'townK2', style: 'hybrid', set: 'town', facing: 'flint', flintTiles: 2, title: 'K2 · Flint, 2 tile courses (before)', note: 'the forum facing: tile bands are not the town wall\'s' },
   { key: 'townFL', style: 'hybrid', set: 'town', facing: 'flint-limestone', title: 'FL · Flint, double limestone courses', note: '4-5 flint courses (0.55 m) then two courses of flat slabs, mostly pale limestone (Collis 1983)' },
+  { key: 'townPlain', style: 'plain', set: 'town', facing: 'flint-limestone', benchOnly: true, title: 'P · Plain (baseline)', note: 'flat colour: the cost floor for bench()' },
   { key: 'townFLs', style: 'hybridLite', set: 'town', facing: 'flint-limestone', title: 'FLs · FL, Standard tier', note: 'FL without fine grain or lumpy outlines' },
 ];
 const panes = only ? allPanes.filter((p) => only.includes(p.key)) : allPanes.filter((p) => (p.set ?? 'wall') === set && !p.benchOnly);

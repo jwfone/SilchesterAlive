@@ -7,6 +7,60 @@ export interface Rect { minX: number; maxX: number; minZ: number; maxZ: number }
 
 type P = { x: number; z: number; u: number; v: number };
 
+/**
+ * Split a flat (x, z) triangle mesh exactly by axis-aligned rectangles (which must not overlap): the part outside every
+ * rectangle and the part inside them, clipped polygon by polygon (no subdivision, so big triangles stay few). The town gates'
+ * levelled ground uses it to drape the road there on a finer grid than elsewhere.
+ */
+export function splitByRects(src: THREE.BufferGeometry, rects: Rect[]): { outside: THREE.BufferGeometry | null; inside: THREE.BufferGeometry | null } {
+  const g = src.index ? src.toNonIndexed() : src;
+  const pos = g.attributes.position as THREE.BufferAttribute, uv = g.attributes.uv as THREE.BufferAttribute;
+  const lerp = (a: P, b: P, t: number): P => ({ x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t, u: a.u + (b.u - a.u) * t, v: a.v + (b.v - a.v) * t });
+  /** Keep the part of a convex polygon where f(p) >= 0 (f linear). */
+  const half = (poly: P[], f: (p: P) => number): P[] => {
+    const out: P[] = [];
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length], fa = f(a), fb = f(b);
+      if (fa >= 0) out.push(a);
+      if ((fa >= 0) !== (fb >= 0)) out.push(lerp(a, b, fa / (fa - fb)));
+    }
+    return out;
+  };
+  const inRect = (poly: P[], r: Rect): P[] => half(half(half(half(poly, (p) => p.x - r.minX), (p) => r.maxX - p.x), (p) => p.z - r.minZ), (p) => r.maxZ - p.z);
+  /** The rectangle's complement as four convex pieces: left, right, and the middle column below and above. */
+  const outRect = (poly: P[], r: Rect): P[][] => [
+    half(poly, (p) => r.minX - p.x),
+    half(poly, (p) => p.x - r.maxX),
+    half(half(half(poly, (p) => p.x - r.minX), (p) => r.maxX - p.x), (p) => r.minZ - p.z),
+    half(half(half(poly, (p) => p.x - r.minX), (p) => r.maxX - p.x), (p) => p.z - r.maxZ),
+  ].filter((q) => q.length >= 3);
+  const outP: number[] = [], outU: number[] = [], inP: number[] = [], inU: number[] = [];
+  const emit = (poly: P[], P_: number[], U_: number[]): void => {
+    for (let i = 1; i + 1 < poly.length; i++) for (const p of [poly[0], poly[i], poly[i + 1]]) { P_.push(p.x, 0, p.z); U_.push(p.u, p.v); }
+  };
+  for (let i = 0; i < pos.count; i += 3) {
+    const tri: P[] = [0, 1, 2].map((k) => ({ x: pos.getX(i + k), z: pos.getZ(i + k), u: uv.getX(i + k), v: uv.getY(i + k) }));
+    let outside: P[][] = [tri];
+    for (const r of rects) {
+      const x0 = Math.min(...tri.map((p) => p.x)), x1 = Math.max(...tri.map((p) => p.x)), z0 = Math.min(...tri.map((p) => p.z)), z1 = Math.max(...tri.map((p) => p.z));
+      if (x1 <= r.minX || x0 >= r.maxX || z1 <= r.minZ || z0 >= r.maxZ) continue;
+      const q = inRect(tri, r);
+      if (q.length >= 3) emit(q, inP, inU);
+      outside = outside.flatMap((poly) => outRect(poly, r));
+    }
+    for (const poly of outside) emit(poly, outP, outU);
+  }
+  if (g !== src) g.dispose();
+  const make = (P_: number[], U_: number[]): THREE.BufferGeometry | null => {
+    if (!P_.length) return null;
+    const out = new THREE.BufferGeometry();
+    out.setAttribute('position', new THREE.Float32BufferAttribute(P_, 3));
+    out.setAttribute('uv', new THREE.Float32BufferAttribute(U_, 2));
+    return out;
+  };
+  return { outside: make(outP, outU), inside: make(inP, inU) };
+}
+
 /** Edge length (m) below which a triangle on a rectangle's border is kept or dropped whole. */
 const MIN_EDGE = 1.2;
 const MAX_DEPTH = 6;

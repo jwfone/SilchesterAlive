@@ -125,7 +125,8 @@ New engine pieces, reusable elsewhere:
   whole map and ~40k triangles of cut decals).
 - **Facing** `flintLimeF` (`facing: 'flint-limestone'`): flint with double courses of mixed limestone and ironstone slabs.
 
-Smoke: town wall section 21,034 tris (cap 24k), earthworks 23,666; gates 590–1,742; whole town **28 draws (was 22), 258k tris (was 216k)**.
+Smoke: town wall section 21,034 tris (cap 24k), earthworks 23,666; gates 590–1,742; whole town **28 draws (was 22), 263k tris (was 216k)** (roads re-draped on a 2.5 m grid over the gates' levelled ground,
+`splitByRects`, 2026-10-15). Facing cost on the HD 620: FL +5.6 ms over plain at 2400 × 1350 (`town-walls.md` "Checks").
 Lab: `tools/materials.html?id=south-gate&set=town`. Scratch scripts (GIS gate frames, wall line, counterforts, plan writer, notes writer,
 review pictures, `shots.ts` for rendering fixed game views through Vite) in gitignored `tmp/key-plans/walls-scripts/`; the user's photos
 and Fulford 2002 notes in `tmp/research/walls/`; the 1890 volume in `tmp/research/arch52/`.

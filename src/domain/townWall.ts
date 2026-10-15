@@ -88,10 +88,17 @@ export interface TownGate {
   hasMound: boolean;
 }
 
+/** A counterfort on the wall line: its middle on the centreline of run `run` at `s` metres along it, the wall's normal
+ * towards the town there, its length along the wall, and whether the rampart's crest reaches it (then it has steps). */
+export interface TownCounterfort {
+  at: [number, number]; n: [number, number]; len: number; ev: TownWallData['counterforts'][number]['ev']; src?: string;
+  run: number; s: number; stairs: boolean;
+}
+
 export interface TownWall {
   segs: WallSeg[];
   gates: TownGate[];
-  counterforts: TownWallData['counterforts'];
+  counterforts: TownCounterfort[];
   /** Signed distance from the line, the nearest piece and the raw position along it (metres from a). */
   nearest: (x: number, z: number) => { d: number; seg: WallSeg; t: number } | undefined;
 }
@@ -157,7 +164,51 @@ export function buildTownWall(data: TownWallData, plans: Record<string, Building
     }
     return best;
   };
-  return { segs, gates, counterforts: data.counterforts, nearest };
+  // counterforts snapped onto the wall line (their data points came from the GIS strip, before the line was smoothed)
+  const counterforts: TownCounterfort[] = [];
+  for (const c of data.counterforts) {
+    let best: WallSeg | undefined, bd = Infinity, bt = 0;
+    for (const g of segs) {
+      if (g.kind !== 'run') continue;
+      const t = Math.max(0, Math.min(g.len, (c.at[0] - g.ax) * g.dx + (c.at[1] - g.az) * g.dz));
+      const dist = Math.hypot(c.at[0] - g.ax - g.dx * t, c.at[1] - g.az - g.dz * t);
+      if (dist < bd) { bd = dist; best = g; bt = t; }
+    }
+    if (!best || bd > 3) continue;
+    // on a vertex of the line the counterfort faces along the mitre (the two pieces' mean normal)
+    let [nx, nz] = [best.nx, best.nz];
+    const b = best, nb = bt < 0.05 ? segs.find((g) => g.kind === 'run' && g.run === b.run && g.seg === b.seg - 1)
+      : bt > b.len - 0.05 ? segs.find((g) => g.kind === 'run' && g.run === b.run && g.seg === b.seg + 1) : undefined;
+    if (nb) { const ml = Math.hypot(nx + nb.nx, nz + nb.nz) || 1; [nx, nz] = [(nx + nb.nx) / ml, (nz + nb.nz) / ml]; }
+    counterforts.push({ at: [b.ax + b.dx * bt, b.az + b.dz * bt], n: [nx, nz], len: c.len, ev: c.ev, src: c.src, run: b.run, s: b.s0 + bt, stairs: false });
+  }
+  const tw: TownWall = { segs, gates, counterforts, nearest };
+  // steps only where the rampart's crest reaches the counterfort (not where it slopes down to a minor gate)
+  for (const c of counterforts) {
+    const d = (FACE.innerLower + COUNTERFORT.stairTo) / 2;
+    c.stairs = earthworkOffset(tw, c.at[0] + c.n[0] * d, c.at[1] + c.n[1] * d) >= RAMPART.crest - 0.05;
+  }
+  return tw;
+}
+
+/** Points along run `run` from s0 to s1 (metres along it), with the wall's normal towards the town at each: the run's
+ * own vertices in between are included, so a counterfort or a strip bends with the wall. */
+export function runSlice(tw: TownWall, run: number, s0: number, s1: number): Array<{ x: number; z: number; nx: number; nz: number; s: number }> {
+  const segs = tw.segs.filter((g) => g.kind === 'run' && g.run === run).sort((a, b) => a.seg - b.seg);
+  const at = (s: number): { x: number; z: number; nx: number; nz: number; s: number } => {
+    const g = segs.find((q) => s <= q.s0 + q.len + 1e-6) ?? segs[segs.length - 1];
+    const t = Math.max(0, Math.min(g.len, s - g.s0));
+    return { x: g.ax + g.dx * t, z: g.az + g.dz * t, nx: g.nx, nz: g.nz, s };
+  };
+  const a = Math.max(0, s0), b = Math.min(segs.reduce((m, g) => Math.max(m, g.s0 + g.len), 0), s1);
+  const out = [at(a)];
+  for (const g of segs) if (g.s0 > a + 1e-3 && g.s0 < b - 1e-3) {
+    // a vertex of the run: the normal is the mean of the two pieces' (a mitre)
+    const prev = segs[g.seg - 1] ?? g, mx = prev.nx + g.nx, mz = prev.nz + g.nz, ml = Math.hypot(mx, mz) || 1, k = 1 / Math.max(0.5, (mx / ml) * g.nx + (mz / ml) * g.nz);
+    out.push({ x: g.ax, z: g.az, nx: (mx / ml) * k, nz: (mz / ml) * k, s: g.s0 });
+  }
+  out.push(at(b));
+  return out;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -187,7 +238,8 @@ const CAUSEWAY = { half: 3.5, slope: 4 } as const;
 
 /** Height of the earthworks above (rampart, gate mounds) or below (ditch) the levelled ground at (x, z). */
 export function earthworkOffset(tw: TownWall, x: number, z: number): number {
-  // inside a gate: its rooms are clear, its mounds stand behind the flanks
+  // inside a gate: its rooms are clear, its mounds stand behind the flanks (the higher of a mound and the wall's rampart wins)
+  let mound = 0;
   for (const g of tw.gates) {
     if (Math.abs(x - g.centre.x) > 40 || Math.abs(z - g.centre.z) > 40) continue;
     const [u, v] = worldToPlan(g.plan, x, z);
@@ -200,22 +252,22 @@ export function earthworkOffset(tw: TownWall, x: number, z: number): number {
         if (inPoly(u, v, m)) { h = RAMPART.crest; break; }
         if (v < vWall) { const dd = distToPoly(u, v, m); if (dd < RAMPART.back) h = Math.max(h, RAMPART.crest * (1 - dd / RAMPART.back)); }
       }
-      if (h > 0) return h;
+      mound = Math.max(mound, h);
     }
   }
   const n = tw.nearest(x, z);
-  if (!n) return 0;
+  if (!n) return mound;
   const { d, seg, t } = n;
-  if (d >= 0) {
-    if (seg.kind !== 'run') return 0;
+  if (d >= 0 || mound > 0) {
+    if (seg.kind !== 'run' || d < 0) return mound;
     const sAlong = seg.s0 + t;
     // no rampart beyond the run's ends; at a gate without mounds it slopes down to the passage
-    if (sAlong < 0 || sAlong > seg.runLen) return 0;
+    if (sAlong < 0 || sAlong > seg.runLen) return mound;
     let h = rampartAt(d);
     for (const [gi, from] of [[seg.gateA, sAlong], [seg.gateB, seg.runLen - sAlong]] as const) {
       if (gi >= 0 && !tw.gates[gi].hasMound) h = Math.min(h, from * 0.75);
     }
-    return h;
+    return Math.max(h, mound);
   }
   let y = ditchAt(d);
   if (y === 0) return 0;
@@ -263,12 +315,12 @@ export function wallDeckAt(tw: TownWall, x: number, z: number): { y: number; foo
   const footX = seg.ax + seg.dx * tc, footZ = seg.az + seg.dz * tc;
   if (d >= FACE.parapetIn && d <= FACE.innerUpper) return { y: WALL.walk, footX, footZ };
   if (d > FACE.innerUpper && d <= COUNTERFORT.stairTo) {
+    const sAlong = seg.s0 + tc;
     for (const c of tw.counterforts) {
-      const rx = x - c.at[0], rz = z - c.at[1];
-      if (Math.abs(rx) > 8 || Math.abs(rz) > 8) continue;
-      const along = Math.abs(rx * c.n[1] - rz * c.n[0]);
+      if (c.run !== seg.run) continue;
+      const along = Math.abs(sAlong - c.s);
       if (d <= FACE.innerLower && along <= c.len / 2) return { y: WALL.walk, footX, footZ };
-      if (d > FACE.innerLower && along <= COUNTERFORT.stairW / 2) {
+      if (c.stairs && d > FACE.innerLower && along <= COUNTERFORT.stairW / 2) {
         const f = (COUNTERFORT.stairTo - d) / (COUNTERFORT.stairTo - FACE.innerLower);
         return { y: RAMPART.crest + (WALL.walk - RAMPART.crest) * f, footX, footZ };
       }

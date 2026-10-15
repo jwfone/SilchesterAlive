@@ -236,8 +236,9 @@ The ditch is a change to the ground surface, not a mesh.
 
 ### Change while modelling (2026-10-14)
 The arch springings came down from the draft (2.6 / 2.4 m) so that each crown, plus the platform's 0.3 m of beams, stays under the
-walk's level (4.2 m): **2.2 m** at the north, south, Lesser West and amphitheatre gates (crowns 3.85–4.0 m), **2.0 m** at the west and east
-gates (3.66 m arches, crowns 3.83 m), 2.1 m for the SE footway (crown 2.7 m). Still room for a laden cart (about 3.5 m). **X**.
+walk's level (4.2 m): **2.2 m** at the north, south and amphitheatre gates (crowns 3.7–3.9 m), **2.1 m** at the Lesser West gate (arches 3.55 and
+3.62 m, crowns 3.9 m; lowered 2026-10-15 when the smoke test found the inner crown at 4.0 m) and the SE footway (crown 2.7 m), **2.0 m** at
+the west and east gates (3.66 m arches, crowns 3.83 m). Every crown stays 0.3 m under the deck over it (smoke test). Still room for a laden cart (about 3.5 m). **X**.
 
 ### Rules for the model
 | Part | Rule | Level |
@@ -282,3 +283,29 @@ gates (3.66 m arches, crowns 3.83 m), 2.1 m for the SE footway (crown 2.7 m). St
   wall colliders carry their tops, so you walk on the walk and are stopped by the parapet. The ground over the ditch is hidden
   under the earthworks mesh by a mask on the ground's material.
 - Review pictures: `tmp/key-plans/walls-step9-drawings.png`, `tmp/key-plans/walls-step9-views.png`.
+
+## Checks (2026-10-15)
+
+- **Cost of the facing** (Intel HD 620, `tools/materials.html?id=south-gate&only=townPlain,townK2,townFL,townFLs`,
+  `await bench(30, 'townDetail', [2400, 1350])`, the wall filling the frame, best of three): plain 17.8 ms, K2 (the forum's flint, used
+  before) 22.6 ms, **FL 23.4 ms (+5.6 ms over plain, inside the playbook's ≲ +10 ms)**, FLs 23.6 ms. FLs is no cheaper here: the
+  flint courses dominate and both tiers draw them; it differs in fine grain at close range only.
+- **Smoke test**: the seven gates are in the per-building table (entrance clear at the feet, a solid wall, dev spawn 8 m out in the field,
+  an element with an 1890 or C&F note pickable at LOD 0 and 1, LOD triangles decreasing, caps 6k / 3k). A new check: no wall rises
+  through a platform except crenellated parapets and the wall's own section, and every arch crown stays 0.3 m under the deck above it.
+  It found the Lesser West gate's inner arch crown at 4.0 m under the 4.25 m walk; its springing came down to 2.1 m.
+- **Walk-through in the game** (2026-10-15, browser pane visible, ~20 fps): from the road over the west gate's bridge (and, spawned in
+  the ditch, under it), through the forecourt and a passage into the town; the town side (inner arch under the platform, tower, rampart);
+  each Look setting (Auto, Detailed, Standard, Plain, Evidence) on the gate and the wall; the North gate's viewer (3D, the date, the
+  platform's note on hover); from the rampart's crest up a counterfort's steps onto the wall-walk. All as intended. Found and fixed: the
+  road decal ran under the gates' levelled ground (it was draped on the 22 m terrain grid); roads are now split exactly at each gate's
+  levelled zone (`splitByRects` in `kit/decal.ts`) and draped there on a 2.5 m grid (+5k triangles; town 263k).
+- In Evidence, the towers' upper storeys show green: wall colours follow the wall plan's evidence (the guardhouses are S), as in the other
+  buildings; the heights are conjecture, as the notes say.
+- **Fixed 2026-10-15 (the user saw them):** (1) the rampart fell short of the back of the wall where a 2.5 m grid cell straddled the
+  inner face: the crest is now also drawn as a strip along each run from the wall's inner face out across the flat top (2 cm over the
+  grid; +2.4k triangles), and near the gates the higher of a gate mound and the wall's rampart now wins (the mound's sloping edge had cut
+  dips into the bank). (2) Counterforts floated or stood askew: their points came from the GIS strip before the line was smoothed, with
+  the probe's normal; they are now snapped onto the run (on a bend, facing along the mitre), swept along the wall line so they bend
+  with it, and given steps only where the rampart's crest reaches them. Smoke checks both: every counterfort on the line and square to
+  it, and the crest's height against the wall along the runs.

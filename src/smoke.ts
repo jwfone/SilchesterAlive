@@ -435,6 +435,15 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     door: [number, number]; wall: [number, number]; spawn: [number, number];
     pick: { element: string; note: string };
   }
+  /** World point of a plan point (for the gates, whose frames are not axis-aligned to the GIS). */
+  const gw = (id: string, u: number, v: number): [number, number] => { const p = planToWorld(KEY_PLANS[id], u, v); return [p.x, p.z]; };
+  /** A dev spawn 8 m out in the field in front of a gate (plan v up = the field). */
+  const gs = (id: string): [number, number] => {
+    const kp = KEY_PLANS[id], vs = kp.walls.flatMap((w) => [w.a[1], w.b[1]]), us = kp.walls.flatMap((w) => [w.a[0], w.b[0]]);
+    return gw(id, (Math.min(...us) + Math.max(...us)) / 2, Math.max(...vs) + 8);
+  };
+  /** The building's own placed centre (the gates have no separate pin to compare with: their anchors were fitted to the same GIS). */
+  const pc = (id: string): [number, number] => { const p = world.planBuildings.find((b) => b.id === id)!.centre; return [p.x, p.z]; };
   const checks: PlanCheck[] = [
     // baths: ~66 x 30 m anchor around 163.9, 144; facade entrance; west wall; cold-bath window (1903-4 glass)
     { id: 'baths', cap: 12000, centre: [163.9, 144], minWalls: 20, door: [13.1, 61.1], wall: [0.45, 50], spawn: [160, 104],
@@ -451,6 +460,15 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     // the arena wall's note (Fulford 2002). LOD0 cap 12k agreed for this building (docs/key-buildings/amphitheatre.md).
     { id: 'amphitheatre', cap: 12000, centre: [452.2, -156.3], minWalls: 60, door: [37.1, 72], wall: ringPoint(KEY_PLANS.amphitheatre.arena!, 45),
       spawn: [467, -197.4], pick: { element: 'arena/wall', note: 'ironstone' } },
+    // the town gates (docs/key-buildings/town-walls.md): through the passage; a passage wall or the central wall; a part with a 1890 note.
+    // LOD0 caps agreed 2026-10-14: 6k for the main gates, 3k for the minor ones.
+    { id: 'north-gate', cap: 6000, centre: pc('north-gate'), minWalls: 10, door: [18.1, 3], wall: [15.6, 2.5], spawn: gs('north-gate'), pick: { element: 'arch-out/door0', note: 'timber sill' } },
+    { id: 'south-gate', cap: 6000, centre: pc('south-gate'), minWalls: 10, door: [15.6, 3], wall: [13.3, 2.5], spawn: gs('south-gate'), pick: { element: 'steps', note: 'rude foundation' } },
+    { id: 'west-gate', cap: 6000, centre: pc('west-gate'), minWalls: 15, door: [10.5, 2.5], wall: [12.95, 2], spawn: gs('west-gate'), pick: { element: 'pier', note: 'central wall' } },
+    { id: 'east-gate', cap: 6000, centre: pc('east-gate'), minWalls: 15, door: [11, 3], wall: [13.5, 2], spawn: gs('east-gate'), pick: { element: 'arch-out-1/door0', note: '3.66 m' } },
+    { id: 'lesser-west-gate', cap: 3000, centre: pc('lesser-west-gate'), minWalls: 2, door: [6.7, 2], wall: [4.4, 1.5], spawn: gs('lesser-west-gate'), pick: { element: 'arch-out/door0', note: 'iron shoe' } },
+    { id: 'amphitheatre-gate', cap: 3000, centre: pc('amphitheatre-gate'), minWalls: 4, door: [7.8, 2.2], wall: [4.45, 1.0], spawn: gs('amphitheatre-gate'), pick: { element: 'arch/door0', note: '3.3 m' } },
+    { id: 'se-gate', cap: 3000, centre: pc('se-gate'), minWalls: 2, door: [4.4, 3], wall: [3.2, 2], spawn: gs('se-gate'), pick: { element: 'arch/door0', note: 'drain' } },
   ];
   for (const c of checks) {
     const kp = KEY_PLANS[c.id];
@@ -466,7 +484,8 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
       throw new Error(`${c.id} centre off its footprint: ${pb.centre.x.toFixed(1)}, ${pb.centre.z.toFixed(1)}`);
     }
     const door = planToWorld(kp, c.door[0], c.door[1]);
-    if (world.polys.some((p) => hitsPoly(door.x, door.z, 0.3, p))) throw new Error(`${c.id} entrance is blocked by a collider`);
+    const atFeet = (p: { top?: number }, x: number, z: number): boolean => p.top === undefined || world.terrainY(x, z) < p.top - 0.35;
+    if (world.polys.some((p) => atFeet(p, door.x, door.z) && hitsPoly(door.x, door.z, 0.3, p))) throw new Error(`${c.id} entrance is blocked by a collider`);
     const wall = planToWorld(kp, c.wall[0], c.wall[1]);
     if (!world.polys.some((p) => hitsPoly(wall.x, wall.z, 0.3, p))) throw new Error(`${c.id} solid wall has no collider`);
     const proximity = pb.distanceTo(c.spawn[0], c.spawn[1]);
@@ -576,7 +595,20 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
   near(earthworkOffset(tw, ditch.x, ditch.z), -DITCH.depth, 0.05, 'ditch depth');
   near(world.groundY(ditch.x, ditch.z) - world.terrainY(ditch.x, ditch.z), 0, 0.01, 'walking in the ditch');
   // counterforts' steps lead from the rampart's crest up to the walk
-  const cf = tw.counterforts[0];
+  // counterforts sit on the wall line, square to it, and those the crest reaches have steps
+  for (const c of tw.counterforts) {
+    const n = tw.nearest(c.at[0], c.at[1]);
+    const off = n ? Math.hypot(c.at[0] - n.seg.ax - n.seg.dx * Math.max(0, Math.min(n.seg.len, n.t)), c.at[1] - n.seg.az - n.seg.dz * Math.max(0, Math.min(n.seg.len, n.t))) : Infinity;
+    if (!n || off > 0.01 || Math.abs(n.seg.nx * c.n[0] + n.seg.nz * c.n[1]) < 0.85) throw new Error(`counterfort at ${c.at.map((v) => v.toFixed(0))} is off the wall line (off ${off.toFixed(3)}, dot ${n ? (n.seg.nx * c.n[0] + n.seg.nz * c.n[1]).toFixed(3) : "-"}, ${n?.seg.kind} run ${n?.seg.run} vs ${c.run})`);
+  }
+  if (tw.counterforts.filter((c) => c.stairs).length < tw.counterforts.length - 6) throw new Error('town wall: too few counterforts with steps');
+  // the rampart reaches the back of the wall: the crest height just inside the inner face
+  for (const sgx of runSegs.filter((g, i) => i % 7 === 0 && g.s0 + g.len / 2 > 5 && g.s0 + g.len / 2 < g.runLen - 5)) {
+    const px = (sgx.ax + sgx.bx) / 2 + sgx.nx * (FACE.innerUpper + 0.3), pz = (sgx.az + sgx.bz) / 2 + sgx.nz * (FACE.innerUpper + 0.3);
+    const lift = earthworkOffset(tw, px, pz);
+    if (lift > 0.5 && Math.abs(lift - RAMPART.crest) > 0.05) throw new Error(`town wall: the rampart against the wall is ${lift.toFixed(2)} m, not the crest`);
+  }
+  const cf = tw.counterforts.find((c) => c.stairs)!;
   const st = { x: cf.at[0] + cf.n[0] * (FACE.innerLower + 0.2), z: cf.at[1] + cf.n[1] * (FACE.innerLower + 0.2) };
   const dk = wallDeckAt(tw, st.x, st.z);
   if (!dk || dk.y < RAMPART.crest + 0.6) throw new Error('town wall: no steps up a counterfort');
@@ -653,6 +685,38 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     if (elementTriangles(b, 'flank-w-1/parapet').length === 0) throw new Error('north gate: the flank parapet is not pickable');
     if (!elementTriangles(b, 'platform').length || elementAtFace(b, elementTriangles(b, 'platform')[0][0])?.note?.includes('platform') !== true) throw new Error('north gate: the platform is not pickable');
     b.geometry.dispose();
+  }
+  // no wall shows through a platform (only crenellated parapets and the wall's own section rise above one), and every arch
+  // crown, with the platform's 0.3 m of beams over it, stays under the platform
+  for (const id of gateIds) {
+    const kp = KEY_PLANS[id];
+    const inPoly = (u: number, v: number, poly: Array<[number, number]>): boolean => {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const [ui, vi] = poly[i], [uj, vj] = poly[j];
+        if ((vi > v) !== (vj > v) && u < ((uj - ui) * (v - vi)) / (vj - vi) + ui) inside = !inside;
+      }
+      return inside;
+    };
+    for (const pf of kp.platforms ?? []) {
+      for (const w of kp.walls) {
+        const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]);
+        const under = (s: number): boolean => inPoly(w.a[0] + ((w.b[0] - w.a[0]) * s) / L, w.a[1] + ((w.b[1] - w.a[1]) * s) / L, pf.poly);
+        const samples = Array.from({ length: Math.max(2, Math.ceil(L / 0.25)) + 1 }, (_, k) => (k * L) / Math.max(2, Math.ceil(L / 0.25)));
+        if (!samples.some(under)) continue;
+        const top = w.kind === 'curtain' ? WALL.walk : w.h;
+        if (top > pf.y + 0.01 && !w.crenel && w.kind !== 'curtain') throw new Error(`${id}: wall ${w.id} (top ${top} m) shows through ${pf.id} (${pf.y} m)`);
+        if (w.crenel && top > pf.y + 0.01 && w.h - (WALL.top - WALL.breast) < pf.y - 0.01 && pf.y < 7) {
+          // a parapet rising through a deck must carry its merlons above it, not stop short of it
+          throw new Error(`${id}: crenellated ${w.id} is solid only to ${(w.h - 0.8).toFixed(2)} m, below ${pf.id}`);
+        }
+        for (const o of w.openings ?? []) {
+          if (!o.arch || !under(o.at)) continue;
+          const crown = o.oh + o.w / 2;
+          if (crown + 0.3 > pf.y + 0.01) throw new Error(`${id}: ${w.id}'s arch crown at ${crown.toFixed(2)} m leaves no room for ${pf.id}'s beams (${pf.y} m)`);
+        }
+      }
+    }
   }
   // the old instanced gate kit is gone
   world.layerGroups.walls.traverse((o) => { if ((o as THREE.InstancedMesh).isInstancedMesh) throw new Error('old gate kit still in the walls layer'); });
