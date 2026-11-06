@@ -24,10 +24,10 @@
     "import:keyplans": "node scripts/import-key-plans.mjs"
   },
   "dependencies": {
-    "three": "^0.186.0"
+    "three": "^0.187.0"
   },
   "devDependencies": {
-    "@types/three": "^0.186.0",
+    "@types/three": "^0.187.0",
     "proj4": "^2.22.0",
     "shpjs": "^6.2.0",
     "typescript": "^7.0.2",
