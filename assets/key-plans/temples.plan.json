@@ -1,0 +1,1345 @@
+{
+ "id": "temples",
+ "pitchDeg": 22,
+ "name": "Temples (Insula XXX)",
+ "dateShown": "c. AD 270–280",
+ "facing": "flint",
+ "period": "late 3rd century AD (c. 270–280): the large and small Romano-Celtic temples of Insula XXX as planned in 1890 (Fox & St John Hope; east halves completed on plan), in their walled precinct; the north temple (demolished c. AD 200) left out",
+ "brief": "docs/key-buildings/temples.md",
+ "frame": {
+  "originEN": [
+   464281.99,
+   162352.95
+  ],
+  "angleDeg": -4.3,
+  "note": "local u (east-ish), v (north-ish) metres; E,N = origin + R(angle)*(u,v); the frame is square to the large temple (-4.3 deg from grid north), origin the in-rings' SW bounding corner. Walls fitted to the Great Plan rings (tmp/key-plans/temples-scripts/fitwalls.py)."
+ },
+ "conventions": "walls: centreline a->b, thickness t, height h; openings at metres from a, width w, height oh. conjecture:true marks things not evidenced.",
+ "drawings": [
+  {
+   "from": "e",
+   "caption": "East front: the small temple (left) and the large temple (right) from the open side of the precinct, with their steps"
+  },
+  {
+   "from": "s",
+   "cut": 46.6,
+   "caption": "Section through the large temple, looking north: podium fill, colonnade, ambulatory roof, cella tower"
+  },
+  {
+   "from": "s",
+   "cut": 14.0,
+   "caption": "Section through the small temple, looking north: podium, enclosed ambulatory, cella tower"
+  },
+  {
+   "from": "w",
+   "caption": "West side: the precinct wall in front of the temples"
+  }
+ ],
+ "rooms": [
+  {
+   "id": "L-amb-e",
+   "name": "Ambulatory (east, front)",
+   "poly": [
+    [
+     31.2,
+     36.52
+    ],
+    [
+     35.18,
+     36.52
+    ],
+    [
+     35.18,
+     57.16
+    ],
+    [
+     31.2,
+     57.16
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory floor: \"a pavement of common opus signinum 2 inches thick, made of coarsely-pounded brick embedded in hard white cement\", laid \"at a height of 7½ feet above the original ground level\" on a fill of sandy clay and loam (Fox & St John Hope 1890, p. 746)",
+   "floorY": 2.3,
+   "finish": "exterior"
+  },
+  {
+   "id": "L-amb-w",
+   "name": "Ambulatory (west)",
+   "poly": [
+    [
+     14.79,
+     36.52
+    ],
+    [
+     18.63,
+     36.52
+    ],
+    [
+     18.63,
+     57.16
+    ],
+    [
+     14.79,
+     57.16
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory floor: \"a pavement of common opus signinum 2 inches thick, made of coarsely-pounded brick embedded in hard white cement\", laid \"at a height of 7½ feet above the original ground level\" on a fill of sandy clay and loam (Fox & St John Hope 1890, p. 746)",
+   "floorY": 2.3,
+   "finish": "exterior"
+  },
+  {
+   "id": "L-amb-n",
+   "name": "Ambulatory (north)",
+   "poly": [
+    [
+     18.63,
+     53.41
+    ],
+    [
+     31.2,
+     53.41
+    ],
+    [
+     31.2,
+     57.16
+    ],
+    [
+     18.63,
+     57.16
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory floor: \"a pavement of common opus signinum 2 inches thick, made of coarsely-pounded brick embedded in hard white cement\", laid \"at a height of 7½ feet above the original ground level\" on a fill of sandy clay and loam (Fox & St John Hope 1890, p. 746)",
+   "floorY": 2.3,
+   "finish": "exterior"
+  },
+  {
+   "id": "L-amb-s",
+   "name": "Ambulatory (south)",
+   "poly": [
+    [
+     18.63,
+     36.52
+    ],
+    [
+     31.2,
+     36.52
+    ],
+    [
+     31.2,
+     40.03
+    ],
+    [
+     18.63,
+     40.03
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory floor: \"a pavement of common opus signinum 2 inches thick, made of coarsely-pounded brick embedded in hard white cement\", laid \"at a height of 7½ feet above the original ground level\" on a fill of sandy clay and loam (Fox & St John Hope 1890, p. 746)",
+   "floorY": 2.3,
+   "finish": "exterior"
+  },
+  {
+   "id": "L-cella",
+   "name": "Cella of the large temple",
+   "poly": [
+    [
+     19.62,
+     41.33
+    ],
+    [
+     30.15,
+     41.33
+    ],
+    [
+     30.15,
+     52.24
+    ],
+    [
+     19.62,
+     52.24
+    ]
+   ],
+   "floor": "signinum-polished",
+   "note": "cella floor at the same level: opus signinum about 5 inches thick, its upper layer of brick fragments \"mixed with pieces of hard stone, the most conspicuous being a streaked limestone of a dark colour, seemingly from the Purbeck beds\", \"ground down level and then smoothed and polished\" (Fox & St John Hope 1890, p. 746)",
+   "floorY": 2.3,
+   "lining": {
+    "dado": "purbeck",
+    "upper": "stucco",
+    "ev": "S",
+    "note": "Purbeck marble wall-linings (\"from their thinness ... evidently wall-linings\") and \"mouldings of plaster panels covered with a fine white stucco\" found near both temples (Fox & St John Hope 1890, p. 747): material S; where they were (a dado of slabs to 1 m, framed panels above, a thin red line in each panel) X"
+   }
+  },
+  {
+   "id": "S-amb-e",
+   "name": "Ambulatory (east, front)",
+   "poly": [
+    [
+     29.61,
+     6.99
+    ],
+    [
+     32.89,
+     6.99
+    ],
+    [
+     32.89,
+     20.7
+    ],
+    [
+     29.61,
+     20.7
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory: no floor survived; \"many one-inch tesserae, both red and drab\" were found north of the building (Fox & St John Hope 1890), which may have paved it (C&F 2016, citing Neal & Cosh 2009); shown as plain opus signinum",
+   "floorY": 1.2
+  },
+  {
+   "id": "S-amb-w",
+   "name": "Ambulatory (west)",
+   "poly": [
+    [
+     19.77,
+     6.99
+    ],
+    [
+     22.18,
+     6.99
+    ],
+    [
+     22.18,
+     20.7
+    ],
+    [
+     19.77,
+     20.7
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory: no floor survived; \"many one-inch tesserae, both red and drab\" were found north of the building (Fox & St John Hope 1890), which may have paved it (C&F 2016, citing Neal & Cosh 2009); shown as plain opus signinum",
+   "floorY": 1.2
+  },
+  {
+   "id": "S-amb-n",
+   "name": "Ambulatory (north)",
+   "poly": [
+    [
+     22.18,
+     17.58
+    ],
+    [
+     29.61,
+     17.58
+    ],
+    [
+     29.61,
+     20.7
+    ],
+    [
+     22.18,
+     20.7
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory: no floor survived; \"many one-inch tesserae, both red and drab\" were found north of the building (Fox & St John Hope 1890), which may have paved it (C&F 2016, citing Neal & Cosh 2009); shown as plain opus signinum",
+   "floorY": 1.2
+  },
+  {
+   "id": "S-amb-s",
+   "name": "Ambulatory (south)",
+   "poly": [
+    [
+     22.18,
+     6.99
+    ],
+    [
+     29.61,
+     6.99
+    ],
+    [
+     29.61,
+     9.97
+    ],
+    [
+     22.18,
+     9.97
+    ]
+   ],
+   "floor": "signinum",
+   "note": "ambulatory: no floor survived; \"many one-inch tesserae, both red and drab\" were found north of the building (Fox & St John Hope 1890), which may have paved it (C&F 2016, citing Neal & Cosh 2009); shown as plain opus signinum",
+   "floorY": 1.2
+  },
+  {
+   "id": "S-cella",
+   "name": "Cella of the small temple",
+   "poly": [
+    [
+     23.34,
+     11.09
+    ],
+    [
+     28.43,
+     11.09
+    ],
+    [
+     28.43,
+     16.56
+    ],
+    [
+     23.34,
+     16.56
+    ]
+   ],
+   "floor": "signinum",
+   "note": "cella: \"merely loose building material\" inside; no floor recorded (Fox & St John Hope 1890)",
+   "floorY": 1.2,
+   "lining": {
+    "dado": "purbeck",
+    "upper": "stucco",
+    "ev": "S",
+    "note": "Purbeck marble wall-linings (\"from their thinness ... evidently wall-linings\") and \"mouldings of plaster panels covered with a fine white stucco\" found near both temples (Fox & St John Hope 1890, p. 747): material S; where they were (a dado of slabs to 1 m, framed panels above, a thin red line in each panel) X"
+   }
+  }
+ ],
+ "walls": [
+  {
+   "id": "L-outer-s",
+   "a": [
+    14.24,
+    36.05
+   ],
+   "b": [
+    35.7,
+    35.69
+   ],
+   "t": 0.95,
+   "h": 2.3,
+   "ev": "S",
+   "note": "outer wall of the large temple: retains the podium fill, 3 ft thick, \"sufficiently broad to have carried columns forming a peristyle all round the cella\"; flint \"admirably constructed\" with tile bonding courses, plastered outside and \"painted a bright red\" (Fox & St John Hope 1890). Shown up to the floor, 7½ ft (2.3 m), with the colonnade on it",
+   "kind": "stylobate",
+   "material": "plasterRed"
+  },
+  {
+   "id": "L-outer-e",
+   "a": [
+    35.7,
+    35.69
+   ],
+   "b": [
+    35.66,
+    57.64
+   ],
+   "t": 0.95,
+   "h": 2.3,
+   "ev": "S",
+   "note": "outer wall of the large temple: retains the podium fill, 3 ft thick, \"sufficiently broad to have carried columns forming a peristyle all round the cella\"; flint \"admirably constructed\" with tile bonding courses, plastered outside and \"painted a bright red\" (Fox & St John Hope 1890). Shown up to the floor, 7½ ft (2.3 m), with the colonnade on it",
+   "kind": "stylobate",
+   "material": "plasterRed",
+   "openings": [
+    {
+     "at": 10.98,
+     "w": 4.4,
+     "oh": 2.3,
+     "conjecture": true,
+     "note": "the steps up to the podium: none found (\"Of steps ascending to the cella of either temple there were no traces\", Fox & St John Hope 1890); placed on the east, in front of the cella door, between the middle columns"
+    }
+   ]
+  },
+  {
+   "id": "L-outer-n",
+   "a": [
+    35.66,
+    57.64
+   ],
+   "b": [
+    14.12,
+    57.68
+   ],
+   "t": 0.95,
+   "h": 2.3,
+   "ev": "S",
+   "note": "outer wall of the large temple: retains the podium fill, 3 ft thick, \"sufficiently broad to have carried columns forming a peristyle all round the cella\"; flint \"admirably constructed\" with tile bonding courses, plastered outside and \"painted a bright red\" (Fox & St John Hope 1890). Shown up to the floor, 7½ ft (2.3 m), with the colonnade on it",
+   "kind": "stylobate",
+   "material": "plasterRed"
+  },
+  {
+   "id": "L-outer-w",
+   "a": [
+    14.12,
+    57.68
+   ],
+   "b": [
+    14.24,
+    36.05
+   ],
+   "t": 1.1,
+   "h": 2.3,
+   "ev": "S",
+   "note": "outer wall of the large temple: retains the podium fill, 3 ft thick, \"sufficiently broad to have carried columns forming a peristyle all round the cella\"; flint \"admirably constructed\" with tile bonding courses, plastered outside and \"painted a bright red\" (Fox & St John Hope 1890). Shown up to the floor, 7½ ft (2.3 m), with the colonnade on it",
+   "kind": "stylobate",
+   "material": "plasterRed"
+  },
+  {
+   "id": "L-cella-s",
+   "a": [
+    19.14,
+    40.75
+   ],
+   "b": [
+    30.67,
+    40.61
+   ],
+   "t": 1.15,
+   "h": 10.8,
+   "ev": "S",
+   "note": "cella wall of the large temple, 3 ft thick, \"of the same thickness and good construction\" as the outer wall (Fox & St John Hope 1890). Height conjectured: eaves 10.8 m above the ground, room for windows above the ambulatory roof (see the brief)",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 3.84,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    },
+    {
+     "at": 7.69,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    }
+   ]
+  },
+  {
+   "id": "L-cella-e",
+   "a": [
+    30.67,
+    40.61
+   ],
+   "b": [
+    30.67,
+    52.79
+   ],
+   "t": 1.05,
+   "h": 10.8,
+   "ev": "S",
+   "note": "cella wall of the large temple, 3 ft thick, \"of the same thickness and good construction\" as the outer wall (Fox & St John Hope 1890). Height conjectured: eaves 10.8 m above the ground, room for windows above the ambulatory roof (see the brief)",
+   "openings": [
+    {
+     "at": 6.09,
+     "w": 2.4,
+     "oh": 3.6,
+     "y0": 2.3,
+     "conjecture": true,
+     "note": "cella door: none found; on the east, facing the road from London, as the 2017 temple faced (Fulford et al. 2017) and as most Romano-Celtic temples do; 2.4 x 3.6 m conjectured"
+    }
+   ],
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 4.06,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    },
+    {
+     "at": 8.12,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    }
+   ]
+  },
+  {
+   "id": "L-cella-n",
+   "a": [
+    30.67,
+    52.79
+   ],
+   "b": [
+    19.11,
+    52.86
+   ],
+   "t": 1.1,
+   "h": 10.8,
+   "ev": "S",
+   "note": "cella wall of the large temple, 3 ft thick, \"of the same thickness and good construction\" as the outer wall (Fox & St John Hope 1890). Height conjectured: eaves 10.8 m above the ground, room for windows above the ambulatory roof (see the brief)",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 3.85,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    },
+    {
+     "at": 7.71,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    }
+   ]
+  },
+  {
+   "id": "L-cella-w",
+   "a": [
+    19.11,
+    52.86
+   ],
+   "b": [
+    19.14,
+    40.75
+   ],
+   "t": 0.95,
+   "h": 10.8,
+   "ev": "S",
+   "note": "cella wall of the large temple, 3 ft thick, \"of the same thickness and good construction\" as the outer wall (Fox & St John Hope 1890). Height conjectured: eaves 10.8 m above the ground, room for windows above the ambulatory roof (see the brief)",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 4.04,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    },
+    {
+     "at": 8.07,
+     "w": 0.8,
+     "sill": 9.15,
+     "head": 10.35,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (8.55 m at the wall); none recorded: the cella can only take its light from above the ambulatory roof"
+    }
+   ]
+  },
+  {
+   "id": "S-outer-s",
+   "a": [
+    19.4,
+    6.18
+   ],
+   "b": [
+    33.76,
+    6.61
+   ],
+   "t": 0.75,
+   "h": 4.2,
+   "ev": "S",
+   "note": "outer wall of the small temple, 2 ft thick, flint with a tile north-west angle, plastered outside in two coats and \"painted a bright red\" (Fox & St John Hope 1890); too thin for columns (ibid.), so it encloses the ambulatory. Height conjectured: 3 m above the floor",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 4.79,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    },
+    {
+     "at": 9.58,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "S-outer-e",
+   "a": [
+    33.76,
+    6.61
+   ],
+   "b": [
+    33.24,
+    21.49
+   ],
+   "t": 0.7,
+   "h": 4.2,
+   "ev": "S",
+   "note": "outer wall of the small temple, 2 ft thick, flint with a tile north-west angle, plastered outside in two coats and \"painted a bright red\" (Fox & St John Hope 1890); too thin for columns (ibid.), so it encloses the ambulatory. Height conjectured: 3 m above the floor",
+   "material": "plasterRed",
+   "openings": [
+    {
+     "at": 7.44,
+     "w": 1.6,
+     "oh": 3.5,
+     "conjecture": true,
+     "note": "front door of the ambulatory, its top steps running through the doorway to the floor: none found; on the east, where the ambulatory is widest (3.6 m against 2.7 m on the west), as on the 2017 temple (Fulford et al. 2017)"
+    }
+   ],
+   "windows": [
+    {
+     "at": 3.28,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    },
+    {
+     "at": 11.61,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "S-outer-n",
+   "a": [
+    33.24,
+    21.49
+   ],
+   "b": [
+    18.93,
+    21.02
+   ],
+   "t": 0.65,
+   "h": 4.2,
+   "ev": "S",
+   "note": "outer wall of the small temple, 2 ft thick, flint with a tile north-west angle, plastered outside in two coats and \"painted a bright red\" (Fox & St John Hope 1890); too thin for columns (ibid.), so it encloses the ambulatory. Height conjectured: 3 m above the floor",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 4.77,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    },
+    {
+     "at": 9.55,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "S-outer-w",
+   "a": [
+    18.93,
+    21.02
+   ],
+   "b": [
+    19.4,
+    6.18
+   ],
+   "t": 0.75,
+   "h": 4.2,
+   "ev": "S",
+   "note": "outer wall of the small temple, 2 ft thick, flint with a tile north-west angle, plastered outside in two coats and \"painted a bright red\" (Fox & St John Hope 1890); too thin for columns (ibid.), so it encloses the ambulatory. Height conjectured: 3 m above the floor",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 4.95,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    },
+    {
+     "at": 9.9,
+     "w": 0.6,
+     "sill": 2.9,
+     "head": 3.7,
+     "ev": "X",
+     "note": "small window lighting the enclosed ambulatory; none recorded (conjecture)"
+    }
+   ]
+  },
+  {
+   "id": "S-cella-s",
+   "a": [
+    22.84,
+    10.45
+   ],
+   "b": [
+    29.09,
+    10.62
+   ],
+   "t": 0.95,
+   "h": 7.4,
+   "ev": "S",
+   "note": "cella wall of the small temple, 3 ft thick, only its south-west angle uncovered (Fox & St John Hope 1890). Height conjectured: eaves 7.4 m, windows above the ambulatory roof",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 3.13,
+     "w": 0.6,
+     "sill": 6.1,
+     "head": 7.0,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (5.65 m at the wall); none recorded"
+    }
+   ]
+  },
+  {
+   "id": "S-cella-e",
+   "a": [
+    29.09,
+    10.62
+   ],
+   "b": [
+    28.95,
+    17.1
+   ],
+   "t": 1.05,
+   "h": 7.4,
+   "ev": "S",
+   "note": "cella wall of the small temple, 3 ft thick, only its south-west angle uncovered (Fox & St John Hope 1890). Height conjectured: eaves 7.4 m, windows above the ambulatory roof",
+   "openings": [
+    {
+     "at": 3.24,
+     "w": 1.4,
+     "oh": 2.4,
+     "y0": 1.2,
+     "conjecture": true,
+     "note": "cella door: none found (only the SW angle was uncovered); on the east, as the large temple; 1.4 x 2.4 m conjectured"
+    }
+   ],
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 3.24,
+     "w": 0.6,
+     "sill": 6.1,
+     "head": 7.0,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (5.65 m at the wall); none recorded"
+    }
+   ]
+  },
+  {
+   "id": "S-cella-n",
+   "a": [
+    28.95,
+    17.1
+   ],
+   "b": [
+    22.68,
+    17.04
+   ],
+   "t": 0.95,
+   "h": 7.4,
+   "ev": "S",
+   "note": "cella wall of the small temple, 3 ft thick, only its south-west angle uncovered (Fox & St John Hope 1890). Height conjectured: eaves 7.4 m, windows above the ambulatory roof",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 3.14,
+     "w": 0.6,
+     "sill": 6.1,
+     "head": 7.0,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (5.65 m at the wall); none recorded"
+    }
+   ]
+  },
+  {
+   "id": "S-cella-w",
+   "a": [
+    22.68,
+    17.04
+   ],
+   "b": [
+    22.84,
+    10.45
+   ],
+   "t": 1.0,
+   "h": 7.4,
+   "ev": "S",
+   "note": "cella wall of the small temple, 3 ft thick, only its south-west angle uncovered (Fox & St John Hope 1890). Height conjectured: eaves 7.4 m, windows above the ambulatory roof",
+   "material": "plasterRed",
+   "windows": [
+    {
+     "at": 3.3,
+     "w": 0.6,
+     "sill": 6.1,
+     "head": 7.0,
+     "ev": "X",
+     "note": "cella window above the ambulatory roof (5.65 m at the wall); none recorded"
+    }
+   ]
+  },
+  {
+   "id": "precinct-00",
+   "a": [
+    42.0,
+    1.25
+   ],
+   "b": [
+    25.0,
+    0.62
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct (temenos) wall, south side: it \"curved round to the east and passed under the churchyard\" (Fox & St John Hope 1890); flint with continuous tile bonding courses, 0.6 m (C&F 2016); its east end is not known"
+  },
+  {
+   "id": "precinct-01",
+   "a": [
+    25.0,
+    0.62
+   ],
+   "b": [
+    17.0,
+    0.42
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct (temenos) wall, south side: it \"curved round to the east and passed under the churchyard\" (Fox & St John Hope 1890); flint with continuous tile bonding courses, 0.6 m (C&F 2016); its east end is not known"
+  },
+  {
+   "id": "precinct-02",
+   "a": [
+    17.0,
+    0.42
+   ],
+   "b": [
+    15.02,
+    0.66
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct (temenos) wall, south side: it \"curved round to the east and passed under the churchyard\" (Fox & St John Hope 1890); flint with continuous tile bonding courses, 0.6 m (C&F 2016); its east end is not known"
+  },
+  {
+   "id": "precinct-03",
+   "a": [
+    15.02,
+    0.66
+   ],
+   "b": [
+    13.53,
+    1.5
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct (temenos) wall, south side: it \"curved round to the east and passed under the churchyard\" (Fox & St John Hope 1890); flint with continuous tile bonding courses, 0.6 m (C&F 2016); its east end is not known"
+  },
+  {
+   "id": "precinct-04",
+   "a": [
+    13.53,
+    1.5
+   ],
+   "b": [
+    12.53,
+    2.95
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct (temenos) wall, south side: it \"curved round to the east and passed under the churchyard\" (Fox & St John Hope 1890); flint with continuous tile bonding courses, 0.6 m (C&F 2016); its east end is not known"
+  },
+  {
+   "id": "precinct-05",
+   "a": [
+    12.53,
+    2.95
+   ],
+   "b": [
+    12.02,
+    5.0
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, west side: traced from the farmyard to the south angle in 1890 and through the barn in 1902; no entrance found along its length (C&F 2016)"
+  },
+  {
+   "id": "precinct-06",
+   "a": [
+    12.02,
+    5.0
+   ],
+   "b": [
+    0.45,
+    114.0
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, west side: traced from the farmyard to the south angle in 1890 and through the barn in 1902; no entrance found along its length (C&F 2016)"
+  },
+  {
+   "id": "precinct-07",
+   "a": [
+    0.45,
+    114.0
+   ],
+   "b": [
+    0.77,
+    117.18
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, north end: followed through the barn and into the field in 1902, where it curves \"round to the east ... more sharply\" and points for the east gate (St John Hope 1903)"
+  },
+  {
+   "id": "precinct-08",
+   "a": [
+    0.77,
+    117.18
+   ],
+   "b": [
+    1.89,
+    119.41
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, north end: followed through the barn and into the field in 1902, where it curves \"round to the east ... more sharply\" and points for the east gate (St John Hope 1903)"
+  },
+  {
+   "id": "precinct-09",
+   "a": [
+    1.89,
+    119.41
+   ],
+   "b": [
+    3.8,
+    120.7
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, north end: followed through the barn and into the field in 1902, where it curves \"round to the east ... more sharply\" and points for the east gate (St John Hope 1903)"
+  },
+  {
+   "id": "precinct-10",
+   "a": [
+    3.8,
+    120.7
+   ],
+   "b": [
+    6.5,
+    121.05
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, north end: followed through the barn and into the field in 1902, where it curves \"round to the east ... more sharply\" and points for the east gate (St John Hope 1903)"
+  },
+  {
+   "id": "precinct-11",
+   "a": [
+    6.5,
+    121.05
+   ],
+   "b": [
+    26.9,
+    116.1
+   ],
+   "t": 0.7,
+   "h": 2.4,
+   "ev": "S",
+   "note": "Precinct wall, north end: followed through the barn and into the field in 1902, where it curves \"round to the east ... more sharply\" and points for the east gate (St John Hope 1903)"
+  }
+ ],
+ "apses": [],
+ "columns": [
+  {
+   "id": "L-colonnade",
+   "d": 0.6,
+   "h": 4.2,
+   "y0": 2.3,
+   "ev": "X",
+   "spacing": 2.68,
+   "on": [
+    "L-outer-s",
+    "L-outer-e",
+    "L-outer-n",
+    "L-outer-w"
+   ],
+   "beam": true,
+   "note": "peristyle round the cella on the podium wall, as Fox read the large temple (\"sufficiently broad to have carried columns\"); no column, base or capital was found, so the diameter is about the forum colonnade's (0.57 m, Fox & St John Hope 1893), the height 7 diameters, Vitruvius's Tuscan rule (\"the thickness of the columns at the bottom be one seventh of their height\", IV.7), with timber main beams as he gives them; 8 bays a side, the middle bay on the east left open for the steps"
+  }
+ ],
+ "roofs": [
+  {
+   "id": "L-ambulatory",
+   "type": "ambulatory",
+   "ev": "X",
+   "outer": [
+    [
+     14.24,
+     36.05
+    ],
+    [
+     35.7,
+     35.69
+    ],
+    [
+     35.66,
+     57.64
+    ],
+    [
+     14.12,
+     57.68
+    ]
+   ],
+   "inner": [
+    [
+     18.62,
+     40.21
+    ],
+    [
+     31.18,
+     40.06
+    ],
+    [
+     31.19,
+     53.33
+    ],
+    [
+     18.59,
+     53.41
+    ]
+   ],
+   "lowY": 6.75,
+   "highY": 8.55
+  },
+  {
+   "id": "L-cella",
+   "type": "hip",
+   "ev": "X",
+   "poly": [
+    [
+     18.62,
+     40.21
+    ],
+    [
+     31.18,
+     40.06
+    ],
+    [
+     31.19,
+     53.33
+    ],
+    [
+     18.59,
+     53.41
+    ]
+   ],
+   "eaves": 10.8
+  },
+  {
+   "id": "S-ambulatory",
+   "type": "ambulatory",
+   "ev": "X",
+   "outer": [
+    [
+     19.4,
+     6.18
+    ],
+    [
+     33.76,
+     6.61
+    ],
+    [
+     33.24,
+     21.49
+    ],
+    [
+     18.93,
+     21.02
+    ]
+   ],
+   "inner": [
+    [
+     22.37,
+     9.93
+    ],
+    [
+     29.59,
+     10.13
+    ],
+    [
+     29.42,
+     17.61
+    ],
+    [
+     22.19,
+     17.54
+    ]
+   ],
+   "lowY": 4.2,
+   "highY": 5.67,
+   "angleDeg": 1.85
+  },
+  {
+   "id": "S-cella",
+   "type": "hip",
+   "ev": "X",
+   "poly": [
+    [
+     22.37,
+     9.93
+    ],
+    [
+     29.59,
+     10.13
+    ],
+    [
+     29.42,
+     17.61
+    ],
+    [
+     22.19,
+     17.54
+    ]
+   ],
+   "eaves": 7.4,
+   "angleDeg": 1.85
+  }
+ ],
+ "stairs": [
+  {
+   "id": "L-outer-e-steps",
+   "a": [
+    39.35,
+    46.67
+   ],
+   "b": [
+    35.21,
+    46.66
+   ],
+   "w": 4.4,
+   "y0": 0,
+   "y1": 2.33,
+   "ev": "X",
+   "note": "steps up to the podium, 2.3 m: none found; nine steps on the east, between the middle columns (conjecture; Fulford 2002's reconstruction of a Romano-Celtic temple has its steps on the entrance side)"
+  },
+  {
+   "id": "S-outer-e-steps",
+   "a": [
+    35.45,
+    14.12
+   ],
+   "b": [
+    33.15,
+    14.04
+   ],
+   "w": 2.0,
+   "y0": 0,
+   "y1": 1.23,
+   "ev": "X",
+   "note": "steps up to the small temple's door: none found; five steps, the top ones in the doorway (conjecture)"
+  }
+ ],
+ "fittings": [
+  {
+   "id": "L-statue",
+   "kind": "statue",
+   "at": [
+    20.46,
+    46.7
+   ],
+   "y0": 2.33,
+   "facing": 0,
+   "w": 2.0,
+   "d": 1.4,
+   "h": 1.2,
+   "figureH": 2.2,
+   "ev": "C",
+   "note": "cult statue on a pedestal, against the back wall on the axis, facing the door: no base or statue was found in either cella (Fox & St John Hope 1890); the cella housed the god's image (Historic England 2018), as at Uley, where Mercury's limestone statue, \"a little larger than life-size (approximately 2m.)\", stood on a base (British Museum 1978,0102.1); Vitruvius IV.5 turns the statue to face as the temple does. The deity is unknown (Fulford et al. 2017 for the north temple): a plain draped figure with an offering dish, no attributes (X). Pedestal faced with Purbeck marble, as the linings found here; its panel's text is not known"
+  },
+  {
+   "id": "L-table",
+   "kind": "table",
+   "at": [
+    22.42,
+    46.7
+   ],
+   "y0": 2.33,
+   "facing": 0,
+   "w": 1.2,
+   "d": 0.6,
+   "h": 0.9,
+   "ev": "X",
+   "note": "offering table before the statue, with two small terracotta lamps and a dish: \"two small lamps of terra-cotta\" were found at the temples (Fox & St John Hope 1890, p. 747); the table and where the lamps stood are conjecture"
+  },
+  {
+   "id": "L-plaque-s1",
+   "kind": "plaque",
+   "at": [
+    21.4,
+    41.298
+   ],
+   "y0": 2.33,
+   "facing": 90,
+   "w": 0.4,
+   "d": 0.02,
+   "h": 0.35,
+   "ev": "C",
+   "note": "inscribed Purbeck marble dedication panel: thin (19 mm) Purbeck slabs with dedications by the guild of peregrini were found \"in the shrine\" of the Romano-Celtic temple in Insula XXXV (RIB 69-71); none from these temples, so their place and text here are conjecture"
+  },
+  {
+   "id": "L-plaque-n1",
+   "kind": "plaque",
+   "at": [
+    21.4,
+    52.296
+   ],
+   "y0": 2.33,
+   "facing": 270,
+   "w": 0.4,
+   "d": 0.02,
+   "h": 0.35,
+   "ev": "C",
+   "note": "inscribed Purbeck marble dedication panel: thin (19 mm) Purbeck slabs with dedications by the guild of peregrini were found \"in the shrine\" of the Romano-Celtic temple in Insula XXXV (RIB 69-71); none from these temples, so their place and text here are conjecture"
+  },
+  {
+   "id": "L-plaque-s2",
+   "kind": "plaque",
+   "at": [
+    23.4,
+    41.273
+   ],
+   "y0": 2.33,
+   "facing": 90,
+   "w": 0.4,
+   "d": 0.02,
+   "h": 0.35,
+   "ev": "C",
+   "note": "inscribed Purbeck marble dedication panel: thin (19 mm) Purbeck slabs with dedications by the guild of peregrini were found \"in the shrine\" of the Romano-Celtic temple in Insula XXXV (RIB 69-71); none from these temples, so their place and text here are conjecture"
+  },
+  {
+   "id": "L-plaque-n2",
+   "kind": "plaque",
+   "at": [
+    23.4,
+    52.284
+   ],
+   "y0": 2.33,
+   "facing": 270,
+   "w": 0.4,
+   "d": 0.02,
+   "h": 0.35,
+   "ev": "C",
+   "note": "inscribed Purbeck marble dedication panel: thin (19 mm) Purbeck slabs with dedications by the guild of peregrini were found \"in the shrine\" of the Romano-Celtic temple in Insula XXXV (RIB 69-71); none from these temples, so their place and text here are conjecture"
+  },
+  {
+   "id": "L-altar",
+   "kind": "altar",
+   "at": [
+    41.2,
+    46.66
+   ],
+   "y0": 0,
+   "facing": 0,
+   "w": 0.8,
+   "d": 0.6,
+   "h": 1.1,
+   "ev": "C",
+   "note": "altar outside, on the axis before the steps, facing east and lower than the statue (Vitruvius IV.9): sacrifice was made in the open, not in the cella. Greensand, as the \"roughout for an altar\" (0.82 x 0.35 x 0.27 m) buried in this precinct (Fulford et al. 2017); this one larger, for the larger temple (X)"
+  },
+  {
+   "id": "S-statue",
+   "kind": "statue",
+   "at": [
+    23.93,
+    13.86
+   ],
+   "y0": 1.23,
+   "facing": 0,
+   "w": 1.2,
+   "d": 0.9,
+   "h": 1.0,
+   "figureH": 1.7,
+   "ev": "C",
+   "note": "cult statue on a pedestal, against the back wall on the axis, facing the door: no base or statue was found in either cella (Fox & St John Hope 1890); the cella housed the god's image (Historic England 2018), as at Uley, where Mercury's limestone statue, \"a little larger than life-size (approximately 2m.)\", stood on a base (British Museum 1978,0102.1); Vitruvius IV.5 turns the statue to face as the temple does. The deity is unknown (Fulford et al. 2017 for the north temple): a plain draped figure with an offering dish, no attributes (X). Pedestal faced with Purbeck marble, as the linings found here; its panel's text is not known"
+  },
+  {
+   "id": "S-table",
+   "kind": "table",
+   "at": [
+    25.59,
+    13.86
+   ],
+   "y0": 1.23,
+   "facing": 0,
+   "w": 0.9,
+   "d": 0.5,
+   "h": 0.9,
+   "ev": "X",
+   "note": "offering table before the statue, with two small terracotta lamps and a dish: \"two small lamps of terra-cotta\" were found at the temples (Fox & St John Hope 1890, p. 747); the table and where the lamps stood are conjecture"
+  },
+  {
+   "id": "S-plaque-s1",
+   "kind": "plaque",
+   "at": [
+    24.7,
+    10.976
+   ],
+   "y0": 1.23,
+   "facing": 90,
+   "w": 0.4,
+   "d": 0.02,
+   "h": 0.35,
+   "ev": "C",
+   "note": "inscribed Purbeck marble dedication panel: thin (19 mm) Purbeck slabs with dedications by the guild of peregrini were found \"in the shrine\" of the Romano-Celtic temple in Insula XXXV (RIB 69-71); none from these temples, so their place and text here are conjecture"
+  },
+  {
+   "id": "S-plaque-n1",
+   "kind": "plaque",
+   "at": [
+    24.7,
+    16.584
+   ],
+   "y0": 1.23,
+   "facing": 270,
+   "w": 0.4,
+   "d": 0.02,
+   "h": 0.35,
+   "ev": "C",
+   "note": "inscribed Purbeck marble dedication panel: thin (19 mm) Purbeck slabs with dedications by the guild of peregrini were found \"in the shrine\" of the Romano-Celtic temple in Insula XXXV (RIB 69-71); none from these temples, so their place and text here are conjecture"
+  },
+  {
+   "id": "S-altar",
+   "kind": "altar",
+   "at": [
+    37.0,
+    14.08
+   ],
+   "y0": 0,
+   "facing": 0,
+   "w": 0.35,
+   "d": 0.27,
+   "h": 0.82,
+   "ev": "C",
+   "note": "altar outside, on the axis before the steps, facing east and lower than the statue (Vitruvius IV.9): sacrifice was made in the open, not in the cella. Greensand, as the \"roughout for an altar\" (0.82 x 0.35 x 0.27 m) buried in this precinct (Fulford et al. 2017); this one is its size"
+  }
+ ]
+}

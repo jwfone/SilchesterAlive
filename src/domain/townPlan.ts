@@ -230,22 +230,9 @@ const RESERVES = [
   { ...anchorReserve('forum-basilica', 68, 72, 8, -8), }, // forum E + basilica W
   { ...anchorReserve('baths', 44, 30, 150, 150), },       // baths
   { ...anchorReserve('mansio', 52, 26, 40, 245), },       // mansio
-  { ...templeReserve(), }, // temples precinct (anchor midpoint when pinned)
+  { ...anchorReserve('temples', 30, 124, 289, 37), },   // temples and their precinct (Insula XXX)
   { ...anchorReserve('church-st-mary', 20, 10, 238, 10), }, // St Mary plot
 ];
-
-/** Reserve covering both temples: anchor midpoint + span when pinned. */
-function templeReserve(): { x: number; z: number; hw: number; hd: number } {
-  const t1 = keyAnchor('temple-1'), t2 = keyAnchor('temple-2');
-  if (t1 && t2) {
-    const cx = (t1.x + t2.x) / 2, cz = (t1.z + t2.z) / 2;
-    const half = Math.max(
-      Math.abs(t1.x - t2.x) + 18, Math.abs(t1.z - t2.z) + 18, 36,
-    ) / 2 + 8;
-    return { x: cx, z: cz, hw: half, hd: half };
-  }
-  return { x: -115, z: -70, hw: 35, hd: 30 };
-}
 
 export function insideReserve(x: number, z: number, pad = 12): boolean {
   return RESERVES.some(r => Math.abs(x - r.x) < r.hw + pad && Math.abs(z - r.z) < r.hd + pad);
@@ -284,8 +271,7 @@ export function buildTownPlan(seed = 1234): TownPlan {
     { id: 'basilica', kind: 'basilica', x: -12, z: -8, w: 18, d: 72, h: 14, rotY: 0 },
     { id: 'baths', kind: 'baths', x: 150, z: 150, w: 44, d: 30, h: 9, rotY: 0.08 },
     { id: 'mansio', kind: 'mansio', x: 40, z: 245, w: 52, d: 26, h: 7, rotY: 0 },
-    { id: 'temple-1', kind: 'temple', x: -125, z: -80, w: 18, d: 18, h: 10, rotY: 0.2 },
-    { id: 'temple-2', kind: 'temple', x: -100, z: -58, w: 14, d: 14, h: 8, rotY: 0.2 },
+    { id: 'temples', kind: 'temple', x: 287, z: 38, w: 124, d: 30, h: 11, rotY: -1.54 },
     { id: 'church-st-mary', kind: 'church', x: 238, z: 10, w: 20, d: 10, h: 8, rotY: 0.1 },
   ];
 
@@ -314,9 +300,15 @@ export function buildTownPlan(seed = 1234): TownPlan {
       const m = buildings.find((b) => b.id === 'mansio');
       if (m) { m.x = mc.x; m.z = mc.z; m.w = mc.w; m.d = mc.d; m.rotY = mc.rotY; }
     }
-    // Temples and church are centre-pinned only: position follows the anchor,
-    // size and rotation stay kit placeholders until full outlines are pinned.
-    for (const id of ['temple-1', 'temple-2', 'church-st-mary'] as const) {
+    // The temples (Insula XXX) are generated from their plan; the entry takes the anchor's outline.
+    const ta = keyAnchor('temples');
+    if (ta) {
+      const t = buildings.find((b) => b.id === 'temples');
+      if (t) { t.x = ta.x; t.z = ta.z; t.w = ta.w; t.d = ta.d; t.rotY = ta.rotY; }
+    }
+    // The church is centre-pinned only: position follows the anchor,
+    // size and rotation stay kit placeholders until its outline is pinned.
+    for (const id of ['church-st-mary'] as const) {
       const a = keyAnchor(id);
       if (a) {
         const t = buildings.find((b) => b.id === id);
@@ -341,7 +333,7 @@ export function buildTownPlan(seed = 1234): TownPlan {
     { cx: bathsB.x, cz: bathsB.z, w: bathsB.w, d: bathsB.d, rotY: bathsB.rotY },
     { cx: mansioB.x, cz: mansioB.z, w: mansioB.w, d: mansioB.d, rotY: mansioB.rotY },
   ];
-  for (const id of ['temple-1', 'temple-2', 'church-st-mary'] as const) {
+  for (const id of ['temples', 'church-st-mary'] as const) {
     const t = buildings.find((b) => b.id === id)!;
     keyFootprints.push({ cx: t.x, cz: t.z, w: t.w, d: t.d, rotY: t.rotY });
   }

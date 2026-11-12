@@ -18,6 +18,7 @@ import { CELL_TILE_M, cellVec } from './atlasTiled.js';
 
 import type { Ev, UV, PlanOpening, PlanWindow, PlanWall, PlanRoom, PlanApse, PlanColumns, PlanRoof, BuildingPlan } from '../../domain/keyPlan.js';
 import { buildArena } from './planArena.js';
+import { emitFittings } from './planFittings.js';
 import { emitCurtain, emitMerlons } from './curtain.js';
 import { FACE, WALL } from '../../domain/townWall.js';
 export type { Ev, UV, PlanOpening, PlanWindow, PlanWall, PlanRoom, PlanApse, PlanColumns, PlanRoof, BuildingPlan };
@@ -44,6 +45,8 @@ export type PlanFootprint =
 export type PlanElementKind =
   | 'wall' | 'stylobate' | 'window' | 'door' | 'apse' | 'floor' | 'pool' | 'labrum' | 'base'
   | 'roof' | 'vault' | 'column' | 'pier' | 'arch' | 'beam' | 'platform'
+  // fittings (planFittings.ts)
+  | 'statue' | 'table' | 'plaque' | 'altar'
   // amphitheatre (planArena.ts)
   | 'arena-wall' | 'passage-wall' | 'seating' | 'bank' | 'rail' | 'palisade' | 'stair' | 'recess';
 /** A pickable part of the building; `ref` is the plan item's id (wall, room, roof...). */
@@ -128,6 +131,19 @@ export class Acc {
     };
     if (!this.ranges.length || this.ranges[this.ranges.length - 1] !== this.tag) this.ranges.push(this.pos.length / 9, this.tag);
     for (let i = 1; i < p.length - 1; i++) { push(p[0]); push(p[i]); push(p[i + 1]); }
+  }
+
+  /** As poly, with a normal per point (smooth shading on curved fittings: a statue, a lamp). */
+  polyN(pts: V3[], ns: V3[], cell: AtlasCell, ev: Tint): void {
+    const start = this.nor.length;
+    this.poly(pts, cell, ev, ns.reduce((s, n) => s.add(n), new THREE.Vector3()));
+    if (this.nor.length === start) return;
+    const rev = !(this.pos[start] === pts[0].x && this.pos[start + 1] === pts[0].y && this.pos[start + 2] === pts[0].z);
+    const order = rev ? [...ns].reverse() : ns;
+    let k = start;
+    for (let i = 1; i < order.length - 1; i++) {
+      for (const j of [0, i, i + 1]) { const n = order[j].clone().normalize(); this.nor[k] = n.x; this.nor[k + 1] = n.y; this.nor[k + 2] = n.z; k += 3; }
+    }
   }
 
   /** Axis-aligned-in-plan box from plan rect corners (u0,v0)-(u1,v1), y0..y1, all faces. */
@@ -232,6 +248,15 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   };
   const interiorRooms = plan.rooms.filter((r) => r.finish !== 'exterior');
 
+  /** A roof's own frame, turned `angleDeg` about the centre of its inner block (ambulatory) or poly (hip), so a
+   * building set at a slight angle to the plan frame gets eaves parallel to its walls. toL: plan -> roof frame. */
+  const roofFrame = (rf: PlanRoof): { toL: (u: number, v: number) => UV; V: (u: number, y: number, v: number) => V3; poly: (p: UV[]) => UV[] } => {
+    const a = ((rf.angleDeg ?? 0) * Math.PI) / 180, B0 = bounds(rf.inner ?? rf.poly ?? []), cu = (B0.u0 + B0.u1) / 2, cv = (B0.v0 + B0.v1) / 2;
+    const c = Math.cos(a), sn = Math.sin(a);
+    const toL = (u: number, v: number): UV => [cu + (u - cu) * c + (v - cv) * sn, cv - (u - cu) * sn + (v - cv) * c];
+    const V = (u: number, y: number, v: number): V3 => v3(cu + (u - cu) * c - (v - cv) * sn, y, cv + (u - cu) * sn + (v - cv) * c);
+    return { toL, V, poly: (p) => p.map(([u, v]) => toL(u, v)) };
+  };
   // Height of the roof surface over a plan point (undefined = open sky).
   const roofHeightAt = (u: number, v: number): number | undefined => {
     for (const rf of plan.roofs ?? []) {
@@ -252,6 +277,17 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
         const [d, depth] = sides.reduce((m, x) => (x[0] < m[0] ? x : m));
         return hi + (lo - hi) * Math.min(1, d / depth);
       }
+      if (rf.type === 'ambulatory' && rf.outer && rf.inner && inPoly(u, v, rf.outer) && !inPoly(u, v, rf.inner)) {
+        // falls from highY at the inner block to lowY at the outer edge; the side a point is on is the one it is furthest out on
+        const F = roofFrame(rf), O = bounds(F.poly(rf.outer)), I = bounds(F.poly(rf.inner)), hi = rf.highY ?? 4.5, lo = rf.lowY ?? 3;
+        [u, v] = F.toL(u, v);
+        const out = Math.max((I.u0 - u) / (I.u0 - O.u0), (u - I.u1) / (O.u1 - I.u1), (I.v0 - v) / (I.v0 - O.v0), (v - I.v1) / (O.v1 - I.v1));
+        return hi + (lo - hi) * Math.min(1, Math.max(0, out));
+      }
+      if (rf.type === 'hip' && rf.poly && inPoly(u, v, rf.poly)) {
+        const F = roofFrame(rf), B = bounds(F.poly(rf.poly)), [lu, lv] = F.toL(u, v);
+        return (rf.eaves ?? 6) + Math.max(0, Math.min(lu - B.u0, B.u1 - lu, lv - B.v0, B.v1 - lv)) * pitch;
+      }
     }
     return undefined;
   };
@@ -263,6 +299,11 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     const ceil = Math.min(...(plan.platforms ?? []).filter((p) => p.y > 0.5 && inPoly(u, v, p.poly)).map((p) => p.y));
     return Math.min(roofHeightAt(u, v) ?? Infinity, ceil);
   };
+  /** Raised floor (a podium's fill) over a plan point: wall faces below it are buried. */
+  const raisedFloorAt = (u: number, v: number): number => {
+    for (const r of plan.rooms) if (r.floorY && inPoly(u, v, r.poly)) return r.floorY;
+    return 0;
+  };
   /** Which room + roof a plan point is in (heights vary along a wall; identity does not). */
   const sideKeyAt = (u: number, v: number): string => {
     const room = interiorRooms.findIndex((r) => inPoly(u, v, r.poly));
@@ -271,12 +312,22 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     return `${room}|${roof}`;
   };
 
-  // Interior face: dado below 1 m, plaster above (split so the dado band is exact).
-  const interiorFace = (q: (y: number) => [V3, V3], y0: number, y1: number, want: V3, ev: Ev | 'N'): void => {
-    const cut = Math.min(Math.max(1.0, y0), y1);
-    if (cut > y0) { const [a, b] = q(y0), [c, d] = q(cut); acc.poly([a, b, d, c], 'dado', ev, want); }
-    if (y1 > cut) { const [a, b] = q(cut), [c, d] = q(y1); acc.poly([a, b, d, c], 'plasterPink', ev, want); }
+  // Interior face: dado to 1 m above the floor (`base`: a raised floor), plaster above (split so the dado band is exact).
+  // A room's `lining` swaps them: a dado of Purbeck slabs, white stucco panels above (both laid out from the floor).
+  const interiorFace = (q: (y: number) => [V3, V3], y0: number, y1: number, want: V3, ev: Ev | 'N', base = 0, lining?: PlanRoom['lining']): void => {
+    const cut = Math.min(Math.max(base + 1.0, y0), y1);
+    // dado UVs from the floor (v = 0 there, 1 at its top), so its band sits at 1 m above a raised floor too
+    // (origin on the model's axis at floor height: u stays continuous along the wall, v counts from the floor)
+    const dado: AtlasCell = lining?.dado === 'purbeck' ? 'purbeckLining' : 'dado', stucco = lining?.upper === 'stucco';
+    if (cut > y0) { const [a, b] = q(y0), [c, d] = q(cut); acc.poly([a, b, d, c], dado, lining?.ev ?? ev, want, false, v3(0, base, 0)); }
+    if (y1 > cut) {
+      const [a, b] = q(cut), [c, d] = q(y1);
+      if (stucco) acc.poly([a, b, d, c], 'stucco', lining?.ev ?? ev, want, false, v3(0, base, 0));
+      else acc.poly([a, b, d, c], 'plasterPink', ev, want);
+    }
   };
+  /** The interior room over a plan point (its wall finish). */
+  const roomAt = (u: number, v: number): PlanRoom | undefined => interiorRooms.find((r) => inPoly(u, v, r.poly));
 
   // ---------------- walls ----------------
   const wallById = new Map(plan.walls.map((w) => [w.id, w]));
@@ -323,6 +374,10 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
     // How high is each side indoors at distance s along the wall? (sampled just beyond each face)
     const sideIn = (s: number, side: number): number =>
       interiorHeight(au + du * s + side * nu * (half + 0.3), av + dv * s + side * nv * (half + 0.3));
+    const sideFloor = (s: number, side: number): number =>
+      raisedFloorAt(au + du * s + side * nu * (half + 0.3), av + dv * s + side * nv * (half + 0.3));
+    const sideLining = (s: number, side: number): PlanRoom['lining'] =>
+      roomAt(au + du * s + side * nu * (half + 0.3), av + dv * s + side * nv * (half + 0.3))?.lining;
     const extCell: AtlasCell = w.material ?? mas;
     // Split where the room or roof on either side changes (e.g. a wall that is partly an annex wall).
     const key = (s: number): string => {
@@ -367,7 +422,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       if (s1 - s0 < 1e-4) continue;
       const mid = (s0 + s1) / 2;
       const sm = Math.min(L - 0.05, Math.max(0.05, mid)); // sample inside the wall's own length
-      const inL = sideIn(sm, 1), inR = sideIn(sm, -1);
+      const inL = sideIn(sm, 1), inR = sideIn(sm, -1), fL = sideFloor(sm, 1), fR = sideFloor(sm, -1);
       const here = holes.filter((h) => mid > h.s0 && mid < h.s1);
       tag(here[0]?.el ?? wallEl); // sill and lintel pieces belong to their window or door
       const archSlice = here.find((h) => h.arch);
@@ -397,14 +452,17 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
         if (y0 < 1.2 && y1 > 0.3) footprints.push({ kind: 'box', a: [au + du * s0, av + dv * s0], b: [au + du * s1, av + dv * s1], t: w.t, h: y1 });
         if (lod >= 1 && inL >= y1 && inR >= y1) continue; // indoors on both sides: invisible from outside
         const q = (side: number) => (y: number): [V3, V3] => [P(s0, side * half, y), P(s1, side * half, y)];
-        // each face: plaster indoors up to the neighbouring roof, masonry above / outdoors
-        const face = (side: number, inH: number, want: V3): void => {
-          const yi = Math.min(y1, Math.max(y0, inH));
-          if (yi > y0 && lod === 0) interiorFace(q(side), y0, yi, want, ev);
+        // each face: plaster indoors up to the neighbouring roof, masonry above / outdoors; nothing below a raised
+        // floor on that side (buried in the podium's fill)
+        const face = (side: number, inH: number, want: V3, fl: number, lining: PlanRoom['lining']): void => {
+          const yb = fl > 0 ? Math.max(y0, fl) : y0; // footings below the ground stay
+          if (yb >= y1) return;
+          const yi = Math.min(y1, Math.max(yb, inH));
+          if (yi > yb && lod === 0) interiorFace(q(side), yb, yi, want, ev, fl, lining);
           if (y1 > yi) { const [a, b] = q(side)(yi), [c, d] = q(side)(y1); acc.poly([a, b, d, c], extCell, ev, want); }
         };
-        face(1, inL, sideL);
-        face(-1, inR, sideR);
+        face(1, inL, sideL, fL, sideLining(sm, 1));
+        face(-1, inR, sideR, fR, sideLining(sm, -1));
         // top (wall top or sill), underside (lintel / window head)
         acc.poly([P(s0, -half, y1), P(s1, -half, y1), P(s1, half, y1), P(s0, half, y1)], 'stone', 'N', UP);
         if (y0 > 0) acc.poly([P(s0, -half, y0), P(s1, -half, y0), P(s1, half, y0), P(s0, half, y0)], 'brick', ev, DOWN);
@@ -525,9 +583,16 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
   // ---------------- floors, pools, fittings (lod 0) ----------------
   // Floors, roofs and vaults are open surfaces (no closed volume).
   acc.surface = true;
+  if (lod === 1) {
+    for (const r of plan.rooms.filter((x) => x.floorY)) {
+      const B = bounds(r.poly), y = (r.floorY ?? 0) + 0.03;
+      tag({ id: `${r.id}/floor`, kind: 'floor', ref: r.id, note: r.note });
+      acc.poly([v3(B.u0, y, B.v0), v3(B.u1, y, B.v0), v3(B.u1, y, B.v1), v3(B.u0, y, B.v1)], FLOOR_CELL[r.floor ?? 'gravel'] ?? 'signinum', 'N', UP);
+    }
+  }
   if (lod === 0) {
     for (const r of plan.rooms) {
-      const cell = FLOOR_CELL[r.floor ?? 'gravel'] ?? 'signinum';
+      const cell = FLOOR_CELL[r.floor ?? 'gravel'] ?? 'signinum', fy = (r.floorY ?? 0) + 0.03;
       tag({ id: `${r.id}/floor`, kind: 'floor', ref: r.id, note: r.note });
       const B = bounds(r.poly);
       const rects: Array<[number, number, number, number]> = [];
@@ -537,7 +602,7 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       } else rects.push([B.u0, B.v0, B.u1, B.v1]);
       for (const [u0, v0, u1, v1] of rects) {
         if (u1 - u0 < 1e-3 || v1 - v0 < 1e-3) continue;
-        acc.poly([v3(u0, 0.03, v0), v3(u1, 0.03, v0), v3(u1, 0.03, v1), v3(u0, 0.03, v1)], cell, 'N', UP);
+        acc.poly([v3(u0, fy, v0), v3(u1, fy, v0), v3(u1, fy, v1), v3(u0, fy, v1)], cell, 'N', UP);
       }
       if (r.pool) {
         // Raised basin: rim walls round a sunken-looking water surface (ground can't be cut).
@@ -566,6 +631,8 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
       }
     }
   }
+
+  emitFittings(acc, plan, lod, tag, footprints);
 
   // ---------------- roofs ----------------
   const OH = 0.35; // eaves overhang
@@ -647,6 +714,64 @@ export function buildFromPlan(plan: BuildingPlan, opts: PlanBuildOptions): PlanB
         for (const [ou, ov, iu, iv] of [[O.u0, O.v0, Iu0, Iv0], [O.u1, O.v0, Iu1, Iv0], [O.u1, O.v1, Iu1, Iv1], [O.u0, O.v1, Iu0, Iv1]]) {
           capRow(v3(ou, hi, ov), v3(iu, loOver, iv), ev, 0.11);
         }
+      }
+    }
+  }
+
+  for (const rf of plan.roofs ?? []) {
+    const ev = rf.ev ?? 'C';
+    if (rf.type === 'ambulatory' && rf.outer && rf.inner) {
+      tag({ id: `roof:${rf.id}`, kind: 'roof', ref: rf.id, ev });
+      // four slopes from the inner block (highY) down to the outer edge (lowY), carried OH beyond it; hips at the corners
+      const F = roofFrame(rf), v3 = F.V, O = bounds(F.poly(rf.outer)), I = bounds(F.poly(rf.inner)), hi = rf.highY ?? 4.5, lo = rf.lowY ?? 3;
+      const depthAvg = ((I.u0 - O.u0) + (O.u1 - I.u1) + (I.v0 - O.v0) + (O.v1 - I.v1)) / 4;
+      const loOver = lo - (hi - lo) * (OH / depthAvg);
+      const Ou0 = O.u0 - OH, Ou1 = O.u1 + OH, Ov0 = O.v0 - OH, Ov1 = O.v1 + OH;
+      const strips: V3[][] = [
+        [v3(Ou0, loOver, Ov1), v3(Ou1, loOver, Ov1), v3(I.u1, hi, I.v1), v3(I.u0, hi, I.v1)],
+        [v3(Ou0, loOver, Ov0), v3(Ou1, loOver, Ov0), v3(I.u1, hi, I.v0), v3(I.u0, hi, I.v0)],
+        [v3(Ou0, loOver, Ov0), v3(Ou0, loOver, Ov1), v3(I.u0, hi, I.v1), v3(I.u0, hi, I.v0)],
+        [v3(Ou1, loOver, Ov0), v3(Ou1, loOver, Ov1), v3(I.u1, hi, I.v1), v3(I.u1, hi, I.v0)],
+      ];
+      for (const st of strips) { roofPoly(st, ev, UP, st[0]); if (lod === 0) acc.poly(st, 'wood', ev, DOWN); }
+      if (trim) {
+        const c = v3((I.u0 + I.u1) / 2, 0, (I.v0 + I.v1) / 2);
+        for (const st of strips) {
+          const mid = st[0].clone().add(st[1]).multiplyScalar(0.5);
+          edgeStrip(st[0], st[1], mid.clone().sub(c).setY(0), ev); // eaves face outward
+        }
+        for (const [ou, ov, iu, iv] of [[Ou0, Ov0, I.u0, I.v0], [Ou1, Ov0, I.u1, I.v0], [Ou1, Ov1, I.u1, I.v1], [Ou0, Ov1, I.u0, I.v1]]) {
+          capRow(v3(iu, hi, iv), v3(ou, loOver, ov), ev, 0.11);
+        }
+      }
+    } else if (rf.type === 'hip' && rf.poly) {
+      tag({ id: `roof:${rf.id}`, kind: 'roof', ref: rf.id, ev });
+      // hipped roof: ridge along the longer side (a point for a square), slopes at the plan pitch, eaves OH out
+      const F = roofFrame(rf), v3 = F.V, B = bounds(F.poly(rf.poly)), e = rf.eaves ?? 6, eY = e - OH * pitch;
+      const alongU = B.u1 - B.u0 >= B.v1 - B.v0;
+      const hb = (alongU ? B.v1 - B.v0 : B.u1 - B.u0) / 2, ridgeY = e + hb * pitch;
+      const cu = (B.u0 + B.u1) / 2, cv = (B.v0 + B.v1) / 2;
+      const r0: V3 = alongU ? v3(B.u0 + hb, ridgeY, cv) : v3(cu, ridgeY, B.v0 + hb);
+      const r1: V3 = alongU ? v3(B.u1 - hb, ridgeY, cv) : v3(cu, ridgeY, B.v1 - hb);
+      const c00 = v3(B.u0 - OH, eY, B.v0 - OH), c10 = v3(B.u1 + OH, eY, B.v0 - OH), c11 = v3(B.u1 + OH, eY, B.v1 + OH), c01 = v3(B.u0 - OH, eY, B.v1 + OH);
+      const flat = r0.distanceTo(r1) < 1e-3;
+      // faces: south (v0), east (u1), north (v1), west (u0); trapezoids along the ridge, triangles at the ends
+      const faces: V3[][] = alongU
+        ? [[c00, c10, r1, r0], [c10, c11, r1], [c11, c01, r0, r1], [c01, c00, r0]]
+        : [[c00, c10, r0], [c10, c11, r1, r0], [c11, c01, r1], [c01, c00, r0, r1]];
+      for (const f of faces) {
+        const pts = flat && f.length === 4 ? [f[0], f[1], f[2]] : f;
+        roofPoly(pts, ev, UP, pts[0]);
+        if (lod === 0) acc.poly(pts, 'wood', ev, DOWN);
+      }
+      if (trim) {
+        const c = v3(cu, 0, cv);
+        for (const [a, b] of [[c00, c10], [c10, c11], [c11, c01], [c01, c00]] as Array<[V3, V3]>) {
+          edgeStrip(a, b, a.clone().add(b).multiplyScalar(0.5).sub(c).setY(0), ev);
+        }
+        const near = (q: V3): V3 => (r0.distanceTo(q) <= r1.distanceTo(q) ? r0 : r1);
+        for (const q of [c00, c10, c11, c01]) capRow(near(q), q, ev, 0.11);
+        if (!flat) capRow(r0, r1, ev);
       }
     }
   }

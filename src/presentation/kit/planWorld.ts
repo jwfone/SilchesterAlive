@@ -180,7 +180,8 @@ export function placePlanBuilding(plan: BuildingPlan, groundY: (x: number, z: nu
         return hole && x >= hole.minX && x <= hole.maxX && z >= hole.minZ && z <= hole.maxZ ? baseY + plan.arena.ground + 0.02 : undefined;
       }
       if (u < u0 - 1 || u > u1 + 1 || v < v0 - 1 || v > v1 + 1) return undefined;
-      const floored = plan.rooms.some((r) => inRect(u, v, r.poly)) || (plan.apses ?? []).some((ap) => inApse(u, v, ap));
+      // raised floors (a podium) are decks, reached by their stairs (deckHeights)
+      const floored = plan.rooms.some((r) => !r.floorY && inRect(u, v, r.poly)) || (plan.apses ?? []).some((ap) => inApse(u, v, ap));
       return floored ? baseY + 0.03 : undefined;
     }
   }
@@ -198,15 +199,26 @@ function inPolygon(u: number, v: number, poly: UV[]): boolean {
   return inside;
 }
 
-/** Heights (above the plan's floor) of the raised walkable surfaces over a plan point: platforms, stairs,
- * and the wall-walks of the plan's stretches of town wall (walls of kind 'curtain'). */
+/** Heights (above the plan's floor) of the raised walkable surfaces over a plan point: platforms, raised room
+ * floors, stairs, raised door sills, and the wall-walks of the plan's stretches of town wall (walls of kind 'curtain'). */
 export function deckHeights(plan: BuildingPlan, u: number, v: number): number[] {
   const out: number[] = [];
   for (const p of plan.platforms ?? []) if (inPolygon(u, v, p.poly)) out.push(p.y);
+  for (const r of plan.rooms) if (r.floorY && inPolygon(u, v, r.poly)) out.push(r.floorY + 0.03);
   for (const st of plan.stairs ?? []) {
     const L = Math.hypot(st.b[0] - st.a[0], st.b[1] - st.a[1]) || 1, du = (st.b[0] - st.a[0]) / L, dv = (st.b[1] - st.a[1]) / L;
     const s = (u - st.a[0]) * du + (v - st.a[1]) * dv, l = -(u - st.a[0]) * dv + (v - st.a[1]) * du;
     if (s >= -0.2 && s <= L + 0.2 && Math.abs(l) <= st.w / 2) out.push(st.y0 + ((st.y1 - st.y0) * Math.max(0, Math.min(L, s))) / L);
+  }
+  // a door with a raised sill (onto a podium's floor): its threshold, through the wall's thickness
+  for (const w of plan.walls) {
+    if (w.kind === 'curtain') continue;
+    for (const o of w.openings ?? []) {
+      if (!o.y0) continue;
+      const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]) || 1, du = (w.b[0] - w.a[0]) / L, dv = (w.b[1] - w.a[1]) / L;
+      const s = (u - w.a[0]) * du + (v - w.a[1]) * dv, d = -(u - w.a[0]) * dv + (v - w.a[1]) * du;
+      if (Math.abs(s - o.at) <= o.w / 2 && Math.abs(d) <= w.t / 2 + 0.05) out.push(o.y0 + 0.03);
+    }
   }
   for (const w of plan.walls) {
     if (w.kind !== 'curtain') continue;

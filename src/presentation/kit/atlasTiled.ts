@@ -37,7 +37,8 @@ export const CELL_TILE_M: Record<AtlasCell, [number, number]> = {
   stone: [2, 2], plaster: [2, 2], timber: [2, 2], tile: [3.2, 4],
   street: [4, 4], grass: [4, 4], wood: [2, 2], arena: [4, 4], water: [4, 4],
   masonry: [2, 1.6], plasterPink: [2, 2], dado: [2, 1], signinum: [2, 2],
-  mosaic: [1, 1], window: [1, 1], brick: [1, 0.56], flint: [2, 1.6], flintIron: [2, 1.6], flintLime: [2, 1.6],
+  mosaic: [1, 1], window: [1, 1], brick: [1, 0.56], flint: [2, 1.6], flintIron: [2, 1.6], flintLime: [2, 1.6], plasterRed: [2, 2],
+  limestone: [1, 1], greensand: [1, 1], purbeck: [1, 1], purbeckLining: [2, 1], inscription: [1, 1], stucco: [2, 2], terracotta: [1, 1],
 };
 
 /** cellRect packed as the shader attribute (u0, v0, du, dv). */
@@ -71,6 +72,16 @@ uniform vec2 uBrickCell;
 uniform vec2 uFlintCell;
 uniform vec2 uFlintIronCell;
 uniform vec2 uFlintLimeCell;
+uniform vec2 uPlasterRedCell;
+uniform vec2 uPlasterPinkCell;
+uniform vec2 uDadoCell;
+uniform vec2 uLimestoneCell;
+uniform vec2 uGreensandCell;
+uniform vec2 uPurbeckCell;
+uniform vec2 uPurbeckLiningCell;
+uniform vec2 uInscriptionCell;
+uniform vec2 uStuccoCell;
+uniform vec2 uTerracottaCell;
 uniform float uFlintTiles;
 uniform vec2 uTileCell;
 uniform sampler2D uBakedMasonry;
@@ -78,6 +89,11 @@ uniform sampler2D uBakedBrick;
 uniform sampler2D uGrain;
 varying vec4 vCellRect;
 varying float vLocalY;
+// Surface relief for rendered walls (plaster): slope of the height field in the style's metres (dh/dx, dh/dy), and the
+// metres per UV unit of the cell, bent into the lighting normal after the colour (as the roof relief).
+vec2 gBumpGrad = vec2(0.0);
+vec2 gBumpS = vec2(1.0);
+bool gBump = false;
 float h1(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float vnoise(vec2 p) {
   vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -327,6 +343,256 @@ vec3 flintLimeF(vec2 m) {
   }
   return flintCourses(m, yb, flintH, ih(band, 82.0) < 0.5 ? 4.0 : 5.0, band, px, far, mortar); // 4-5 flint layers
 }
+// --- rendered walls (plaster): no block layout to carry variety (the stonework's comes from one hash per block), so the
+// variety itself must not repeat. Wall-scale tone is live value noise on the integer hash ih (a repeating big patch would
+// show); everything finer is the grain tile read twice at unrelated scales and turns and summed (as the stonework's drift),
+// which has no visible period, and the relief is that sum's slope from screen derivatives (no extra reads). ---
+float lnoise(vec2 p) {
+  vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(ih(i.x, i.y), ih(i.x + 1.0, i.y), u.x), mix(ih(i.x, i.y + 1.0), ih(i.x + 1.0, i.y + 1.0), u.x), u.y);
+}
+const mat2 GROT = mat2(0.8, 0.6, -0.6, 0.8);   // 36.9°
+// two reads of the grain tile at scales s and 1.37 s, the second turned: summed, contrast restored
+vec4 grain2(vec2 m, vec2 s, float salt) {
+  vec4 g = 0.5 * (texture(uGrain, m * s + salt) + texture(uGrain, GROT * (m * s * 1.37) + salt * 1.7 + 0.31));
+  return 0.5 + (g - 0.5) * 1.45;
+}
+// slope dh/dm of a height h(m) from screen derivatives (a 2 x 2 pixel estimate; enough for a low relief)
+vec2 slopeOf(float h, vec2 m) {
+  vec2 dx = dFdx(m), dy = dFdy(m);
+  float hx = dFdx(h), hy = dFdy(h), det = dx.x * dy.y - dx.y * dy.x;
+  return abs(det) < 1e-12 ? vec2(0.0) : vec2(hx * dy.y - hy * dx.y, hy * dx.x - hx * dy.x) / det;
+}
+// Lime render painted red (the temples of Insula XXX: "a coating of white plaster ... over this a second coating of white
+// plaster 1¼ inch thick, and painted a bright red", Fox & St John Hope 1890; docs/key-buildings/temples.md "Materials").
+// A smooth render: no courses. Surface variety only (tone, mottling, weathering): red ochre drifting warmer and cooler across a
+// wall; an uneven wash; paint worn thin and paler in ragged patches (the white undercoat showing through), mostly low down;
+// run-off streaks from the wall tops; up close lime grain, faint horizontal brush marks, hairline cracks in places and a low
+// relief in the lighting, fading out with distance. Standard tier: drift, wash, wear and run-off (4 reads, 1 noise).
+vec3 plasterRedF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  bool lite = wallStyle() == 6;
+  float far = lite ? 1.0 : smoothstep(0.015, 0.09, px);
+  float big = lnoise(m / 6.3 + 3.7);
+  vec3 col = mix(vec3(0.6, 0.18, 0.12), vec3(0.71, 0.27, 0.16), big);                   // ochre drift, ~6 m
+  vec4 W = grain2(m, vec2(1.0 / 2.1), 0.17);                                              // wash (r), wear (a)
+  col *= 0.8 + 0.4 * W.r;
+  float wear = W.a + 0.2 * (1.0 - smoothstep(0.0, 1.2, m.y)) - 0.08 * smoothstep(1.2, 3.0, m.y);
+  float run = 0.5 * (texture(uGrain, vec2(m.x / 1.3, m.y / 14.0) + 0.23).b + texture(uGrain, vec2(m.x / 0.83, m.y / 19.0) + 0.71).g);
+  col *= 1.0 - 0.2 * smoothstep(0.55, 0.8, run) * smoothstep(0.35, 0.7, big);            // run-off streaks
+  if (!lite) {
+    vec4 F = grain2(m, vec2(1.9), 0.07);                                                  // ragged edges (r), cracks (g), relief (b)
+    float nf = 1.0 - far;
+    wear += (F.r - 0.5) * 0.3 * nf;
+    gBumpGrad = slopeOf(F.b, m) * 0.003 * nf; gBumpS = vec2(2.0, 2.0); gBump = true;
+    if (far < 1.0) {
+      vec4 G = grain2(m, vec2(7.3), 0.41);                                                // lime grain (r), crack roughening (g)
+      float brush = 0.5 * (texture(uGrain, vec2(m.x * 0.37, m.y * 5.3) + 0.61).b + texture(uGrain, vec2(m.x * 0.23, m.y * 7.9) + 0.13).r);
+      col *= (1.0 + (brush - 0.5) * 0.1 * nf) * (1.0 + (G.r - 0.5) * 0.1 * nf);
+      float cr = abs(F.g - 0.5 + (G.g - 0.5) * 0.04);                                     // hairline cracks, in places
+      col *= 1.0 - 0.28 * (1.0 - smoothstep(0.002, 0.005 + px * 0.35, cr)) * smoothstep(0.62, 0.75, 1.0 - big) * nf;
+    }
+  }
+  col = mix(col, vec3(0.76, 0.43, 0.33), smoothstep(0.6, 0.7, wear) * 0.36);             // worn paint, mostly low down
+  col *= 1.0 + (W.b - 0.5) * 0.25 * far;                                                  // mid-scale mottling at distance
+  return col;
+}
+// Interior wall plaster (the default inside every plan-built building: a generator default, none recorded): fine pink lime
+// plaster, an uneven wash, faint slanting trowel sweeps and lime grain up close, the odd hairline crack and a low relief.
+// Standard tier: tone and wash (2 reads, 1 noise).
+vec3 plasterPinkF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  bool lite = wallStyle() == 6;
+  float far = lite ? 1.0 : smoothstep(0.015, 0.09, px);
+  float big = lnoise(m / 5.1 + 0.37);
+  vec3 col = mix(vec3(0.74, 0.52, 0.43), vec3(0.8, 0.59, 0.49), big);
+  vec4 W = grain2(m, vec2(1.0 / 1.8), 0.61);
+  col *= 0.88 + 0.24 * W.r;
+  if (!lite) {
+    vec4 F = grain2(m, vec2(2.1), 0.29);
+    float nf = 1.0 - far;
+    gBumpGrad = slopeOf(F.b, m) * 0.002 * nf; gBumpS = vec2(2.0, 2.0); gBump = true;
+    if (far < 1.0) {
+      vec2 tr = mat2(0.92, 0.38, -0.38, 0.92) * m;                                        // trowel sweeps, slanting
+      float sweep = texture(uGrain, vec2(tr.x * 0.6, tr.y * 3.7) + 0.13).b;
+      col *= (1.0 + (sweep - 0.5) * 0.07 * nf) * (1.0 + (F.r - 0.5) * 0.08 * nf);
+      float cr = abs(F.g - 0.5 + (W.g - 0.5) * 0.03);
+      col *= 1.0 - 0.2 * (1.0 - smoothstep(0.002, 0.005 + px * 0.35, cr)) * smoothstep(0.66, 0.78, 1.0 - big) * nf;
+    }
+  }
+  col *= 1.0 + (W.b - 0.5) * 0.2 * far;
+  return col;
+}
+// Painted dado (m.y = 0 at the room's floor, 1 at its top): dark red ground sprinkled with pale and dark flecks in imitation of
+// marble (one fleck at most per cell, its size, place and colour from the cell's hash: no repeat), in drifts; a cream band at
+// the top edge over a dark line; scuffed and soiled at the foot. Generator default (X).
+float fleck(vec2 m, float cell, float salt, float p, float px) {
+  vec2 c = floor(m / cell), f = m / cell - c;
+  float h = ih(c.x + salt, c.y);
+  if (h < 1.0 - p) return 0.0;
+  float r = (0.12 + 0.2 * fract(h * 37.0)) * cell;
+  vec2 o = vec2(fract(h * 113.0), fract(h * 71.0)) * 0.6 + 0.2;
+  return 1.0 - smoothstep(r - px, r + px, length((f - o) * cell));
+}
+vec3 dadoF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  bool lite = wallStyle() == 6;
+  float far = lite ? 1.0 : smoothstep(0.012, 0.07, px);
+  float y = fract(m.y);
+  vec4 W = grain2(m, vec2(1.0 / 1.4), 0.57);
+  vec3 col = mix(vec3(0.27, 0.05, 0.03), vec3(0.34, 0.08, 0.045), W.g) * (0.9 + 0.2 * W.r);
+  if (!lite && far < 1.0) {
+    float nf = 1.0 - far, drift = smoothstep(0.4, 0.8, W.b);
+    col = mix(col, vec3(0.5, 0.22, 0.12), fleck(m, 0.06, 31.0, 0.18 * drift, px) * 0.55 * nf);        // ochre flecks
+    col = mix(col, vec3(0.55, 0.36, 0.26), fleck(m + 0.031, 0.13, 57.0, 0.07 * drift, px) * 0.4 * nf); // a few larger pale splashes
+    col = mix(col, vec3(0.13, 0.03, 0.02), fleck(m + 0.017, 0.05, 83.0, 0.2, px) * 0.5 * nf);          // dark flecks
+  }
+  col = mix(col, vec3(0.38, 0.14, 0.08), 0.03 * far);                                                 // their average at distance
+  col *= 1.0 - 0.25 * (1.0 - smoothstep(0.0, 0.18, y)) * (0.6 + 0.4 * W.a);                          // scuffs and dirt at the foot
+  float band = smoothstep(0.935 - px, 0.94 + px, y), line = smoothstep(0.92 - px, 0.925 + px, y) * (1.0 - band);
+  col = mix(col, vec3(0.82, 0.69, 0.48) * (0.92 + 0.08 * W.r), band);
+  return mix(col, vec3(0.1, 0.03, 0.02), line);
+}
+// --- fittings and linings (planFittings.ts: the temples' cellae and altars; docs/key-buildings/temples.md) ---
+// Freestone carved from one block (a statue, a pedestal's mouldings, an altar): no courses. Tone from live hash noise, grain
+// and small weathered pits from paired grain reads, a low tooled relief. Standard: tone only.
+vec3 freestoneF(vec2 m, vec3 c0, vec3 c1, float salt) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  bool lite = wallStyle() == 6;
+  float far = lite ? 1.0 : smoothstep(0.01, 0.06, px);
+  vec3 col = mix(c0, c1, lnoise(m / 0.7 + salt));
+  vec4 W = grain2(m, vec2(1.0 / 0.5), salt * 0.13);
+  col *= 0.92 + 0.16 * W.r;
+  if (!lite && far < 1.0) {
+    float nf = 1.0 - far;
+    vec4 G = grain2(m, vec2(5.1), salt * 0.29 + 0.07);
+    col *= 1.0 + (G.r - 0.5) * 0.14 * nf;                                   // grain
+    col *= 1.0 - 0.16 * smoothstep(0.72, 0.86, G.g) * nf;                    // small weathered pits
+    gBumpGrad = slopeOf(G.b, m) * 0.0012 * nf; gBumpS = vec2(1.0); gBump = true;
+  }
+  return col;
+}
+// Purbeck marble, polished: a dark grey-green shelly limestone packed with sections of freshwater snail shells (Viviparus),
+// pale rims round dark cores, in drifts (one shell at most per cell, its size and place from the cell's hash: no repeat).
+float shellRing(vec2 m, float cell, float salt, float p, float px) {
+  vec2 c = floor(m / cell), f = m / cell - c;
+  float h = ih(c.x + salt, c.y);
+  if (h < 1.0 - p) return 0.0;
+  float r = (0.22 + 0.2 * fract(h * 37.0)) * cell;
+  vec2 dd = (f - (vec2(fract(h * 113.0), fract(h * 71.0)) * 0.5 + 0.25)) * cell;
+  dd.x *= 0.75 + 0.5 * fract(h * 19.0);                                       // oblique sections are ovals
+  float d = length(dd), w = max(r * 0.25, px);
+  return (1.0 - smoothstep(r - px, r + px, d)) * smoothstep(r - w - px, r - w + px, d);
+}
+vec3 purbeckF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  bool lite = wallStyle() == 6;
+  float far = lite ? 1.0 : smoothstep(0.004, 0.03, px);
+  vec3 col = mix(vec3(0.22, 0.22, 0.18), vec3(0.3, 0.28, 0.22), lnoise(m / 0.35 + 5.1));
+  vec4 W = grain2(m, vec2(1.0 / 0.3), 0.83);
+  col *= 0.9 + 0.2 * W.r;
+  if (!lite && far < 1.0) {
+    float nf = 1.0 - far, drift = smoothstep(0.3, 0.7, W.b);
+    float sh = max(shellRing(m, 0.022, 11.0, 0.5 * drift + 0.12, px), shellRing(m + 0.009, 0.035, 29.0, 0.3 * drift, px));
+    col = mix(col, vec3(0.55, 0.52, 0.43), sh * 0.75 * nf);
+    col = mix(col, vec3(0.13, 0.13, 0.1), fleck(m + 0.004, 0.012, 47.0, 0.25, px) * 0.5 * nf);
+  }
+  return mix(col, vec3(0.33, 0.31, 0.25), 0.3 * far);                        // the shells' average at distance
+}
+// Purbeck slab lining (m.y = 0 at the floor, 1 at its top, metres): a skirting course, upright slabs above it with fine joints
+// and their own tone, a rounded moulding along the top.
+vec3 purbeckLiningF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y), y = fract(m.y);
+  bool sk = y < 0.16;
+  float sx = sk ? m.x / 0.7 + 0.5 : m.x / 0.92;                               // slab widths, the skirting's staggered
+  float k = floor(sx), fx = fract(sx) * (sk ? 0.7 : 0.92);
+  vec3 col = purbeckF(m + vec2(0.0, k * 1.7)) * (0.9 + 0.2 * ih(k, sk ? 3.0 : 9.0));
+  float jw = 0.0016 + px * 0.5;
+  float joint = (1.0 - smoothstep(jw * 0.5, jw, min(fx, (sk ? 0.7 : 0.92) - fx))) + (1.0 - smoothstep(jw * 0.5, jw, abs(y - 0.16)));
+  col *= 1.0 - 0.6 * min(joint, 1.0);
+  float t = smoothstep(0.92, 1.0, y);                                         // top moulding: lit above, shadowed below
+  col *= y > 0.92 ? 0.8 + 0.5 * sin(t * 3.1416) : 1.0;
+  return col;
+}
+// An inscribed Purbeck panel (UV 0..1 across its face): a moulded border, then rows of letters cut in the field, paler where
+// cut. The text is not known (none survives from these temples): capitals drawn as strokes (I T E L V A N O M C S P) picked
+// by a hash, interpuncts between words, lines centred; fading out at distance.
+float sg(vec2 p, vec2 a, vec2 b) { vec2 pa = p - a, ba = b - a; return length(pa - ba * clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0)); }
+float glyph(vec2 p, float k) {             // p: x 0..0.5, y 0..1 (letter box); distance to the letter's strokes
+  float d = 9.0;
+  vec2 L0 = vec2(0.0, 0.0), L1 = vec2(0.0, 1.0), R0 = vec2(0.5, 0.0), R1 = vec2(0.5, 1.0), M0 = vec2(0.0, 0.5), M1 = vec2(0.42, 0.5);
+  if (k < 1.0) d = sg(p, vec2(0.25, 0.0), vec2(0.25, 1.0));                                                     // I
+  else if (k < 2.0) d = min(sg(p, L1, R1), sg(p, vec2(0.25, 0.0), vec2(0.25, 1.0)));                            // T
+  else if (k < 3.0) d = min(min(sg(p, L0, L1), sg(p, L1, R1)), min(sg(p, M0, M1), sg(p, L0, R0)));              // E
+  else if (k < 4.0) d = min(sg(p, L0, L1), sg(p, L0, vec2(0.45, 0.0)));                                         // L
+  else if (k < 5.0) d = min(sg(p, L1, vec2(0.25, 0.0)), sg(p, vec2(0.25, 0.0), R1));                            // V
+  else if (k < 6.0) d = min(min(sg(p, L0, vec2(0.25, 1.0)), sg(p, vec2(0.25, 1.0), R0)), sg(p, vec2(0.1, 0.38), vec2(0.4, 0.38))); // A
+  else if (k < 7.0) d = min(min(sg(p, L0, L1), sg(p, R0, R1)), sg(p, L1, R0));                                  // N
+  else if (k < 8.0) d = abs(length((p - vec2(0.25, 0.5)) / vec2(0.5, 1.0)) - 0.48) * 0.5;                       // O
+  else if (k < 9.0) d = min(min(sg(p, L0, vec2(0.06, 1.0)), sg(p, R0, vec2(0.44, 1.0))), min(sg(p, vec2(0.06, 1.0), vec2(0.25, 0.3)), sg(p, vec2(0.25, 0.3), vec2(0.44, 1.0)))); // M
+  else if (k < 10.0) { vec2 q = (p - vec2(0.27, 0.5)) / vec2(0.5, 1.0); d = (q.x > 0.18 && abs(q.y) < 0.3) ? 9.0 : abs(length(q) - 0.48) * 0.5; } // C
+  else if (k < 11.0) {                                                                                          // S: two open arcs
+    vec2 a = (p - vec2(0.25, 0.74)) / vec2(0.5, 0.52), b = (p - vec2(0.25, 0.26)) / vec2(0.5, 0.52);
+    d = min((a.x > 0.0 && a.y < 0.1) ? 9.0 : abs(length(a) - 0.46) * 0.5, (b.x < 0.0 && b.y > -0.1) ? 9.0 : abs(length(b) - 0.46) * 0.5);
+  }
+  else d = min(min(sg(p, L0, L1), sg(p, L1, vec2(0.4, 1.0))), min(sg(p, vec2(0.4, 1.0), vec2(0.45, 0.75)), sg(p, vec2(0.45, 0.75), M0))); // P
+  return d;
+}
+vec3 inscriptionF(vec2 uv) {
+  float px = fwidth(uv.x) + fwidth(uv.y);
+  vec3 col = purbeckF(uv * vec2(0.4, 0.35) + 3.3);
+  float e = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
+  col *= 1.0 + 0.3 * (1.0 - smoothstep(0.035, 0.045 + px, e)) * smoothstep(0.0, 0.02, e);   // raised fillet
+  col *= 1.0 - 0.5 * (smoothstep(0.055 - px, 0.06, e) - smoothstep(0.07, 0.075 + px, e));    // groove inside it
+  vec2 f = (uv - vec2(0.12, 0.14)) / vec2(0.76, 0.72);
+  float vis = 1.0 - smoothstep(0.006, 0.025, px);
+  if (vis > 0.0 && f.x > 0.0 && f.x < 1.0 && f.y > 0.0 && f.y < 1.0) {
+    const float ROWS = 5.0, COLS = 11.0;
+    vec2 g = vec2(f.x * COLS, (1.0 - f.y) * ROWS), c = floor(g), q = fract(g);
+    float len = COLS - floor(ih(c.y, 7.0) * 4.0), x0 = floor((COLS - len) * 0.5);   // lines centred, some shorter
+    float h = ih(c.x + 3.0, c.y + 17.0);
+    vec2 lq = (vec2(q.x, 1.0 - q.y) - vec2(0.2, 0.17)) / vec2(0.6, 0.66);            // the letter box in its cell (y up)
+    float aa = px * 12.0, w = 0.055, ink = 0.0;
+    if (c.x >= x0 && c.x < x0 + len) {
+      if (h > 0.14) ink = 1.0 - smoothstep(w - aa, w + aa, glyph(lq * vec2(0.5, 1.0), floor(fract(h * 7.31) * 12.0)));
+      else ink = 1.0 - smoothstep(0.06 - aa, 0.06 + aa, length((lq - vec2(0.5, 0.5)) * vec2(0.6, 1.0)));   // interpunct
+    }
+    col = mix(col, vec3(0.6, 0.56, 0.48), ink * vis);
+  }
+  return col;
+}
+// White stucco (m in metres, m.y from the floor): panels 1.6 m wide between 1.15 and 4.4 m, each framed by a moulding,
+// with a thin red line inside it; a cornice band above; plain stucco higher up, darkened by lamp soot.
+float stuccoH(vec2 m) {
+  float y = m.y, P = 1.6, x = fract(m.x / P) * P;
+  float h = smoothstep(4.5, 4.55, y) * (1.0 - smoothstep(4.68, 4.75, y));    // cornice
+  if (y > 1.15 && y < 4.4) {
+    float d = min(min(x, P - x), min(y - 1.15, 4.4 - y));
+    h += smoothstep(0.08, 0.1, d) * (1.0 - smoothstep(0.15, 0.17, d));        // the frame's moulding
+  }
+  return h;
+}
+vec3 stuccoF(vec2 m) {
+  float px = fwidth(m.x) + fwidth(m.y);
+  bool lite = wallStyle() == 6;
+  float far = lite ? 1.0 : smoothstep(0.015, 0.09, px);
+  vec3 col = mix(vec3(0.85, 0.83, 0.77), vec3(0.91, 0.89, 0.83), lnoise(m / 4.3 + 1.9));
+  vec4 W = grain2(m, vec2(1.0 / 1.7), 0.47);
+  col *= 0.94 + 0.12 * W.r;
+  float y = m.y, P = 1.6, x = fract(m.x / P) * P;
+  if (y > 1.15 && y < 4.4) {
+    float d = min(min(x, P - x), min(y - 1.15, 4.4 - y));
+    col = mix(col, vec3(0.6, 0.19, 0.13), (smoothstep(0.235 - px, 0.24, d) - smoothstep(0.252, 0.257 + px, d)) * 0.85);
+  }
+  float h = stuccoH(m);
+  col *= 1.0 + 0.05 * h;
+  if (!lite) { gBumpGrad = slopeOf(h * 0.015 + W.b * 0.002 * (1.0 - far), m); gBumpS = vec2(2.0); gBump = true; }
+  return col * (1.0 - 0.14 * smoothstep(3.0, 9.0, y) * (0.6 + 0.4 * W.g));   // lamp soot, higher up
+}
+vec3 terracottaF(vec2 m) {
+  vec4 W = grain2(m, vec2(1.0 / 0.2), 0.61);
+  return mix(vec3(0.62, 0.37, 0.24), vec3(0.76, 0.5, 0.33), W.r);
+}
 vec3 brickF(vec2 m) {
   // All-brick surfaces (piers, quoins): same bricks and joints as the bonding courses.
   float ch = 0.2 / 3.0, course = floor(m.y / ch);
@@ -436,6 +702,16 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
       uFlintCell: { value: new THREE.Vector2(...cellVec('flint').slice(0, 2)) },
       uFlintIronCell: { value: new THREE.Vector2(...cellVec('flintIron').slice(0, 2)) },
       uFlintLimeCell: { value: new THREE.Vector2(...cellVec('flintLime').slice(0, 2)) },
+      uPlasterRedCell: { value: new THREE.Vector2(...cellVec('plasterRed').slice(0, 2)) },
+      uPlasterPinkCell: { value: new THREE.Vector2(...cellVec('plasterPink').slice(0, 2)) },
+      uDadoCell: { value: new THREE.Vector2(...cellVec('dado').slice(0, 2)) },
+      uLimestoneCell: { value: new THREE.Vector2(...cellVec('limestone').slice(0, 2)) },
+      uGreensandCell: { value: new THREE.Vector2(...cellVec('greensand').slice(0, 2)) },
+      uPurbeckCell: { value: new THREE.Vector2(...cellVec('purbeck').slice(0, 2)) },
+      uPurbeckLiningCell: { value: new THREE.Vector2(...cellVec('purbeckLining').slice(0, 2)) },
+      uInscriptionCell: { value: new THREE.Vector2(...cellVec('inscription').slice(0, 2)) },
+      uStuccoCell: { value: new THREE.Vector2(...cellVec('stucco').slice(0, 2)) },
+      uTerracottaCell: { value: new THREE.Vector2(...cellVec('terracotta').slice(0, 2)) },
       uFlintTiles: { value: (mat.userData.flintTiles as number | undefined) ?? FLINT_TILE_COURSES },
       uTileCell: { value: new THREE.Vector2(...cellVec('tile').slice(0, 2)) },
     };
@@ -460,6 +736,12 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     if (isCell(uFlintCell)) sampledDiffuseColor = vec4(0.72, 0.71, 0.66, 1.0);
     if (isCell(uFlintIronCell)) sampledDiffuseColor = vec4(0.7, 0.67, 0.6, 1.0);
     if (isCell(uFlintLimeCell)) sampledDiffuseColor = vec4(0.72, 0.7, 0.63, 1.0);
+    if (isCell(uPlasterRedCell)) sampledDiffuseColor = vec4(0.6, 0.23, 0.16, 1.0);
+    if (isCell(uLimestoneCell)) sampledDiffuseColor = vec4(0.79, 0.75, 0.65, 1.0);
+    if (isCell(uGreensandCell)) sampledDiffuseColor = vec4(0.53, 0.55, 0.44, 1.0);
+    if (isCell(uPurbeckCell) || isCell(uPurbeckLiningCell) || isCell(uInscriptionCell)) sampledDiffuseColor = vec4(0.3, 0.29, 0.24, 1.0);
+    if (isCell(uStuccoCell)) sampledDiffuseColor = vec4(0.87, 0.85, 0.79, 1.0);
+    if (isCell(uTerracottaCell)) sampledDiffuseColor = vec4(0.7, 0.44, 0.3, 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uMasonryCell)) {
     sampledDiffuseColor = vec4(masonryF(tUv * vec2(2.0, 1.6)), 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uFlintCell)) {
@@ -468,6 +750,26 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     sampledDiffuseColor = vec4(flintIronF(tUv * vec2(2.0, 1.6)), 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uFlintLimeCell)) {
     sampledDiffuseColor = vec4(flintLimeF(tUv * vec2(2.0, 1.6)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uPlasterRedCell)) {
+    sampledDiffuseColor = vec4(plasterRedF(tUv * vec2(2.0, 2.0)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uPlasterPinkCell)) {
+    sampledDiffuseColor = vec4(plasterPinkF(tUv * vec2(2.0, 2.0)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uDadoCell)) {
+    sampledDiffuseColor = vec4(dadoF(tUv * vec2(2.0, 1.0)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uLimestoneCell)) {
+    sampledDiffuseColor = vec4(freestoneF(tUv, vec3(0.74, 0.7, 0.6), vec3(0.83, 0.79, 0.69), 1.3), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uGreensandCell)) {
+    sampledDiffuseColor = vec4(freestoneF(tUv, vec3(0.47, 0.5, 0.4), vec3(0.58, 0.59, 0.47), 4.7), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uPurbeckCell)) {
+    sampledDiffuseColor = vec4(purbeckF(tUv), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uPurbeckLiningCell)) {
+    sampledDiffuseColor = vec4(purbeckLiningF(tUv * vec2(2.0, 1.0)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uInscriptionCell)) {
+    sampledDiffuseColor = vec4(inscriptionF(tUv), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uStuccoCell)) {
+    sampledDiffuseColor = vec4(stuccoF(tUv * vec2(2.0, 2.0)), 1.0);
+  } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uTerracottaCell)) {
+    sampledDiffuseColor = vec4(terracottaF(tUv), 1.0);
   } else if ((wallStyle() == 5 || wallStyle() == 6) && isCell(uBrickCell)) {
     sampledDiffuseColor = vec4(brickF(tUv * vec2(1.0, 0.56)), 1.0);
   } else if ((uStyle == 5 || uStyle == 6) && isCell(uTileCell)) {
@@ -484,8 +786,8 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     vec2 aUv = vCellRect.xy + fract(tUv) * vCellRect.zw;
     sampledDiffuseColor = textureGrad(map, aUv, dFdx(tUv) * vCellRect.zw, dFdy(tUv) * vCellRect.zw);
   }
-  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell) || isCell(uFlintCell) || isCell(uFlintIronCell) || isCell(uFlintLimeCell))) {
-    vec2 m = tUv * (isCell(uBrickCell) ? vec2(1.0, 0.56) : vec2(2.0, 1.6));
+  if ((wallStyle() == 5 || wallStyle() == 6) && (isCell(uMasonryCell) || isCell(uBrickCell) || isCell(uFlintCell) || isCell(uFlintIronCell) || isCell(uFlintLimeCell) || isCell(uPlasterRedCell))) {
+    vec2 m = tUv * (isCell(uBrickCell) ? vec2(1.0, 0.56) : isCell(uPlasterRedCell) ? vec2(2.0, 2.0) : vec2(2.0, 1.6));
     // colour drift from two unrelated scales of the grain tile: no visible period
     float drift = texture(uGrain, m / 11.0).b * 0.6 + texture(uGrain, m / 29.3 + 0.37).b * 0.4;
     drift = 0.47 + (drift - 0.47) * 1.6; // blending two noises flattens contrast: restore it to match C
@@ -522,6 +824,14 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
     vec3 q0 = dFdx(-vViewPosition), q1 = dFdy(-vViewPosition);
     vec2 rm = vMapUv * vec2(${CELL_TILE_M.tile[0]}, ${CELL_TILE_M.tile[1]});
     vec2 st0 = dFdx(rm), st1 = dFdy(rm);
+    vec2 sb0 = dFdx(vMapUv) * gBumpS, sb1 = dFdy(vMapUv) * gBumpS;
+    if (gBump) {
+      vec3 q1perp = cross(q1, normal), q0perp = cross(normal, q0);
+      vec3 T = q1perp * sb0.x + q0perp * sb1.x, B = q1perp * sb0.y + q0perp * sb1.y;
+      float det = max(dot(T, T), dot(B, B));
+      float sc = det == 0.0 ? 0.0 : inversesqrt(det);
+      normal = normalize(normal - sc * (gBumpGrad.x * T + gBumpGrad.y * B));
+    }
     if (gRoof) {
       vec3 q1perp = cross(q1, normal), q0perp = cross(normal, q0);
       vec3 T = q1perp * st0.x + q0perp * st1.x, B = q1perp * st0.y + q0perp * st1.y;
@@ -532,6 +842,6 @@ export function createTiledAtlasMaterial(params: THREE.MeshLambertMaterialParame
   }`,
       );
   };
-  mat.customProgramCacheKey = () => 'atlas-tiled-v8';
+  mat.customProgramCacheKey = () => 'atlas-tiled-v13';
   return mat;
 }

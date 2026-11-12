@@ -18,7 +18,9 @@ export interface PlanWall {
   id: string; a: UV; b: UV; t: number; h: number; ev?: Ev;
   /** `curtain`: a stretch of the town wall's own section (plinth, inner set-off, walk, parapet; see townWall.ts),
    * its field side to the `outer` side of a -> b ('l' = left). */
-  kind?: 'stylobate' | 'curtain'; outer?: 'l' | 'r'; material?: 'stone' | 'brick';
+  kind?: 'stylobate' | 'curtain'; outer?: 'l' | 'r';
+  /** Exterior face, reveals and quoins of this wall, instead of the plan's facing ('plasterRed': rendered and painted red). */
+  material?: 'stone' | 'brick' | 'plasterRed';
   /** Merlons along the top: a crenellated parapet (tower tops). */
   crenel?: boolean;
   openings?: PlanOpening[]; windows?: PlanWindow[]; note?: string;
@@ -26,11 +28,17 @@ export interface PlanWall {
 export interface PlanRoom {
   id: string; name: string; poly: UV[]; floor?: string; finish?: 'exterior';
   vault?: boolean; note?: string;
+  /** Raised solid floor (m above the plan's ground), e.g. a temple podium filled with earth: walked as a deck
+   * (reached by stairs), and wall faces below it, buried in the fill, are not drawn. */
+  floorY?: number;
   /** Plan drawing: label position and relative size (default: polygon centre, 1). */
   labelAt?: UV; labelSize?: number;
   pool?: { poly: UV[]; depth: number; rimT: number };
   labrum?: { c: UV; r: number };
   base?: { poly: UV[]; h: number; note?: string };
+  /** Inside wall finish (default: a painted dado to 1 m above the floor, pink plaster above): a dado of Purbeck marble
+   * slabs and/or white stucco panels above it. */
+  lining?: { dado?: 'painted' | 'purbeck'; upper?: 'plaster' | 'stucco'; ev?: Ev; note?: string };
 }
 export interface PlanApse {
   id: string; c: UV; r: number; t: number; start: number; end: number; h: number; ev?: Ev;
@@ -48,11 +56,16 @@ export interface PlanColumns {
   at?: UV[]; spacing?: number; on?: string[];
   beam?: boolean | { from: UV; to: UV }; arch?: boolean; note?: string;
 }
+/** Roofs. `peristyle`: a ring round a court sloping inward (highY at `outer`, lowY at `inner`); `ambulatory`: a ring
+ * round a central block sloping outward (highY against `inner`, lowY at `outer`), hipped at the corners; `hip`: a hipped
+ * (pyramid, for a square) roof over `poly` from `eaves`. */
 export interface PlanRoof {
-  id: string; type: 'gable' | 'lean-to' | 'peristyle'; ev?: Ev;
+  id: string; type: 'gable' | 'lean-to' | 'peristyle' | 'ambulatory' | 'hip'; ev?: Ev;
   poly?: UV[]; ridge?: 'u' | 'v'; eaves?: number;
   highSide?: 'n' | 's' | 'e' | 'w'; highY?: number; lowY?: number; closeEnds?: boolean;
   outer?: UV[]; inner?: UV[];
+  /** ambulatory / hip: the roof's own axes turned this many degrees (ccw) from the plan's, about its inner block's centre. */
+  angleDeg?: number;
 }
 /** A drawing for the reconstruction viewer: an elevation seen from one side, or a
  * section cut at `at` metres (u for views from e/w, v for views from n/s). */
@@ -89,6 +102,23 @@ export interface PlanPlatform { id: string; poly: UV[]; y: number; ev?: Ev; note
 /** A straight flight of steps rising from `a` (at y0) to `b` (at y1), `w` wide. */
 export interface PlanStair { id: string; a: UV; b: UV; w: number; y0: number; y1: number; ev?: Ev; note?: string }
 
+/** A piece of furniture or sculpture, drawn at the walkable detail level only (except altars, also seen from outside).
+ * `at` is its centre on the floor (a plaque: on the wall's face), `y0` the floor it stands on, `facing` the plan
+ * bearing its front looks along (degrees anticlockwise from +u: 0 = east in a temple frame), w x d x h its overall
+ * width (across the front), depth and height.
+ *   statue  a moulded pedestal w x d x h carrying a draped standing figure `figureH` tall (the deity unknown: no
+ *           attributes but an offering dish), the pedestal's die faced with an inscribed panel
+ *   table   an offering table: a slab on a pier, with two small lamps and a dish on it
+ *   plaque  a thin inscribed slab (d thick) fixed to a wall's face at `at`, its centre 1.6 m above its floor `y0`
+ *   altar   a stone altar: moulded base and capital, bolsters (pulvini) and a focus on top */
+export interface PlanFitting {
+  id: string; kind: 'statue' | 'table' | 'plaque' | 'altar';
+  at: UV; y0?: number; facing: number; w: number; d: number; h: number;
+  figureH?: number;
+  material?: 'limestone' | 'greensand' | 'purbeck';
+  ev?: Ev; note?: string;
+}
+
 /** The town wall's circuit (assets/key-plans/town-wall.json): centreline runs between the gates (game x, z) and counterforts. */
 export interface TownWallData {
   runs: Array<Array<[number, number]>>;
@@ -110,6 +140,7 @@ export interface BuildingPlan {
   rooms: PlanRoom[]; walls: PlanWall[]; apses?: PlanApse[]; columns?: PlanColumns[]; roofs?: PlanRoof[];
   arena?: PlanArena;
   platforms?: PlanPlatform[]; stairs?: PlanStair[];
+  fittings?: PlanFitting[];
   /** Town gates: where the curtain-wall generator stops (plan points on the wall's centreline), the rampart
    * behind the flanks (polygons), and how the ditch is crossed. */
   curtainEnds?: UV[]; mound?: UV[][]; crossing?: 'bridge' | 'causeway'; crossingEv?: Ev;

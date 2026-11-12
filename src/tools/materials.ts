@@ -4,6 +4,7 @@
 //   http://localhost:5173/tools/materials.html?id=baths&set=roof   roofs
 //   http://localhost:5173/tools/materials.html?id=forum-basilica&set=flint   flint facing
 //   http://localhost:5173/tools/materials.html?id=amphitheatre&set=arena    flint with ironstone courses
+//   http://localhost:5173/tools/materials.html?id=temples&set=temple        red-painted plaster
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildFromPlan, type BuildingPlan } from '../presentation/kit/planBuilding.js';
@@ -19,7 +20,7 @@ const params = new URLSearchParams(location.search);
 const only = params.get('only')?.split(',');
 const set = params.get('set') ?? 'wall';
 type Facing = 'greensand' | 'flint' | 'flint-ironstone' | 'flint-limestone';
-interface Pane { key: string; style: SurfaceStyle; title: string; note: string; trim?: false; set?: 'roof' | 'flint' | 'arena' | 'town'; benchOnly?: boolean; facing?: Facing; flintTiles?: number }
+interface Pane { key: string; style: SurfaceStyle; title: string; note: string; trim?: false; set?: 'roof' | 'flint' | 'arena' | 'town' | 'temple'; bare?: boolean; benchOnly?: boolean; facing?: Facing; flintTiles?: number }
 const allPanes: Pane[] = [
   { key: 'texture', style: 'texture', title: 'A · Painted texture (current)', note: 'one 2 × 1.6 m tile, repeated' },
   { key: 'procedural', style: 'procedural', title: 'B · Generated stonework', note: 'every block and brick its own size and tone' },
@@ -45,6 +46,11 @@ const allPanes: Pane[] = [
   { key: 'townFL', style: 'hybrid', set: 'town', facing: 'flint-limestone', title: 'FL · Flint, double limestone courses', note: '4-5 flint courses (0.55 m) then two courses of flat slabs, mostly pale limestone (Collis 1983)' },
   { key: 'townPlain', style: 'plain', set: 'town', facing: 'flint-limestone', benchOnly: true, title: 'P · Plain (baseline)', note: 'flat colour: the cost floor for bench()' },
   { key: 'townFLs', style: 'hybridLite', set: 'town', facing: 'flint-limestone', title: 'FLs · FL, Standard tier', note: 'FL without fine grain or lumpy outlines' },
+  // temples (?id=temples&set=temple): the large temple's podium and colonnade, the small temple's walls
+  { key: 'templeK2', style: 'hybrid', set: 'temple', bare: true, title: 'K2 · Flint, unplastered (before)', note: 'what the walls are built of: flint with tile bonding courses (1890), under the render' },
+  { key: 'templePR', style: 'hybrid', set: 'temple', title: 'PR · Red-painted plaster', note: 'lime render "painted a bright red" (1890): uneven ochre wash, brush marks, pale weathered patches' },
+  { key: 'templePlain', style: 'plain', set: 'temple', benchOnly: true, title: 'P · Plain (baseline)', note: 'flat colour: the cost floor for bench()' },
+  { key: 'templePRs', style: 'hybridLite', set: 'temple', title: 'PRs · PR, Standard tier', note: 'PR without brush marks, grain or weathered patches' },
 ];
 const panes = only ? allPanes.filter((p) => only.includes(p.key)) : allPanes.filter((p) => (p.set ?? 'wall') === set && !p.benchOnly);
 
@@ -81,13 +87,15 @@ const geoFor = (f: Facing): THREE.BufferGeometry => {
   if (!geoByFacing.has(f)) geoByFacing.set(f, buildFromPlan(plan, { lod: 0, facing: f }).geometry);
   return geoByFacing.get(f)!;
 };
+// the temples without their render: every wall in the plan's facing (flint)
+const geoBare = set === 'temple' ? buildFromPlan({ ...plan, walls: plan.walls.map((w) => ({ ...w, material: undefined })) }, { lod: 0 }).geometry : geoGame;
 const mesh = new THREE.Mesh(geoGame);
 scene.add(mesh);
 const mats = panes.map((p) => { const m = createTiledAtlasMaterial({}, p.style); if (p.flintTiles) m.userData.flintTiles = p.flintTiles; return m; });
 const usePane = (i: number): void => {
   const p = panes[i];
   mesh.material = mats[i];
-  mesh.geometry = (p.set === 'arena' || p.set === 'town') && p.facing ? geoFor(p.facing) : p.facing === 'greensand' ? geoGreensand : p.trim === false ? geoNoTrim : geoGame;
+  mesh.geometry = p.bare ? geoBare : (p.set === 'arena' || p.set === 'town') && p.facing ? geoFor(p.facing) : p.facing === 'greensand' ? geoGreensand : p.trim === false ? geoNoTrim : geoGame;
 };
 
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
@@ -122,6 +130,19 @@ const presets: Record<string, [THREE.Vector3, THREE.Vector3]> = {
   townClose: [new THREE.Vector3(1.5, 1.7, -21), new THREE.Vector3(6, 2.4, -14.3)],
   townWide: [new THREE.Vector3(-6, 1.8, -30), new THREE.Vector3(15, 3, -13)],
   townAerial: [new THREE.Vector3(30, 28, -45), new THREE.Vector3(14, 2, -8)],
+  // temples (?id=temples&set=temple): the large temple's SE corner up close, from the steps, both temples from the east, the air
+  templeDetail: [new THREE.Vector3(37.7, 1.5, -37.4), new THREE.Vector3(36.2, 1.3, -38.4)],
+  templeClose: [new THREE.Vector3(44, 1.8, -31), new THREE.Vector3(35.5, 3.5, -40)],
+  templeWide: [new THREE.Vector3(58, 2, -24), new THREE.Vector3(28, 4.5, -34)],
+  templeAerial: [new THREE.Vector3(85, 45, 5), new THREE.Vector3(26, 2, -35)],
+  templeRoof: [new THREE.Vector3(42, 13.5, -31), new THREE.Vector3(31, 8.5, -42)],
+  templeInside: [new THREE.Vector3(29.4, 3.9, -44.5), new THREE.Vector3(19.6, 3.9, -48.5)],
+  // the cella fittings: the large temple's statue from the door, its table and a plaque up close, the small cella, an altar
+  templeStatue: [new THREE.Vector3(29.6, 4.0, -46.7), new THREE.Vector3(20.5, 4.6, -46.7)],
+  templeTable: [new THREE.Vector3(24.4, 4.1, -45.5), new THREE.Vector3(22.4, 3.25, -46.7)],
+  templePlaque: [new THREE.Vector3(21.6, 3.95, -42.5), new THREE.Vector3(21.4, 3.9, -41.3)],
+  templeSmallCella: [new THREE.Vector3(28.2, 2.9, -13.0), new THREE.Vector3(23.9, 2.9, -14.1)],
+  templeAltar: [new THREE.Vector3(44.5, 1.6, -44.6), new THREE.Vector3(41.0, 1.0, -46.7)],
 };
 const setCam = (k: string): void => {
   const [eye, target] = presets[k];
@@ -204,4 +225,4 @@ function snap(view: string, pw = 1200, ph = 675): string {
 (window as unknown as { snap: typeof snap }).snap = snap;
 controls.addEventListener('change', draw);
 addEventListener('resize', draw);
-setCam(params.get('cam') ?? (set === 'roof' ? 'roofClose' : set === 'flint' ? 'flintClose' : set === 'arena' ? 'arenaClose' : 'close'));
+setCam(params.get('cam') ?? (set === 'roof' ? 'roofClose' : set === 'flint' ? 'flintClose' : set === 'arena' ? 'arenaClose' : set === 'temple' ? 'templeClose' : 'close'));

@@ -115,68 +115,33 @@
   {
    "type": "Feature",
    "properties": {
-    "id": "temple-1",
-    "status": "user-pinned-centre: position from user lat/lon 51.357019,-1.07781; size/rotation still kit placeholders until corners pinned",
-    "source": "user lat/lon centre 51.357019,-1.07781"
+    "id": "temples",
+    "status": "user-approved-outline",
+    "source": "min-area rectangle (29.9 x 123.6 m, 1.9 deg) around Great Plan rings classified in assets/key-plans/temples.review.json (the two Romano-Celtic temples and the surveyed precinct wall of Insula XXX; Fox & St John Hope 1890, Archaeologia 52, Pl. XXX; St John Hope 1903, Archaeologia 58); approved 2026-10-16, replacing the user-pinned centres temple-1 (51.357019,-1.07781) and temple-2 (51.356728,-1.077829)"
    },
    "geometry": {
     "type": "Polygon",
     "coordinates": [
      [
       [
-       464300.7,
-       162406.5
+       464294.3,
+       162349.8
       ],
       [
-       464318.7,
-       162406.5
+       464324.2,
+       162350.8
       ],
       [
-       464318.7,
-       162388.5
+       464320.1,
+       162474.4
       ],
       [
-       464300.7,
-       162388.5
+       464290.2,
+       162473.4
       ],
       [
-       464300.7,
-       162406.5
-      ]
-     ]
-    ]
-   }
-  },
-  {
-   "type": "Feature",
-   "properties": {
-    "id": "temple-2",
-    "status": "user-pinned-centre: position from user lat/lon 51.356728,-1.077829; size/rotation still kit placeholders until corners pinned",
-    "source": "user lat/lon centre 51.356728,-1.077829"
-   },
-   "geometry": {
-    "type": "Polygon",
-    "coordinates": [
-     [
-      [
-       464301.8,
-       162372.1
-      ],
-      [
-       464315.8,
-       162372.1
-      ],
-      [
-       464315.8,
-       162358.1
-      ],
-      [
-       464301.8,
-       162358.1
-      ],
-      [
-       464301.8,
-       162372.1
+       464294.3,
+       162349.8
       ]
      ]
     ]

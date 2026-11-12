@@ -134,12 +134,33 @@ and Fulford 2002 notes in `tmp/research/walls/`; the 1890 volume in `tmp/researc
 Possible follow-ups: the gates' order in the HUD list (alphabetical by id, so they interleave with the other buildings); the outer
 earthworks (GIS 03 banks) are untouched; Joyce 1881, St John Hope 1897/1909 and Fulford 1984 not read (east, Lesser West gates).
 
+## Done: temples (2026-10-16)
+
+Plan-built from the Great Plan rings: the large and small Romano-Celtic temples of Insula XXX and their precinct wall, as planned in 1890 (east
+halves completed on plan by St John Hope); the north temple (dug 2017, demolished c. AD 200) left out. Brief, sources (Fox & St John Hope 1890,
+*Archaeologia* 52; St John Hope 1903, *Archaeologia* 58; Fulford et al. 2017; C&F 2016), decisions and the reasoning for every height:
+[`temples.md`](temples.md). The anchor is now `temples` (123.6 × 29.9 m, 1.9°), replacing the pins `temple-1` and `temple-2`; the old solid boxes,
+the temple column rows (the column `InstancedMesh`) and `kit/columns.ts` are gone.
+
+New engine pieces: raised floors (`floorY` on a room, walked as a deck, buried wall faces not drawn; a door's raised sill walkable); roofs `ambulatory`
+(outward ring) and `hip` (pyramid), each with its own `angleDeg`; per-wall `material: 'plasterRed'` with the style `plasterRedF` (lab
+`tools/materials.html?id=temples&set=temple`; rebuilt after the user's review so nothing repeats: live hash noise for wall-scale tone, paired grain reads for
+the rest, relief from screen derivatives; High about +12 ms, Standard about +10 ms over plain at 2400 × 1350, as the forum's flint). Interior plaster
+and dado are now generated the same way (`plasterPinkF`, `dadoF`) in every plan-built building; the dado's band starts from the room's floor.
+Auto picks Standard on the HD 620. Smoke: temples LOD0 3,194 / LOD1 1,718 /
+LOD2 544, cap 12k; whole town **26 draws (was 28), 269,952 tris (was 265,686)**. Walked in the game (both temples' steps, doors and cellae; every Look). The level-ground smoke check now samples only the footprint (a long
+precinct). Scratch scripts (wall fits, plate fit, plan writer, roof check, review pictures; Python) in gitignored `tmp/key-plans/temples-scripts/`;
+the 1890 plate in `tmp/research/temples-1890-plxxx.jpg`, sources in `tmp/research/temples/`, `arch52/`, `arch58/`.
+
+The user approved the step-9 drawings and the red plaster (2026-10-16): colonnade on the large temple, walled ambulatory and 1.2 m floor on the
+small one (decisions 8–10 in `temples.md`).
+
 ## Next: the other key buildings
 
 One session per building, in any order. The repeatable procedure is [`playbook.md`](playbook.md) (steps,
 deliverables, the code touch-points for replacing an old kit, pitfalls, a kickoff prompt); what is known about each
-building, open questions for the user and research leads are in [`other-buildings.md`](other-buildings.md). Suggested
-order there: temples, church (forum-basilica, mansio and amphitheatre done). The church is blocked on a user decision (the
+building, open questions for the user and research leads are in [`other-buildings.md`](other-buildings.md). Remaining: the
+church (forum-basilica, mansio, amphitheatre, the town wall and the temples done). The church is blocked on a user decision (the
 pin is probably on the medieval St Mary's; the Roman church may postdate the c. 270–280 snapshot).
 
 ## Done: in-game reconstruction viewer (was Next 2)

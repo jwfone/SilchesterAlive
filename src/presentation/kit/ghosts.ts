@@ -574,6 +574,38 @@ export function ghostCostumeTriCount(g: THREE.BufferGeometry): number {
   return g.index ? g.index.count / 3 : g.attributes.position.count / 3;
 }
 
+// Rim + foot fade, injected into the basic material so fog and vertex colours
+// keep working. Edges (grazing view) go brighter and more opaque, the middle
+// more see-through; alpha falls off over the lowest metres so the figure
+// hovers instead of ending in hard leg stumps. No lighting, no features.
+const RIM_POWER = 2.0;
+const RIM_CENTRE_ALPHA = 0.65; // × base opacity at face-on surfaces
+const RIM_EDGE_ALPHA = 1.4; // × base opacity at silhouettes
+const RIM_BRIGHTEN = 0.12;
+const FOOT_FADE_TOP = 0.32; // local metres above the soles
+
+function injectGhostShading(shader: THREE.WebGLProgramParametersWithUniforms): void {
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', `#include <common>
+varying vec3 vGhostN;
+varying vec3 vGhostV;
+varying float vGhostY;`)
+    .replace('#include <project_vertex>', `#include <project_vertex>
+vGhostN = normalize(normalMatrix * normal);
+vGhostV = -mvPosition.xyz;
+vGhostY = position.y;`);
+  shader.fragmentShader = shader.fragmentShader
+    .replace('#include <common>', `#include <common>
+varying vec3 vGhostN;
+varying vec3 vGhostV;
+varying float vGhostY;`)
+    .replace('#include <opaque_fragment>', `float ghostRim = pow(1.0 - abs(dot(normalize(vGhostN), normalize(vGhostV))), ${RIM_POWER.toFixed(2)});
+outgoingLight = mix(outgoingLight, vec3(1.0), ghostRim * ${RIM_BRIGHTEN.toFixed(2)});
+diffuseColor.a *= mix(${RIM_CENTRE_ALPHA.toFixed(2)}, ${RIM_EDGE_ALPHA.toFixed(2)}, ghostRim);
+diffuseColor.a *= smoothstep(0.0, ${FOOT_FADE_TOP.toFixed(2)}, vGhostY);
+#include <opaque_fragment>`);
+}
+
 export function getGhostMaterial(): THREE.MeshBasicMaterial {
   if (sharedMaterial) return sharedMaterial;
   sharedMaterial = new THREE.MeshBasicMaterial({
@@ -584,12 +616,50 @@ export function getGhostMaterial(): THREE.MeshBasicMaterial {
     depthWrite: false,
     fog: true,
   });
+  sharedMaterial.onBeforeCompile = injectGhostShading;
+  sharedMaterial.customProgramCacheKey = () => 'ghost-rim-v1';
   return sharedMaterial;
 }
 
-/** Per-ghost mesh: own costume geometry, shared translucent material. */
+let depthMaterial: THREE.MeshBasicMaterial | null = null;
+
+/**
+ * Depth-only pre-pass: lays down the nearest surface so the colour pass draws
+ * one clean shell, not every overlapping primitive inside it (legs in the
+ * tunic, head in the helmet). Transparent so it sorts with its own colour
+ * pass; a small polygon offset pushes it back so the front face still passes.
+ */
+export function getGhostDepthMaterial(): THREE.MeshBasicMaterial {
+  if (depthMaterial) return depthMaterial;
+  depthMaterial = new THREE.MeshBasicMaterial({
+    colorWrite: false,
+    depthWrite: true,
+    transparent: true,
+    polygonOffset: true,
+    polygonOffsetFactor: 1,
+    polygonOffsetUnits: 1,
+    fog: false,
+  });
+  return depthMaterial;
+}
+
+/** Two groups over the same triangles: depth pre-pass, then colour. */
+function ensurePrepassGroups(g: THREE.BufferGeometry): void {
+  if (g.groups.length) return;
+  const count = g.index ? g.index.count : g.attributes.position.count;
+  g.addGroup(0, count, 0);
+  g.addGroup(0, count, 1);
+}
+
+/**
+ * Per-ghost mesh: own costume geometry, shared materials. Both passes are
+ * groups of one object, so they share its sort depth and render back-to-back
+ * (depth then colour) per ghost — ghosts behind stay visible through it.
+ */
 export function createGhostMesh(costume: GhostCostumeId): THREE.Mesh {
-  const mesh = new THREE.Mesh(getGhostCostumeGeometry(costume), getGhostMaterial());
+  const geometry = getGhostCostumeGeometry(costume);
+  ensurePrepassGroups(geometry);
+  const mesh = new THREE.Mesh(geometry, [getGhostDepthMaterial(), getGhostMaterial()]);
   mesh.castShadow = false;
   mesh.receiveShadow = false;
   mesh.renderOrder = 5; // after opaque town, among transparent decals

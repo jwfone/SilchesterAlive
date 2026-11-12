@@ -17,15 +17,14 @@ Treat ◐ and ✎ as leads. Re-verify before they go into a brief, and correct t
 | Building | In game today | Pinned anchor | Evidence outlook | Main generator work |
 |---|---|---|---|---|
 | **Forum-basilica** | **Done 2026-10-11**: plan-built (`forum-basilica.plan.json`), flint walls | Full outline, 97 × 82 m | Best: 1977–86 excavation monograph, Victorian plan, 47 Great Plan rings | Basilica nave, aisles, clerestory, big roof; courtyard ranges |
-| **Temples** (Insula XXX) | Solid boxes + classical column rows | Centres only, sizes are placeholders | Good: 2017 Reading excavation, GPR, Victorian plan | Cella with ambulatory (two-tier roof), temenos wall |
+| **Temples** (Insula XXX) | **Done 2026-10-16**: plan-built (`temples.plan.json`), red-plastered temples, flint precinct wall | Full outline, 123.6 × 29.9 m (both temples and the precinct) | Good: 1890 *Archaeologia* 52 Pl. XXX fits the rings (84% within 0.3 m); 2017 Reading report on the north temple | Raised floors, ring and pyramid roofs, red plaster facing |
 | **Church** | Solid box | On the **medieval** St Mary's (probably), no Roman walls | Contested identity and date | Small apsidal hall (if built) |
 | **Mansio** | **Done 2026-10-13**: plan-built (`mansio.plan.json`), flint walls | Full outline, 130 × 65.1 m | Good: 1887 and 1894 *Archaeologia* reports, the 1893 plate fits the rings (88% within 0.3 m) | None new (walls, roofs, apse, vaults) |
 | **Amphitheatre** | **Done 2026-10-14**: plan-built (`amphitheatre.plan.json`, new `arena` element), sunken arena | Full outline, 74.8 × 81.1 m | Good: GIS 04 is the stone phase; Fulford 1989 via a full review; Fulford 2002 plan and section (user) | Elliptical bowl: arena wall, passages, recesses, seat rows, banks, ground hole |
 | **Town wall and gates** | **Done 2026-10-14**: curtain generator (`kit/townWall.ts`) + seven plan-built gates, rampart and ditch | GIS 04 line and gate plans; seven gate anchors | Good: 1890 *Archaeologia* 52 gate plans, C&F 2016 ch. 8, Collis 1983 | Curtain wall generator (profile, counterforts, rampart, ditch); seven gates |
 
-**Suggested order** (my judgement, for the user to change): forum-basilica (largest and best evidenced; most
-visible), temples (small, report online, tests the two-tier roof), amphitheatre, mansio (research first; may end up
-mostly conjecture), church (blocked on a decision). Any building can go in any order; they are independent.
+**Suggested order** (my judgement, for the user to change): forum-basilica, temples, amphitheatre, mansio (all done);
+church (blocked on a decision). Any building can go in any order; they are independent.
 
 ## Pinned anchors (game coordinates, from `GENERATED_KEYS`)
 
@@ -33,8 +32,7 @@ mostly conjecture), church (blocked on a decision). Any building can go in any o
 |---|---|---|---|---|
 | forum-basilica | −89.2, 45.0 | 97.3 × 81.6 | 0.012 | lat/lon NW 51.357496, −1.083949, SE 51.356762, −1.082551 |
 | mansio (was mansio-courtyard) | 24.7, 313.8 | 130.0 × 65.1 | 0.068 | min-area rectangle of the rings in `mansio.review.json` (2026-10-12); the first pin (15.4, 316.3; 45.8 × 34.1 m) was the courtyard only |
-| temple-1 | 289.7, 52.5 | 18 × 18 (placeholder) | 0 | centre 51.357019, −1.07781 |
-| temple-2 | 288.8, 84.9 | 14 × 14 (placeholder) | 0 | centre 51.356728, −1.077829 |
+| temples (was temple-1, temple-2) | 287.2, 37.9 | 123.7 × 29.9 | −1.538 | min-area rectangle of the rings in `temples.review.json` (2026-10-16); the pins were the centres of the large temple (289.7, 52.5) and the small temple (288.8, 84.9) |
 | church-st-mary | 319.9, 84.9 | 20.1 × 10.1 (placeholder) | 0.103 | centre 51.356724, −1.077382 |
 | amphitheatre | 452.2, −156.3 | 74.8 × 81.1 | 1.217 | min-area rectangle of the GIS 04 stone-phase walls and the banks' toe (2026-10-13); before, only the ellipse fitted to the GIS 04 strips (`GENERATED_AMPHITHEATRE`) |
 
@@ -119,41 +117,23 @@ mesh, the slab-top ground code, `addPlatform(forum.meshes)`; `townPlan`: `forumC
 
 ## Temples (Insula XXX, beside the churchyard)
 
-**In game.** `temple-1` and `temple-2` as solid boxes (18 × 18 × 10 m and 14 × 14 × 8 m, `rotY` 0.2 placeholders,
-'plaster' cell) with a row of classical columns on the front face ✔ (read in the pilot). Sizes and rotation are placeholders;
-only the centres are pinned, 32 m apart on one north–south line (consistent with a row inside one precinct). They
-share one platform.
+**Done 2026-10-16.** Plan-built from the Great Plan rings: the large and small Romano-Celtic temples and the surveyed precinct wall. Brief,
+sources, decisions and the reasoning for every height: [`temples.md`](temples.md). The cellae were fitted out on 2026-10-16 (statue, offering
+table, lamps, plaques, Purbeck and stucco linings; an altar before each temple): `temples.md` "Inside the cellae". Corrections made while verifying:
 
-**Evidence.**
-- ✔ 2018 baths report (Fulford et al.), "Temple Area": a GPR survey (62 × 40 m) west of the graveyard found "the course of
-  the temenos wall surrounding **three** Romano-Celtic Temples now known to exist here"; "the two southern temples
-  appear prominently within the data, indicating they are relatively well preserved"; the temenos wall runs
-  north–south and "curves 90 degrees at its southern extent", and "fits almost exactly to the Antiquaries plan,
-  validating it". (Report PDF linked in `baths.md`.)
-- ✔ Great Plan rings: 10 overlap temple-1, 5 overlap temple-2, forming long north–south runs (the temenos wall).
-- ◐ Insula XXX, at the eastern edge of the town, next to the present churchyard. Two temples found by the Victorians
-  (1890); the third was located 1902 and excavated by Reading in **2017**, which found the typical Romano-Celtic
-  **"double-square" plan** (central cella inside an ambulatory); GPR showed it similar in size to the southernmost.
-  Some sources call the group the earliest masonry in Silchester; Reading's press release links the third temple with Nero.
-  Leads: the 2017 Reading report <https://research.reading.ac.uk/silchester/wp-content/uploads/sites/33/PDFs/2017-Silchester-Temple-report-small.pdf>,
-  the release <https://reading.ac.uk/news-and-events/releases/PR749147.aspx>, Historic England's GPR report
-  <https://historicengland.org.uk/research/results/reports/9-2001>.
-- ◐ A **different** Romano-Celtic temple stood in Insula XXXV (found 1907, axis about 13° off the street): not part of
-  this group.
+- ✔ **Three temples**, as the 2018 baths report said: the 1890 pair (the large central one, "still the largest of its kind in Roman Britain",
+  and the small south one) and the **north temple** (Block XXX.III, found 1893/1902, dug by Reading in **2017**). The 2017 dig dated the north
+  temple to Nero–early 70s ("the earliest masonry building so far attested at Silchester") and **demolished c. AD 200** (tentative); it is
+  left out. It was ~~similar in size to the southernmost~~ ✔ 17.5 × 15 m with an 8 m cella (the south one is 15.2 m square).
+- ✔ The pins: `temple-1` was the large temple, `temple-2` the small one; the north temple was not pinned. Both pins replaced by `temples`.
+- ✔ ~~Double-square plan~~: the type is a square cella in a square ambulatory; here both stand on **raised platforms** filled with earth, the
+  large one 7½ ft (2.3 m) high (1890).
+- ✔ The temenos wall is flint with tile bonding courses, 0.6 m, with no entrance found; its east side lies under the churchyard (C&F 2016).
+- ✔ Romano-Celtic temples facing east: supported for the north temple (2017) and suggested for the 1890 pair ("possibly on the eastern side").
+- ✔ The other temple in **Insula XXXV** (a low podium 10.7 × 11.1 m, C&F 2016) and the 16-sided temple in Insula VII are not part of this
+  group.
 
-**Open questions.** Which of our two pins is which excavated temple, and where is the third (it is not pinned)?
-Corners and rotation of each. Is the temenos wall and its entrance
-part of this building's plan? Which materials (the 2017 report will say)?
-
-**Likely generator work.** A cella tower with a higher roof over a lower ambulatory (a two-tier roof; the generator
-has gable, lean-to and a hipped peristyle ring, no free-standing hip or pyramid), clerestory windows, an entrance
-or porch (✎ Romano-Celtic temples usually face east; check), a temenos wall with a gateway. The classical
-column row in the current game is wrong for this building type.
-
-**Code touchpoints.** `WorldBuilder`: `publicBs` (temples and church), the solid-box loop, the temple column rows
-(`t1`/`t2` in the column `InstancedMesh`), `boxes.key.push` for temple/church in `physicsForPlanByLayer`, the shared
-platform; `townPlan`: `templeReserve`, the centre-only snap, `keyFootprints`. Plan ids will be `temple-1`, … and
-match `buildings` entries.
+Leads not followed: Lewis 1966, Boon 1974, Fox 1948, Historic England GPR report 9-2001.
 
 ---
 
@@ -311,7 +291,7 @@ The opening plan (2026-10-08) said some things from memory. Updated:
 
 - "The church pin is on the medieval parish church, not the small 4th-century church next to the forum": the first half
   stands; the second is **wrong**: the Roman church is in Insula XXXV in the south-east quarter, not by the forum.
-- The temples are Romano-Celtic with a cella and ambulatory: **supported** (◐ double-square plan); and there are **three**
-  temples in the precinct, not two.
+- The temples are Romano-Celtic with a cella and ambulatory: ✔ **confirmed** (1890, 2017); there are **three** temples in the
+  precinct, not two, of which the north one was demolished c. AD 200 (2017).
 - "Mansio near the south gate": the pin is ~150 m from the GIS south gate; ~~and no primary source for the mansio has been found yet~~ ✔ the primary sources are the 1887 and 1894 *Archaeologia* reports (mansio session, 2026-10-13); the building fills Insula VIII, whose SW corner holds the gate.
 - Forum description (ranges of rooms on three sides, east entrance): still ✎.

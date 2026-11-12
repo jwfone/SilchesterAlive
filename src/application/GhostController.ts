@@ -3,7 +3,7 @@ import {
   buildStreetGraph, createGhostSpecs, ghostHeading, ghostPosition, stepGhost,
   type GhostCostumeId, type GhostSpec, type StreetGraph,
 } from '../domain/ghosts.js';
-import { createGhostMesh } from '../presentation/kit/ghosts.js';
+import { createGhostMesh, setGhostTime } from '../presentation/kit/ghosts.js';
 import type { TownPlan } from '../domain/townPlan.js';
 
 // Owns ghost state + meshes. One Mesh per ghost (N<=16: a few extra draws,
@@ -14,6 +14,8 @@ export class GhostController {
   readonly group = new THREE.Group();
   private specs: GhostSpec[] = [];
   private meshes: THREE.Mesh[] = [];
+  /** Displayed yaw per ghost, eased toward the path / player heading. */
+  private yaws: number[] = [];
   private graph: StreetGraph = { edges: [], adjacency: new Map(), edgeNodes: [] };
   private held = new Set<string>();
   private time = 0;
@@ -34,6 +36,7 @@ export class GhostController {
     }
     this.meshes = [];
     this.specs = createGhostSpecs(this.graph, count, this.rand);
+    this.yaws = this.specs.map((s) => ghostHeading(s, this.graph));
     this.specs.forEach((s, i) => {
       const mesh = createGhostMesh(s.costume);
       mesh.name = s.id;
@@ -122,6 +125,9 @@ export class GhostController {
   ): void {
     if (!this.visible || !this.specs.length) return;
     this.time += dt;
+    setGhostTime(this.time);
+    // Ease turns (street corners, turning to the player) instead of snapping.
+    const turn = 1 - Math.exp(-dt * 3.5);
     for (let i = 0; i < this.specs.length; i++) {
       const s = this.specs[i];
       const mesh = this.meshes[i];
@@ -130,11 +136,14 @@ export class GhostController {
       const p = ghostPosition(s, this.graph);
       const bob = Math.sin(this.time * 0.55 + s.phase) * 0.028;
       mesh.position.set(p.x, groundY(p.x, p.z) + 0.35 + bob, p.z);
-      if (held && px !== undefined && pz !== undefined) {
-        mesh.rotation.set(0, Math.atan2(-(px - p.x), -(pz - p.z)), 0);
-      } else {
-        mesh.rotation.set(0, ghostHeading(s, this.graph), Math.sin(this.time * 1.4 + s.phase) * 0.06);
-      }
+      const facePlayer = held && px !== undefined && pz !== undefined;
+      const target = facePlayer
+        ? Math.atan2(-(px - p.x), -(pz - p.z))
+        : ghostHeading(s, this.graph);
+      let d = target - this.yaws[i];
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      this.yaws[i] += d * turn;
+      mesh.rotation.set(0, this.yaws[i], facePlayer ? 0 : Math.sin(this.time * 1.4 + s.phase) * 0.06);
       const sc = s.scale;
       mesh.scale.set(sc, sc, sc);
     }

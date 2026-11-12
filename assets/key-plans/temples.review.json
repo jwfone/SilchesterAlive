@@ -1,0 +1,232 @@
+{
+ "id": "temples",
+ "note": "Reading of Great Plan rings (tmp/audit-buildings/raw.geojson refs) for user review. cls: in | maybe | out. 'why' is Claude's reading of Fox & St John Hope 1890 (Archaeologia 52, 744-9, Pl. XXX), St John Hope 1903 (Archaeologia 58, 413-15, Pl. XXVIII) and Fulford et al. 2017, not established fact.",
+ "scope": "User 2026-10-16: the large (central) and small (south) temples and the surveyed precinct wall; not the north temple (demolished c. AD 200) and not Blocks XXX.I-II.",
+ "underlays": [
+  {
+   "file": "temples-1890-plxxx.jpg",
+   "label": "Fox & St John Hope 1890, Archaeologia 52, Pl. XXX \"Silchester. Temples near East Gate\" (scan p. 840; St John Hope mens. et del.)",
+   "source": "https://archive.org/details/sim_archaeologia-tracts-relating-to-antiquity_1890_52",
+   "width": 410,
+   "height": 840,
+   "opacity": 0.6,
+   "points_note": "[px, py, E, N] generated from an affine chamfer fit of the plate walls to the in-rings (temples-scripts/chamfit.py): 84% of wall pixels within 0.3 m of a ring wall, 89% within 0.6 m; 0.0710 m/px",
+   "points": [
+    [
+     41,
+     84,
+     464298.99,
+     162406.41
+    ],
+    [
+     369,
+     84,
+     464322.26,
+     162407.03
+    ],
+    [
+     369,
+     756,
+     464324.18,
+     162360.91
+    ],
+    [
+     41,
+     756,
+     464300.91,
+     162360.28
+    ],
+    [
+     205,
+     252,
+     464311.11,
+     162395.19
+    ],
+    [
+     123,
+     588,
+     464306.25,
+     162371.97
+    ]
+   ]
+  }
+ ],
+ "rings": {
+  "r284": {
+   "cls": "in",
+   "why": "Large (central) temple: outer wall of the raised ambulatory, 22.3 m square (1890 \"platform 73 feet square\"). West and north walls excavated 1890; the east parts hatched on Pl. XXX, \"completed on plan\" except the NE angle found in a sawpit trench."
+  },
+  "r1273": {
+   "cls": "in",
+   "why": "Large (central) temple: outer wall of the raised ambulatory, 22.3 m square (1890 \"platform 73 feet square\"). West and north walls excavated 1890; the east parts hatched on Pl. XXX, \"completed on plan\" except the NE angle found in a sawpit trench."
+  },
+  "r279": {
+   "cls": "in",
+   "why": "Large (central) temple: outer wall of the raised ambulatory, 22.3 m square (1890 \"platform 73 feet square\"). West and north walls excavated 1890; the east parts hatched on Pl. XXX, \"completed on plan\" except the NE angle found in a sawpit trench."
+  },
+  "r1258": {
+   "cls": "in",
+   "why": "Large (central) temple: outer wall of the raised ambulatory, 22.3 m square (1890 \"platform 73 feet square\"). West and north walls excavated 1890; the east parts hatched on Pl. XXX, \"completed on plan\" except the NE angle found in a sawpit trench."
+  },
+  "r272": {
+   "cls": "in",
+   "why": "Large temple: cella, 12.8 m square outside (1890 \"42 feet square without and 36 feet square within\")."
+  },
+  "r1270": {
+   "cls": "in",
+   "why": "Large temple: cella, 12.8 m square outside (1890 \"42 feet square without and 36 feet square within\")."
+  },
+  "r273": {
+   "cls": "in",
+   "why": "Large temple: cella, 12.8 m square outside (1890 \"42 feet square without and 36 feet square within\")."
+  },
+  "r267": {
+   "cls": "in",
+   "why": "Large temple: cella, 12.8 m square outside (1890 \"42 feet square without and 36 feet square within\")."
+  },
+  "r1264": {
+   "cls": "in",
+   "why": "Large temple: cella, 12.8 m square outside (1890 \"42 feet square without and 36 feet square within\")."
+  },
+  "r1245": {
+   "cls": "in",
+   "why": "Large temple: cella, 12.8 m square outside (1890 \"42 feet square without and 36 feet square within\")."
+  },
+  "r239": {
+   "cls": "in",
+   "why": "Small (south) temple: outer wall, 15.2 m square (1890 \"platform 50 feet square\"); the west side excavated 1890, the rest under the churchyard and completed on plan."
+  },
+  "r1189": {
+   "cls": "in",
+   "why": "Small temple: outer wall, east part (completed on plan, under the churchyard)."
+  },
+  "r232": {
+   "cls": "in",
+   "why": "Small temple: cella, 7.3 m square outside (1890 \"24 feet square outside and 18 feet square within\"); only the SW angle uncovered."
+  },
+  "r1183": {
+   "cls": "in",
+   "why": "Small temple: cella, 7.3 m square outside (1890 \"24 feet square outside and 18 feet square within\"); only the SW angle uncovered."
+  },
+  "r351": {
+   "cls": "in",
+   "why": "Precinct (temenos) wall, west side with its curved SW angle: flint with continuous tile bonding courses, 0.6 m (1890, 1902; C&F 2016). No entrance along its length."
+  },
+  "r1163": {
+   "cls": "in",
+   "why": "Precinct wall, south side, running east under the churchyard (1890: \"curved round to the east and passed under the churchyard\")."
+  },
+  "r1355": {
+   "cls": "in",
+   "why": "Precinct wall, north end: traced through the barn in 1902, curving east \"more sharply\" and pointing to the east gate."
+  },
+  "r381": {
+   "cls": "in",
+   "why": "Precinct wall, north end: traced through the barn in 1902, curving east \"more sharply\" and pointing to the east gate."
+  },
+  "r1345": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r349": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r1344": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r341": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r1333": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r348": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r1323": {
+   "cls": "out",
+   "why": "Block XXX.III: the third (north) temple, excavated 2017; \"abandoned and demolished c. AD 200\" (Fulford et al. 2017). Left out under the period rule (user, 2026-10-16)."
+  },
+  "r1378": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1379": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1370": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1372": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1369": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1368": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1365": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r367": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r368": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r1366": {
+   "cls": "out",
+   "why": "Blocks XXX.I and II in the north curve of the precinct (1902): an apsidal chamber 21.5 x 12 ft and two walls of another building; undated, purpose unknown. Outside the agreed scope."
+  },
+  "r347": {
+   "cls": "out",
+   "why": "House No. 1 / blocks west of the precinct wall (Insula XXIX / street side), not part of the precinct."
+  },
+  "r1347": {
+   "cls": "out",
+   "why": "House No. 1 / blocks west of the precinct wall (Insula XXIX / street side), not part of the precinct."
+  },
+  "r1311": {
+   "cls": "out",
+   "why": "House No. 1 / blocks west of the precinct wall (Insula XXIX / street side), not part of the precinct."
+  },
+  "r1292": {
+   "cls": "out",
+   "why": "House No. 1 / blocks west of the precinct wall (Insula XXIX / street side), not part of the precinct."
+  },
+  "r312": {
+   "cls": "out",
+   "why": "House No. 1 / blocks west of the precinct wall (Insula XXIX / street side), not part of the precinct."
+  },
+  "r318": {
+   "cls": "out",
+   "why": "House No. 1 / blocks west of the precinct wall (Insula XXIX / street side), not part of the precinct."
+  },
+  "r217": {
+   "cls": "out",
+   "why": "Other buildings and street lines outside the precinct."
+  },
+  "r393": {
+   "cls": "out",
+   "why": "Other buildings and street lines outside the precinct."
+  },
+  "r454": {
+   "cls": "out",
+   "why": "Other buildings and street lines outside the precinct."
+  }
+ }
+}

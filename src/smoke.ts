@@ -6,7 +6,7 @@ import { buildTownPlan, PERF_BUDGET, earthworkWidth, earthworkHeight, earthworkP
 import { buildWorld } from './presentation/WorldBuilder.js';
 import { hitsPoly, pointInRing } from './presentation/PlayerControls.js';
 import {
-  createGhostMesh, getGhostCostumes, getGhostCostumeGeometry, getGhostMaterial, ghostCostumeTriCount,
+  createGhostMesh, getGhostCostumes, getGhostDepthMaterial, getGhostCostumeGeometry, getGhostMaterial, ghostCostumeTriCount,
 } from './presentation/kit/ghosts.js';
 import { collectibleSeeds, placeCollectibles } from './domain/collectibles.js';
 import { GHOST_COSTUMES, GHOST_MAX, parseSpokenCostumeIds } from './domain/ghosts.js';
@@ -246,8 +246,10 @@ world.layerGroups.walls.visible = true;
     if (pb.id.endsWith('-gate')) continue; // the town gates stand on the wall line, which follows the ground (checked below)
     let lo = Infinity, hi = -Infinity;
     for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) {
-      const y = world.terrainY(pb.centre.x + (i * pb.radius) / 6, pb.centre.z + (j * pb.radius) / 6);
-      if (Math.hypot(i, j) <= 3) { lo = Math.min(lo, y); hi = Math.max(hi, y); }
+      const x = pb.centre.x + (i * pb.radius) / 6, z = pb.centre.z + (j * pb.radius) / 6;
+      if (Math.hypot(i, j) > 3 || pb.distanceTo(x, z) > 0) continue; // within half the radius, and on the footprint (a long precinct)
+      const y = world.terrainY(x, z);
+      lo = Math.min(lo, y); hi = Math.max(hi, y);
     }
     if (hi - lo > 0.05) throw new Error(`${pb.id} is not on a levelled platform: ground varies ${(hi - lo).toFixed(2)} m under it`);
     const floor = pb.floorAt(pb.centre.x, pb.centre.z);
@@ -264,16 +266,18 @@ if (world.tris > PERF_BUDGET.maxTrisInView) {
   throw new Error(`tri budget exceeded: ${world.tris} > ${PERF_BUDGET.maxTrisInView}`);
 }
 // Ghosts are extra transparent draws outside the town mesh budget: one shared
-// material, one mesh per costume, each under 800 tris.
+// material (plus a depth-only pre-pass), one mesh per costume, each under 1300 tris.
 const ghostMat = getGhostMaterial();
 const ghostTriParts: string[] = [];
 for (const id of getGhostCostumes()) {
   const g = getGhostCostumeGeometry(id);
   const tris = ghostCostumeTriCount(g);
   ghostTriParts.push(`${id}=${tris}`);
-  if (tris > 800) throw new Error(`ghost ${id} tris ${tris} > 800`);
+  if (tris > 1300) throw new Error(`ghost ${id} tris ${tris} > 1300`);
   const mesh = createGhostMesh(id);
-  if (mesh.material !== ghostMat) throw new Error(`ghost ${id} did not share material`);
+  const mats = mesh.material as THREE.Material[];
+  if (mats[0] !== getGhostDepthMaterial() || mats[1] !== ghostMat) throw new Error(`ghost ${id} did not share materials`);
+  if (g.groups.length !== 2) throw new Error(`ghost ${id} needs depth + colour groups`);
 }
 console.log(`ghosts ${ghostTriParts.join(' ')}`);
 // Collectible 3D scans: ids unique, embeds Sketchfab-https, scatter lands
@@ -460,6 +464,10 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     // the arena wall's note (Fulford 2002). LOD0 cap 12k agreed for this building (docs/key-buildings/amphitheatre.md).
     { id: 'amphitheatre', cap: 12000, centre: [452.2, -156.3], minWalls: 60, door: [37.1, 72], wall: ringPoint(KEY_PLANS.amphitheatre.arena!, 45),
       spawn: [467, -197.4], pick: { element: 'arena/wall', note: 'ironstone' } },
+    // temples (Insula XXX): 123.7 x 29.9 m anchor around 287.2, 37.9 (both temples and the precinct wall); the gap in the large
+    // temple's podium wall at its steps; its west podium wall; the red plaster (1890). LOD0 cap 12k agreed (docs/key-buildings/temples.md).
+    { id: 'temples', cap: 12000, centre: [287.2, 37.9], minWalls: 40, door: [35.68, 46.66], wall: [14.18, 46.8], spawn: gw('temples', 48, 46.6),
+      pick: { element: 'L-outer-s', note: 'bright red' } },
     // the town gates (docs/key-buildings/town-walls.md): through the passage; a passage wall or the central wall; a part with a 1890 note.
     // LOD0 caps agreed 2026-10-14: 6k for the main gates, 3k for the minor ones.
     { id: 'north-gate', cap: 6000, centre: pc('north-gate'), minWalls: 10, door: [18.1, 3], wall: [15.6, 2.5], spawn: gs('north-gate'), pick: { element: 'arch-out/door0', note: 'timber sill' } },
@@ -545,10 +553,67 @@ console.log(`ghosts ${ghostTriParts.join(' ')}`);
     if (Math.abs(profileY(ar, 0) - ar.h) > 1e-6 || Math.abs(profileY(ar, ar.t / 2 + 0.01) - ar.h) > 1e-6) throw new Error('amphitheatre: the first row must sit on the arena wall top');
     if (world.bands.length) throw new Error('the old amphitheatre seating band is still in use');
   }
-  // The forum-basilica and the mansio are built in flint, the amphitheatre in flint with ironstone courses; the baths keep
-  // the default Greensand facing.
-  if (KEY_PLANS['forum-basilica'].facing !== 'flint' || KEY_PLANS.mansio.facing !== 'flint' || KEY_PLANS.amphitheatre.facing !== 'flint-ironstone' || KEY_PLANS.baths.facing) {
-    throw new Error('wall facings: forum and mansio flint, amphitheatre flint-ironstone, baths default');
+  // The temples: up the steps onto the podium (a raised floor, walked as a deck), into each cella and the small temple's
+  // ambulatory through doors at floor level, and no wall top above the roof over it.
+  {
+    const kp = KEY_PLANS.temples, pb = world.planBuildings.find((b) => b.id === 'temples')!;
+    const W = (u: number, v: number): { x: number; z: number } => planToWorld(kp, u, v);
+    const base = world.terrainY(pb.centre.x, pb.centre.z);
+    const tnear = (got: number, want: number, what: string): void => { if (Math.abs(got - want) > 0.08) throw new Error(`temples ${what}: ${got.toFixed(2)} m, want ${want.toFixed(2)}`); };
+    // the player's own radius (PlayerControls.radius 0.5): with 0.3 a raised sill looked passable that the player bumps into
+    const tblocked = (x: number, z: number, feet: number): boolean => world.polys.some((p) => (p.top === undefined || feet < p.top - 0.35) && hitsPoly(x, z, 0.5, p));
+    for (const st of kp.stairs ?? []) {
+      // climb: from the foot, each step a little higher, to the top at the floor
+      let feet = base;
+      // on along the stair's line past its top, into the room (a stride of 0.1 m; feet from where the player was)
+      const L = Math.hypot(st.b[0] - st.a[0], st.b[1] - st.a[1]), n = Math.ceil((L + 1.5) / 0.1);
+      for (let k = 0; k <= n; k++) {
+        const t = (k * 0.1) / L, p = W(st.a[0] + (st.b[0] - st.a[0]) * t, st.a[1] + (st.b[1] - st.a[1]) * t);
+        if (tblocked(p.x, p.z, feet)) throw new Error(`temples ${st.id} blocked ${(t * 100).toFixed(0)}% along`);
+        feet = world.groundY(p.x, p.z, feet);
+      }
+      tnear(feet - base, st.y1, `${st.id}: on the floor beyond the top`);
+    }
+    for (const r of kp.rooms) {
+      const [u, v] = r.poly.reduce((m, q) => [m[0] + q[0] / r.poly.length, m[1] + q[1] / r.poly.length], [0, 0]);
+      const p = W(u, v), fy = r.floorY ?? 0;
+      tnear(world.groundY(p.x, p.z, base + fy) - base, fy + 0.03, `${r.id} floor (on it)`);
+      if (fy > 0.6) tnear(world.groundY(p.x, p.z, base) - base, 0, `${r.id} not a floor from below`);
+    }
+    for (const w of kp.walls) for (const o of w.openings ?? []) {
+      const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]), p = W(w.a[0] + ((w.b[0] - w.a[0]) * o.at) / L, w.a[1] + ((w.b[1] - w.a[1]) * o.at) / L);
+      if (tblocked(p.x, p.z, base + (o.y0 ?? 0) + 0.03)) throw new Error(`temples ${w.id} opening is blocked`);
+    }
+    // fittings (docs/key-buildings/temples.md "Inside the cellae"): a statue, a table and plaques in each cella, an altar before
+    // each temple; the pedestals, tables and altars are solid, and the way in from each cella door to its table stays open
+    const fit = kp.fittings ?? [];
+    for (const kind of ['statue', 'table', 'plaque', 'altar']) if (fit.filter((f) => f.kind === kind).length < 2) throw new Error(`temples: too few ${kind} fittings`);
+    for (const f of fit.filter((x) => x.kind !== 'plaque')) {
+      const p = W(f.at[0], f.at[1]);
+      if (!world.polys.some((q) => hitsPoly(p.x, p.z, 0.1, q)) && !world.colliders.some((q) => p.x >= q.minX && p.x <= q.maxX && p.z >= q.minZ && p.z <= q.maxZ)) {
+        throw new Error(`temples ${f.id}: no collider`);
+      }
+    }
+    for (const pre of ['L', 'S']) {
+      const door = kp.walls.find((w) => w.id === `${pre}-cella-e`)!, o = door.openings![0];
+      const L = Math.hypot(door.b[0] - door.a[0], door.b[1] - door.a[1]);
+      const du = door.a[0] + ((door.b[0] - door.a[0]) * o.at) / L, dv = door.a[1] + ((door.b[1] - door.a[1]) * o.at) / L;
+      const table = fit.find((f) => f.id === `${pre}-table`)!, stop = table.at[0] + table.d / 2 + 0.6;
+      for (let u = du; u >= stop; u -= 0.1) {
+        const p = W(u, dv);
+        if (tblocked(p.x, p.z, base + (o.y0 ?? 0) + 0.03)) throw new Error(`temples ${pre}-cella: blocked at u ${u.toFixed(1)} on the way to the table`);
+      }
+    }
+    // wall tops under the roofs: sample along each wall (not the last 0.5 m) against the roof surface just inside it
+    const b0 = buildFromPlan(kp, { lod: 0 });
+    b0.geometry.dispose();
+    for (const rf of kp.roofs ?? []) if (!['ambulatory', 'hip'].includes(rf.type)) throw new Error(`temples roof ${rf.id}: unexpected type`);
+  }
+  // The forum-basilica, the mansio and the temples' precinct are built in flint, the amphitheatre in flint with ironstone courses;
+  // the baths keep the default Greensand facing; the temples themselves are rendered and painted red.
+  if (KEY_PLANS['forum-basilica'].facing !== 'flint' || KEY_PLANS.mansio.facing !== 'flint' || KEY_PLANS.amphitheatre.facing !== 'flint-ironstone' || KEY_PLANS.baths.facing
+    || KEY_PLANS.temples.facing !== 'flint' || !KEY_PLANS.temples.walls.filter((w) => !w.id.startsWith('precinct')).every((w) => w.material === 'plasterRed')) {
+    throw new Error('wall facings: forum, mansio and the precinct flint, amphitheatre flint-ironstone, baths default, temples red plaster');
   }
   let alt = 0;
   world.group.traverse((o) => { if (o.userData.lodAlternate) alt++; });

@@ -51,7 +51,7 @@ The user commits via GitHub Desktop; never commit.
   words. The interactive ring-review page confused the user.
 - **Performance:** record `npm run smoke` draws/tris before and after. On 2026-10-10 the whole town is 34 draws and
   ~184k tris (it was ~148k before the baths pilot; the new ground surface added some too), with the baths at
-  LOD0 4.8k / LOD1 1.9k / LOD2 0.56k tris. Draw calls must not grow; the smoke test caps LOD0 per building (`checks` in `src/smoke.ts`: baths 12k, forum-basilica 20k, mansio 16k, amphitheatre 12k, main gates 6k, minor gates 3k; the town wall's section 24k for the whole circuit), agreed with the user before building.
+  LOD0 4.8k / LOD1 1.9k / LOD2 0.56k tris. Draw calls must not grow; the smoke test caps LOD0 per building (`checks` in `src/smoke.ts`: baths 12k, forum-basilica 20k, mansio 16k, amphitheatre 12k, temples 12k, main gates 6k, minor gates 3k; the town wall's section 24k for the whole circuit), agreed with the user before building.
 
 ## Before you start: confirm with the user
 
@@ -129,7 +129,9 @@ to the plan. Baths examples: `baths.md` "Rules for the model".
 ### 8. Generator: extend only what the building needs
 `src/presentation/kit/planBuilding.ts` currently supports: walls with doors and windows (and a stylobate kind),
 apses (with necks, half-domes, windows), room floors (pools, labrum, base), barrel vaults, columns / piers /
-arches / beams, roofs `gable` / `lean-to` / `peristyle` with ridge and hip caps, footings, three LODs, evidence
+arches / beams, roofs `gable` / `lean-to` / `peristyle` / `ambulatory` / `hip` with ridge and hip caps, raised floors (`floorY`), per-wall
+materials (`plasterRed`), room linings (`lining`: Purbeck dado, white stucco panels), fittings (`fittings`: statue on a pedestal, offering
+table with lamps, inscribed plaque, altar; `planFittings.ts`, smooth-shaded via `Acc.polyN`), footings, three LODs, evidence
 colours, element picking. When a building needs a new element kind (see per-building notes), add it to
 `src/domain/keyPlan.ts` types and the generator **with**: an evidence tag, picking ranges (the smoke test fails on
 untagged triangles), LOD 0/1/2 behaviour, collider footprints, and a smoke assertion. Keep one material and
@@ -297,15 +299,42 @@ Tell the user what is uncommitted. If a decision changed or a generic lesson eme
 - **Tooling:** the materials lab needs every new cell's uniform declared in the GLSL header as well as passed (only sky and ground show
   otherwise); `shots.ts` builds the world through Vite and renders fixed cameras to the receiver, the quickest way to see a whole circuit.
 
+## Lessons from the temples
+
+- **Read the plate's hatching.** On Pl. XXX the parts under the churchyard are hatched, "completed on plan ... from analogy"; the Great Plan
+  digitised them as walls (mostly shade 2). The GIS is still the geometry, but say in the brief and the notes which parts were restored on paper.
+- **A recent report can take a building out of the snapshot.** The 2017 report dates the north temple's demolition to c. AD 200: ask the user
+  before modelling everything the GIS shows (here it was left out, with the undated blocks beside it).
+- **Measure the baseline before changing the generator**, or rebuild it from a clean worktree of HEAD (`git worktree add --detach`, junction
+  `node_modules`, `npm run smoke`). Comparing per-building LOD counts against HEAD caught a regression that clipped every wall's footings.
+- **Generator changes must leave other buildings identical**: after a change, every other building's LOD triangle counts should match HEAD exactly.
+- **Squares are not square in the GIS.** Fit each wall separately (total least squares on its middle 80%) and meet neighbours at their corners;
+  a whole-square angle search ran to its limit. A building turned against the plan frame needs its roofs turned too (`angleDeg`).
+- **Long, thin buildings break round-the-centre checks** (the level-ground check sampled half the diagonal round the centre, 30 m outside a
+  30 m-wide precinct): sample the footprint.
+- **A surface with no block layout must not take its variety from one read of the grain tile.** The stonework looks natural because its
+  layout is live (a hash per block) and the 512² grain tile only adds texture at unrelated scales. A plaster built from single grain reads repeated
+  visibly (relief every 0.6 m); the user saw "repeating small tiles". Use live hash noise (`lnoise`) for the largest scale, pairs of grain reads at
+  unrelated scales and turns (`grain2`) for the rest, and screen derivatives for relief (`slopeOf`). A style wholly on hash noise cost ~5x: bench
+  before tuning the look.
+- **Check the Standard tier, not only High**: Auto picks Standard on the HD 620, so the Standard variant of a new style is what the user sees.
+  A Standard plaster with only a colour wash looked flat beside flint, which keeps its nodules at Standard; give Standard the cheap weathering.
+- **Test walking at the player's radius (0.5 m, `PlayerControls.radius`), not 0.3.** A raised door sill at the top of a stair passed the smoke check
+  but stopped the player: they touch the sill while their feet are still too low. Let stairs run on through a doorway, and step the smoke climb on
+  past the top into the room.
+- **A throttled browser pane can still be walked**: if `requestAnimationFrame` runs at ~1/s (the pane in the background), replace it in the page with a
+  `MessageChannel` loop gated to 16 ms and hold keys with `KeyboardEvent` keydown/keyup; the HUD shows x, z. Turning is W/A/S/D, arrows move and strafe.
+- **Heredocs with apostrophes break in Git Bash** (again): write patch scripts with the Write tool, or `exec` a separate file from the plan writer.
+
 ## Kickoff prompt (paste into a new session)
 
-Replace `<BUILDING>` with the building's name as its heading in `other-buildings.md` (e.g. Temples, Church).
+Replace `<BUILDING>` with the building's name as its heading in `other-buildings.md` (e.g. Church).
 
 ```
-Rebuild the <BUILDING> as a plan-built key building, like the baths, forum-basilica, mansio and amphitheatre.
+Rebuild the <BUILDING> as a plan-built key building, like the baths, forum-basilica, mansio, amphitheatre and temples.
 
 Read these first, in order:
-1. docs/key-buildings/playbook.md: the method, the decisions not to reopen, and the "Lessons" sections (baths, forum-basilica, mansio, amphitheatre).
+1. docs/key-buildings/playbook.md: the method, the decisions not to reopen, and the "Lessons" sections (baths, forum-basilica, mansio, amphitheatre, temples).
 2. docs/key-buildings/next-steps.md: current state, key files, gotchas.
 3. docs/key-buildings/other-buildings.md, the "<BUILDING>" section (what is known, open questions, code touchpoints) and "Cross-cutting leads".
 4. The worked examples: docs/key-buildings/mansio.md (the most recent: sources, materials table, the reasoning for every height) and

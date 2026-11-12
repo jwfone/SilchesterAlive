@@ -14,7 +14,14 @@ export type AtlasCell =
   // Flint with brown ironstone courses (amphitheatre): the same painting, nudged further.
   | 'flintIron'
   // Flint with double courses of limestone slabs (the town wall).
-  | 'flintLime';
+  | 'flintLime'
+  // Lime render painted red (the temples): shares the pink plaster painting, nudged (atlasTiled.ts plasterRedF).
+  | 'plasterRed'
+  // Fittings and linings (planFittings.ts; the temples): each shares a painting, nudged so atlasTiled.ts can tell them
+  // apart. Freestone (one block, no courses): limestone (plaster's painting), greensand (stone's); Purbeck marble
+  // (the dado's): polished slabs, a dado of slabs, an inscribed panel; white stucco panels (the pink plaster's);
+  // terracotta (the brick's): lamps.
+  | 'limestone' | 'greensand' | 'purbeck' | 'purbeckLining' | 'inscription' | 'stucco' | 'terracotta';
 
 export interface AtlasRect { u0: number; v0: number; u1: number; v1: number }
 
@@ -23,7 +30,13 @@ const CELLS: Record<AtlasCell, [number, number]> = {
   street: [0, 1], grass: [1, 1], wood: [2, 1], arena: [3, 1],
   water: [0, 2], masonry: [1, 2], plasterPink: [2, 2], dado: [3, 2],
   signinum: [0, 3], mosaic: [1, 3], window: [2, 3], brick: [3, 3],
-  flint: [1, 2], flintIron: [1, 2], flintLime: [1, 2],
+  flint: [1, 2], flintIron: [1, 2], flintLime: [1, 2], plasterRed: [2, 2],
+  limestone: [1, 0], greensand: [0, 0], purbeck: [3, 2], purbeckLining: [3, 2], inscription: [3, 2], stucco: [2, 2], terracotta: [3, 3],
+};
+/** Nudge of a cell that shares another's painting (atlasTiled.ts isCell tells them apart at 1e-3). */
+const NUDGE: Partial<Record<AtlasCell, number>> = {
+  flint: 0.002, flintIron: 0.004, flintLime: 0.006, plasterRed: 0.002,
+  limestone: 0.002, greensand: 0.002, purbeck: 0.002, purbeckLining: 0.004, inscription: 0.006, stucco: 0.004, terracotta: 0.002,
 };
 
 export function cellRect(cell: AtlasCell): AtlasRect {
@@ -33,7 +46,7 @@ export function cellRect(cell: AtlasCell): AtlasRect {
   const u0 = cx * s, u1 = (cx + 1) * s;
   const v1 = 1 - cy * s, v0 = 1 - (cy + 1) * s;
   // inset slightly to avoid bleeding
-  const pad = 0.004, nudge = cell === 'flint' ? 0.002 : cell === 'flintIron' ? 0.004 : cell === 'flintLime' ? 0.006 : 0;
+  const pad = 0.004, nudge = NUDGE[cell] ?? 0;
   return { u0: u0 + pad + nudge, v0: v0 + pad, u1: u1 - pad + nudge, v1: v1 - pad };
 }
 

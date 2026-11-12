@@ -8,7 +8,6 @@ import { getTiledAtlasMaterial } from './kit/atlasTiled.js';
 import { DITCH, FACE, buildTownWall, earthworkOffset, wallDeckAt, type TownWall } from '../domain/townWall.js';
 import { buildGableRoofGeometry } from './kit/roofs.js';
 import { buildHouseWithOpeningsGeometry } from './kit/houses.js';
-import { buildColumnGeometry } from './kit/columns.js';
 import { buildTerrainSurface, type Platform } from '../domain/terrainSurface.js';
 import { DECK_STEP, placePlanBuilding, planFootprintBounds, setPlanBuildingDisplay, type KeyBuildingDisplay, type PlacedPlanBuilding } from './kit/planWorld.js';
 import { KEY_PLANS, TOWN_WALL } from '../domain/keyPlans.generated.js';
@@ -83,7 +82,7 @@ function physicsForPlanByLayer(plan: TownPlan): { boxes: LayerColliders; polys: 
   // The town wall's colliders come from its own generator (kit/townWall.ts, in buildWorld): they carry
   // the walk's height, so the wall-walk is walkable.
   for (const b of plan.buildings) {
-    if (b.kind === 'forum' || b.kind === 'basilica' || b.kind === 'baths' || b.kind === 'mansio') continue; // hollow key buildings have own colliders
+    if (b.kind === 'forum' || b.kind === 'basilica' || b.kind === 'baths' || b.kind === 'mansio' || b.kind === 'temple') continue; // plan-built key buildings have own colliders
     // GIS traces: skip tiny stubs and footprints that sit on key plots so the
     // forum/baths interiors stay walkable while the plan still renders.
     if (b.outline && b.outline.length >= 3) {
@@ -102,15 +101,15 @@ function physicsForPlanByLayer(plan: TownPlan): { boxes: LayerColliders; polys: 
       polys.buildings.push({ outline: b.outline, holes: b.holes, minX, maxX, minZ, maxZ });
       continue;
     }
-    // Kit houses/temples/church: axis-aligned bound of the rotY-oriented box,
+    // Kit houses/church: axis-aligned bound of the rotY-oriented box,
     // matching the instanced mesh (unrotated AABBs used to transpose near ±90°).
     const hw = b.w / 2, hd = b.d / 2;
     const c = Math.abs(Math.cos(b.rotY)), s = Math.abs(Math.sin(b.rotY));
     const ex = hw * c + hd * s, ez = hw * s + hd * c;
     const box = { minX: b.x - ex, maxX: b.x + ex, minZ: b.z - ez, maxZ: b.z + ez };
-    // Solid temples/church render in the key-buildings layer; leftover infill
+    // The solid church renders in the key-buildings layer; leftover infill
     // houses/shops/ruins (no GIS ring) render in the other-buildings layer.
-    if (b.kind === 'temple' || b.kind === 'church') boxes.key.push(box);
+    if (b.kind === 'church') boxes.key.push(box);
     else boxes.buildings.push(box);
   }
   return { boxes, polys };
@@ -131,7 +130,6 @@ export function collidersForPlan(plan: TownPlan): Collider[] {
   return [...byLayer.walls, ...byLayer.key, ...byLayer.buildings];
 }
 
-const COLUMN_UNIT_H = 5.65; // buildColumnGeometry(5): base .35 + shaft 5 + cap .3
 
 /** The ground's material with the ditch cut out: fragments over the grid quads given are discarded (the
  * earthworks mesh draws the ditch there). A world-space mask texture at 0.5 m. */
@@ -195,14 +193,14 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   // Key buildings stand on levelled platforms (the terrain is flattened under each, with a short
   // ramp back to the contours), so floors, walls and the ground agree. Their kits do not depend on
   // the ground, so they are built first to learn their footprints.
-  const publicBs = plan.buildings.filter((x) => x.kind === 'temple' || x.kind === 'church');
+  const publicBs = plan.buildings.filter((x) => x.kind === 'church');
   const platforms: Platform[] = [];
   /** Key buildings' own footprints: ground decals (roads) are cut out of these, the reconstruction has its own floors. */
   const keepOuts: Rect[] = [];
   const addPlatform = (minX: number, maxX: number, minZ: number, maxZ: number): void => {
     keepOuts.push({ minX, maxX, minZ, maxZ });
     const p: Platform = { minX: minX - PLATFORM_MARGIN, maxX: maxX + PLATFORM_MARGIN, minZ: minZ - PLATFORM_MARGIN, maxZ: maxZ + PLATFORM_MARGIN, ramp: PLATFORM_RAMP };
-    // Neighbouring buildings (the two temples) share one platform: fewer grid lines, no thin ridge between.
+    // Neighbouring buildings (the temples and the church) share one platform: fewer grid lines, no thin ridge between.
     const near = PLATFORM_RAMP * 2 + 6;
     const q = platforms.find((o) => p.minX < o.maxX + near && p.maxX > o.minX - near && p.minZ < o.maxZ + near && p.maxZ > o.minZ - near);
     if (!q) { platforms.push(p); return; }
@@ -751,7 +749,7 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
   const setKeyBuildingDisplay = (mode: KeyBuildingDisplay): void => setPlanBuildingDisplay(planMeshes, mode);
 
 
-  // Solid public buildings (temples, church only — rest are hollow key buildings)
+  // Solid public building (the church only; the rest are plan-built)
   {
     for (const b of publicBs) {
       const g = new THREE.BoxGeometry(b.w, b.h, b.d);
@@ -851,40 +849,6 @@ export function buildWorld(plan: TownPlan): BuiltWorld {
       group.add(mesh);
       countTris(g);
     }
-  }
-
-  // Portico columns: temple rows, one InstancedMesh (plan-built buildings
-  // carry their own columns inside their merged meshes). Key-buildings layer.
-  {
-    const spots: Array<{ x: number; z: number; h: number }> = [];
-    const row = (cx: number, cz: number, n: number, spacing: number, rotY: number, h: number): void => {
-      for (let i = 0; i < n; i++) {
-        const off = (i - (n - 1) / 2) * spacing;
-        const x = cx + Math.cos(rotY) * off, z = cz - Math.sin(rotY) * off;
-        spots.push({ x, z, h });
-        const cc = { x, z, r: 0.65 };
-        circles.push(cc);
-        circlesByLayer.key.push(cc);
-      }
-    };
-    // Temple portico rows follow the plan temples (front = +z face, as designed).
-    const t1 = plan.buildings.find((b) => b.id === 'temple-1');
-    const t2 = plan.buildings.find((b) => b.id === 'temple-2');
-    row(t1?.x ?? -125, (t1?.z ?? -80) + 12, 4, 4, 0.2, 5);
-    row(t2?.x ?? -100, (t2?.z ?? -58) + 10, 4, 3.5, 0.2, 5);
-    const colG = buildColumnGeometry(5);
-    const cols = new THREE.InstancedMesh(colG, kitMat, Math.max(1, spots.length));
-    const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), E = new THREE.Euler(), P = new THREE.Vector3(), S = new THREE.Vector3();
-    spots.forEach((c, i) => {
-      E.set(0, 0, 0); Q.setFromEuler(E);
-      P.set(c.x, gy(c.x, c.z), c.z); S.set(1, c.h / COLUMN_UNIT_H, 1);
-      M.compose(P, Q, S);
-      cols.setMatrixAt(i, M);
-    });
-    cols.instanceMatrix.needsUpdate = true;
-    cols.count = spots.length;
-    layerGroups.key.add(cols);
-    countTris(colG, spots.length);
   }
 
   // Baked AO: one contact-shadow decal mesh per layer so hiding a layer also
